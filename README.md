@@ -25,7 +25,8 @@ variables. As output, you need to generate a knitr document that describes...
 * an experiment where you outline your hypothesis and what you learned from the experiment.
 * if you can figure out how to create time-lapsed heatmaps of the state of the
 population (also shown in Fig. 1) as a GIF, I will give you a considerable
-amount of extra credit.
+amount of extra credit
+* you may no more than one for/repeat/while loop (although none would be even better)
 
 ### Game plan...
 Complete the exercise and submit it as a pull request to the [Assignment 5 repository](https://github.com/microbialinformatics/assignment05). You should not use any packages beyond the base R system. This assignment is due on Friday, November 22nd. Be sure to include all R, Rmd, and md files in your commits. There are two approaches you and your partner can take to work on this project:
