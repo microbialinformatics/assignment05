@@ -31,11 +31,37 @@ rpsmat <- matrix(states, nrow=250, ncol=250)
 colnames(rpsmat) <- paste("c", 1:250, sep="")
 rownames(rpsmat) <- paste("r", 1:250, sep="")
 ```
- do one generation of updates - update matrix and frequencies of each cell type
+
+do one generation of updates - update matrix and frequencies of each cell type
+global
+```{r, eval=TRUE}
+fc <- sum(rpsmat==1)/(nrow(rpsmat)*ncol(rpsmat))
+fr <- sum(rpsmat==2)/(nrow(rpsmat)*ncol(rpsmat))
+fs <- sum(rpsmat==3)/(nrow(rpsmat)*ncol(rpsmat))
+```
+
+local - ID point, then get the frequencies
+assume that the updating for an empty cell depends on the absolute frequency of the other cells - not their relative frequencies
+```{r}
+column <- sample(1:250, 1)
+row <- sample(1:250, 1)
+
+focal <- 2
+  #rpsmat[row, column]
+
+if(focal==0){
+  rpsmat[row,column] = sample(c(1,2,3), 1, prob=c(fc, fr, fs))
+  } else if(focal==1) {
+    rpsmat[row, column] = sample(c(0,1), 1, prob=c(delta.c, 1-delta.c))
+     } else if(focal==2){
+       rpsmat[row, column] = sample(c(0,2), 1, prob=c(delta.s, 1-delta.s))
+       } else if (focal==3) rpsmat[row, column] = sample(c(0,3), 1, prob=c(delta.r, 1-delta.r))
+                                      
+```
 
 for loop for updating
 
- save frequencies at each generation
+save frequencies at each generation
 
  figure out how to save matricies every N generations (in a list?)
 
