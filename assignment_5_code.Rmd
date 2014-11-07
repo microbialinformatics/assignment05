@@ -1,0 +1,29 @@
+---
+title: "assignment_5"
+author: "Iris"
+date: "November 7, 2014"
+output: html_document
+---
+```{r, eval=TRUE}
+rpsmat <- matrix(NA, nrow=250, ncol=250)
+colnames(rpsmat) <- paste("c", 1:250, sep="")
+rownames(rpsmat) <- paste("r", 1:250, sep="")
+```
+
+death and replacement probabilities
+
+
+
+ put out initial outlay - start at equal abundances (from Fig.1 line graphs)
+
+ do one generation of updates - update matrix and frequencies of each cell type
+
+for loop for updating
+
+ save frequencies at each generation
+
+ figure out how to save matricies every N generations (in a list?)
+
+ work with neighborhood sizes 
+
+
