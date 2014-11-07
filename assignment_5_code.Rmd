@@ -4,18 +4,33 @@ author: "Iris"
 date: "November 7, 2014"
 output: html_document
 ---
+death probabilities
+
 ```{r, eval=TRUE}
-rpsmat <- matrix(NA, nrow=250, ncol=250)
+delta.c <- 1/3
+delta.r <- 10/32
+tau <- 3/4
+delta.s0 <- 1/4
+delta.s <- delta.s0 + tau*fc
+```
+
+ put out initial outlay - start at equal abundances (from Fig.1 line graphs)
+ 
+ 0 = empty
+ 1=C
+ 2=R
+ 3=S
+ 
+```{r}
+possible.states <- c(0, 1, 2, 3)
+
+states <- sample(possible.states, 250*250, replace=TRUE)
+
+rpsmat <- matrix(states, nrow=250, ncol=250)
+
 colnames(rpsmat) <- paste("c", 1:250, sep="")
 rownames(rpsmat) <- paste("r", 1:250, sep="")
 ```
-
-death and replacement probabilities
-
-
-
- put out initial outlay - start at equal abundances (from Fig.1 line graphs)
-
  do one generation of updates - update matrix and frequencies of each cell type
 
 for loop for updating
