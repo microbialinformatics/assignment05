@@ -10,3 +10,8 @@ create.matrix <- function(variable, nrows=250,ncols=250){
 }
 
 # 
+simulation <- function(matrix, nSim=3000){
+nrow <- sample(1:nrow(matrix), 1)
+ncol <- sample(1:ncol(matrix), 1)
+index <- matrix[nrow,ncol]
+}
