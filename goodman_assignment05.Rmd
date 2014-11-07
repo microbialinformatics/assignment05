@@ -5,7 +5,8 @@ output: html_document
 
 # First step... generate a matrix, size 250x250, and fill it randomly with values 1-4 to represent C, S, R, and empty spaces in the vector.
 
-create.matrix <- function(nrows=250,ncols=250){
-	variable <- c("S", "R", "C", "E")
+create.matrix <- function(variable, nrows=250,ncols=250){
 	matrix(sample(variable, nrows*ncols, replace=TRUE), nrow=nrows, ncol=ncols)
 }
+
+# 
