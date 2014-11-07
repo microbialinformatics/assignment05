@@ -5,5 +5,7 @@ output: html_document
 
 # First step... generate a matrix, size 250x250, and fill it randomly with values 1-4 to represent C, S, R, and empty spaces in the vector.
 
-variable <- c("S", "R", "C", "E")
-lattice <- matrix(sample(variable, 250*250, replace=TRUE), nrow=250, ncol=250)
+create.matrix <- function(nrows=250,ncols=250){
+	variable <- c("S", "R", "C", "E")
+	matrix(sample(variable, nrows*ncols, replace=TRUE), nrow=nrows, ncol=ncols)
+}
