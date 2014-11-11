@@ -64,16 +64,25 @@ fr.loc <- r.local(rpsmat, row, column)
 
 fs.loc <- s.local(rpsmat, row, column)
 
-
+update <- function(matrix, row, column, prob.e, prob.s){
 if(focal==0){
-  rpsmat[row,column] = sample(c(1,2,3), 1, prob=c(fc, fr, fs))
+  matrix[row,column] = sample(c(1,2,3), 1, prob=prob.e, replace=TRUE)
   } else if(focal==1) {
-    rpsmat[row, column] = sample(c(0,1), 1, prob=c(delta.c, 1-delta.c))
+    rpsmat[row, column] = sample(c(0,1), 1, prob=c(delta.c, 1-delta.c), replace=TRUE)
      } else if(focal==2){
-       rpsmat[row, column] = sample(c(0,2), 1, prob=c(delta.s, 1-delta.s))
-       } else if (focal==3) rpsmat[row, column] = sample(c(0,3), 1, prob=c(delta.r, 1-delta.r))
-                                      
+       rpsmat[row, column] = sample(c(0,2), 1, prob=prob.s, replace=TRUE)
+       } else if (focal==3) rpsmat[row, column] = sample(c(0,3), 1, prob=c(delta.r, 1-delta.r), replace=TRUE)
+return(matrix[row, column])
+}  
+
+rpsmat[row, column] <- update(rpsmat, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
+
+
 ```
+
+
+
+
 
 for loop for updating
 
