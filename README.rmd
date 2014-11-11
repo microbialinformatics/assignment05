@@ -43,7 +43,16 @@ Daniel and Shawn
 seeds<-sample(1:4,100, replace=T) #pick the random numbers to fill matrix
 empty.matrix<-matrix(seeds ,nrow=10, ncol=10) #create matrix with random numbers
 #pick random cell in matrix to change
-cell.to.change<-empty.matrix[[(sample(1:10,1, replace=T)),(sample(1:10,1, replace=T))]]
+row.to.change<-empty.matrix[(sample(1:10,1, replace=T))]
+col.to.change<-empty.matrix[(sample(1:10,1, replace=T))]
+#function to change what is in cell based on probabilities
+#select what is in cell
+#based on what is in the cell, change to one of other 4
+#change to one of other 4 
+                             
+                             
+                             
+#find index of cell changed
 #change cell based on probabilities
                  
 
