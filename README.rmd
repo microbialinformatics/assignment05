@@ -45,6 +45,56 @@ empty.matrix<-matrix(seeds ,nrow=10, ncol=10) #create matrix with random numbers
 #pick random cell in matrix to change
 row.to.change<-empty.matrix[(sample(1:10,1, replace=T))]
 col.to.change<-empty.matrix[(sample(1:10,1, replace=T))]
+#select neighborhood based on index
+#neighborhood is 3 above, 2 each side, 3 on bottom of index
+select.neighbors<-function(r,c){
+ #rows:
+#a center upper
+  up.row<-r+1
+  # b center lower
+  down.row<-r-1
+  #c right upper corner
+  r.up.corner<-r+1
+  #d left upper corner
+  l.up.corner<-r+1
+  #e center right
+  center.r<-r
+  # f center left
+  center.l<-r
+  #g right lower corner
+  r.low.corner<-r-1
+  #h left lower corner 
+  l.low.corner<-r-1
+   #Columns:
+  #a upper
+  up.col<-c
+  # b lower
+  low.col<-c
+  # c right upper corner
+  r.up.cor.col<-c+1
+  # d left upper corner
+  l.up.cor.col<-c-1
+  # e center right
+  center.r.col<-c+1
+  # f center left
+  center.l.com<-c-1
+  # g right lower corner
+  r.lower.cor.col<-c+1
+  # h left lower corner 
+  l.lower.cor.col<-c-1
+  # put together indices
+  A<-empty.matrix[up.row,up.col]
+  B<-empty.matrix[down.row,low.col]
+  C<- empty.matrix[r.up.corner, r.up.cor.col]
+  D<-empty.matrix[l.up.corner, l.up.cor.col]
+  E<-empty.matrix[center.r, center.r.col]
+  G<-empty.matrix[center.l, center.l.com]
+  H<-empty.matrix[ r.low.corner,r.lower.cor.col]
+  I<-empty.matrix[l.low.corner, l.lower.cor.col]
+   
+  
+}
+
 #function to change what is in cell based on probabilities
 #select what is in cell
 #based on what is in the cell, change to one of other 4
