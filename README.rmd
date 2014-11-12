@@ -43,8 +43,8 @@ Daniel and Shawn
 seeds<-sample(1:4,100, replace=T) #pick the random numbers to fill matrix
 empty.matrix<-matrix(seeds ,nrow=10, ncol=10) #create matrix with random numbers
 #pick random cell in matrix to change
-row.to.change<-empty.matrix[(sample(1:10,1, replace=T))]
-col.to.change<-empty.matrix[(sample(1:10,1, replace=T))]
+r<-empty.matrix[(sample(1:10,1, replace=T))]
+c<-empty.matrix[(sample(1:10,1, replace=T))]
 #select neighborhood based on index
 #neighborhood is 3 above, 2 each side, 3 on bottom of index
 select.neighbors<-function(r,c){
@@ -91,12 +91,17 @@ select.neighbors<-function(r,c){
   G<-empty.matrix[center.l, center.l.com]
   H<-empty.matrix[ r.low.corner,r.lower.cor.col]
   I<-empty.matrix[l.low.corner, l.lower.cor.col]
-   
-  
+   change.the.type<-function(A,B,C,D,E,G,H,I){
+     make.vec<-as.vector(c(A,B,C,D,E,G,H,I))
+     type<-empty.matrix[r,c] #get type index is
+     prob<- #number of type in neighborhood
+       #fraction of type in neighborhood=probability
+       
+    
+   }
 }
 
-#function to change what is in cell based on probabilities
-#select what is in cell
+
 #based on what is in the cell, change to one of other 4
 #change to one of other 4 
                              
