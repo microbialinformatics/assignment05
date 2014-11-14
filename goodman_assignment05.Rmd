@@ -9,9 +9,87 @@ create.matrix <- function(variable, nrows=250,ncols=250){
 	matrix(sample(variable, nrows*ncols, replace=TRUE), nrow=nrows, ncol=ncols)
 }
 
-# 
+
+# Pick random cell, sample surroundings, figure out what the cell will become
+
 simulation <- function(matrix, nSim=3000){
 nrow <- sample(1:nrow(matrix), 1)
 ncol <- sample(1:ncol(matrix), 1)
-index <- matrix[nrow,ncol]
+index <- c(nrow,ncol)
+index.value <- matrix[nrow,ncol]
+
+if(nrow==1){
+a <- matrix[nrow(matrix),ncol]
+b <- matrix[nrow(matrix),ncol+1]
+c <- matrix[nrow(matrix),ncol-1]
+d <- matrix[nrow+1, ncol]
+e <- matrix[nrow+1, ncol-1]
+f <- matrix[nrow+1, ncol+1]
+g <- matrix[nrow, ncol+1]
+h <- matrix[nrow, ncol-1]
+} else if(ncol==1){
+a <- matrix[nrow-1,ncol]
+b <- matrix[nrow-1,ncol+1]
+c <- matrix[nrow-1,ncol(matrix)]
+d <- matrix[nrow+1, ncol]
+e <- matrix[nrow+1, ncol(matrix)]
+f <- matrix[nrow+1, ncol+1]
+g <- matrix[nrow, ncol+1]
+h <- matrix[nrow, ncol(matrix)]
+} else if(ncol==10){
+a <- matrix[nrow-1,ncol]
+b <- matrix[nrow-1,1]
+c <- matrix[nrow-1,ncol-1]
+d <- matrix[nrow+1, ncol]
+e <- matrix[nrow+1, ncol-1]
+f <- matrix[nrow+1, 1]
+g <- matrix[nrow, 1]
+h <- matrix[nrow, ncol-1]
+} else if(nrow==10){
+a <- matrix[nrow-1,ncol]
+b <- matrix[nrow-1,ncol+1]
+c <- matrix[nrow-1,ncol-1]
+d <- matrix[1, ncol]
+e <- matrix[1, ncol-1]
+f <- matrix[1, ncol+1]
+g <- matrix[nrow, ncol+1]
+h <- matrix[nrow, ncol-1] 
+} else {
+a <- matrix[nrow-1,ncol]
+b <- matrix[nrow-1,ncol+1]
+c <- matrix[nrow-1,ncol-1]
+d <- matrix[nrow+1, ncol]
+e <- matrix[nrow+1, ncol-1]
+f <- matrix[nrow+1, ncol+1]
+g <- matrix[nrow, ncol+1]
+h <- matrix[nrow, ncol-1] }
+local <- c(a,b,c,d,e,f,g,h) 
+
+if(index.value==R){
+    present <- sum(local=="S")
+    if(present>0){
+        index.value <- "S"
+        } else {index.value<-"R"}
+} else if(index.value==C){
+    present <- sum(local=="R")
+    if(present>0){
+        index.value <- "R"
+        } else {index.value<-"C"}
+} else if(index.value==S){
+    present <- sum(local=="C")
+    present <- present/8
+    S <- 1/4 +3/4*present
+    C <- 1/3
+    if(C<S){
+       index.value <- "C"
+    } else {index.value<-"S"}
+} else {
+    fractionS <- sum(local=="S")/8
+    fractionR <- sum(local=="R")/8
+    fractionC <- sum(local=="C")/8
+    x <- c(fractionS, fractionR, fractionC)
+    if(max(x)==fractionS){index.value= "S"}
+    else if(max(x)==fractionR){index.value= "R"}
+    else if(max(x)==fractionC){index.value= "C"}
+}
 }
