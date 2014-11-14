@@ -11,6 +11,9 @@ matrix <- createMatrix(conditions, nrows=10, ncols=10)
 
 
 runSimulations <- function(matrix, nsim=3000){
+  
+  
+  
   nrow <- sample(1:nrow(matrix), 1)
   ncol <- sample(1:ncol(matrix), 1)
   index <- c(nrow, ncol)
@@ -87,7 +90,7 @@ runSimulations <- function(matrix, nsim=3000){
       cell6 <- matrix[nrow+1,ncol(matrix)]
       cell7 <- matrix[nrow+1,ncol]
       cell8 <- matrix[nrow+1,ncol+1]  
- } else if(ncol == ncol(matrix) & nrow != 1 & nrow != nrow(matrix)) { #middle last column!      
+ } else { #middle last column!          (ncol == ncol(matrix) & nrow != 1 & nrow != nrow(matrix)) 
       cell1 <- matrix[nrow-1,ncol-1]
       cell2 <- matrix[nrow-1,ncol]
       cell3 <- matrix[nrow-1,1]
@@ -96,15 +99,6 @@ runSimulations <- function(matrix, nsim=3000){
       cell6 <- matrix[nrow+1,ncol-1]
       cell7 <- matrix[nrow+1,ncol]
       cell8 <- matrix[nrow+1,1] 
- } else { # just in case:  search in the middle (most probable)
-   cell1 <- matrix[nrow-1,ncol-1]
-   cell2 <- matrix[nrow-1,ncol]
-   cell3 <- matrix[nrow-1,ncol+1]
-   cell4 <- matrix[nrow,ncol-1]
-   cell5 <- matrix[nrow,ncol+1]
-   cell6 <- matrix[nrow+1,ncol-1]
-   cell7 <- matrix[nrow+1,ncol]
-   cell8 <- matrix[nrow+1,ncol+1]  
  }
   local <- c(cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8)   
   
