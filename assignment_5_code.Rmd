@@ -80,7 +80,7 @@ rpsmat[row, column] <- update(rpsmat, row, column, c(fc, fr, fs), c(delta.s, 1-d
 
 # for loop
 
-ngen=1000
+ngen=100000
 
 abundance.c <- c()
 abundance.s <- c()
@@ -93,15 +93,15 @@ for(k in 1:ngen){
   column <- sample(2:251, 1)
 row <- sample(2:251, 1)
 
-  #frequency of each cell type in global environment
-  fc <- sum(rpsmat==1)/(nrow(rpsmat)*ncol(rpsmat))
+#frequency of each cell type in global environment
+fc <- sum(rpsmat==1)/(nrow(rpsmat)*ncol(rpsmat))
 fr <- sum(rpsmat==2)/(nrow(rpsmat)*ncol(rpsmat))
 fs <- sum(rpsmat==3)/(nrow(rpsmat)*ncol(rpsmat))
 
   # death probability of susceptibles
   delta.s <- delta.s0 + tau*fc
 
-
+# frequencies for local neighborhood
 fc.loc <- sum(rpsmat[(row-1):(row+1), (column-1):(column+1)]==1)/9
 
 fr.loc <- sum(rpsmat[(row-1):(row+1), (column-1):(column+1)]==2)/9
@@ -114,13 +114,14 @@ focal <- rpsmat[row, column]
 
 rpsmat[row, column] <- update(rpsmat, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
 
+
 abundance.c[k] <- sum(rpsmat==1)
 abundance.r[k] <- sum(rpsmat==2)
 abundance.s[k] <-  sum(rpsmat==3)
 
 }
 
-plot(x=1:1000, y=seq(from=8, to=10, by=2/999), type="n")
+plot(x=1:100000, y=seq(from=9.5, to=10, by=0.5/99999), type="n")
   
 lines(log(abundance.r), col="green")
 lines(log(abundance.s), col="blue")
