@@ -104,12 +104,8 @@ runSimulations <- function(matrix, nsim=3000){
   
   
   
-  findAround <- function(matrix, index){  
+#  findAround <- function(matrix, index){   
     
-    
-    
-    
-    
-  }
+#  }
   
   
