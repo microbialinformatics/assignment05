@@ -68,20 +68,69 @@ update <- function(matrix, row, column, prob.e, prob.s){
 if(focal==0){
   matrix[row,column] = sample(c(1,2,3), 1, prob=prob.e, replace=TRUE)
   } else if(focal==1) {
-    rpsmat[row, column] = sample(c(0,1), 1, prob=c(delta.c, 1-delta.c), replace=TRUE)
+    matrix[row, column] = sample(c(0,1), 1, prob=c(delta.c, 1-delta.c), replace=TRUE)
      } else if(focal==2){
-       rpsmat[row, column] = sample(c(0,2), 1, prob=prob.s, replace=TRUE)
-       } else if (focal==3) rpsmat[row, column] = sample(c(0,3), 1, prob=c(delta.r, 1-delta.r), replace=TRUE)
+       matrix[row, column] = sample(c(0,2), 1, prob=prob.s, replace=TRUE)
+       } else if (focal==3) matrix[row, column] = sample(c(0,3), 1, prob=c(delta.r, 1-delta.r), replace=TRUE)
 return(matrix[row, column])
 }  
 
 rpsmat[row, column] <- update(rpsmat, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
 
 
+# for loop
+
+ngen=1000
+
+abundance.c <- c()
+abundance.s <- c()
+abundance.r <- c()
+
+
+
+for(k in 1:ngen){
+  
+  column <- sample(2:251, 1)
+row <- sample(2:251, 1)
+
+  #frequency of each cell type in global environment
+  fc <- sum(rpsmat==1)/(nrow(rpsmat)*ncol(rpsmat))
+fr <- sum(rpsmat==2)/(nrow(rpsmat)*ncol(rpsmat))
+fs <- sum(rpsmat==3)/(nrow(rpsmat)*ncol(rpsmat))
+
+  # death probability of susceptibles
+  delta.s <- delta.s0 + tau*fc
+
+
+fc.loc <- sum(rpsmat[(row-1):(row+1), (column-1):(column+1)]==1)/9
+
+fr.loc <- sum(rpsmat[(row-1):(row+1), (column-1):(column+1)]==2)/9
+
+fs.loc <- sum(rpsmat[(row-1):(row+1), (column-1):(column+1)]==3)/9
+
+
+
+focal <- rpsmat[row, column]
+
+rpsmat[row, column] <- update(rpsmat, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
+
+abundance.c[k] <- sum(rpsmat==1)
+abundance.r[k] <- sum(rpsmat==2)
+abundance.s[k] <-  sum(rpsmat==3)
+
+}
+
+plot(x=1:1000, y=seq(from=8, to=10, by=2/999), type="n")
+  
+lines(log(abundance.r), col="green")
+lines(log(abundance.s), col="blue")
+lines(log(abundance.c), col="red")
+
+test <- rpsmat[1:10,1:10]
 ```
 
 
-
+test <- rpsmat[1:10,1]
 
 
 for loop for updating
@@ -92,4 +141,52 @@ save frequencies at each generation
 
  work with neighborhood sizes 
 
+```{r}
+ngen=1000
 
+abundance.c <- c()
+abundance.s <- c()
+abundance.r <- c()
+
+test <- rpsmat[1:10,1:10]
+
+for(k in 1:ngen){
+  
+  column <- sample(2:9, 1)
+row <- sample(2:9, 1)
+
+  #frequency of each cell type in global environment
+  fc <- sum(test==1)/(nrow(test)*ncol(test))
+fr <- sum(test==2)/(nrow(test)*ncol(test))
+fs <- sum(test==3)/(nrow(test)*ncol(test))
+
+  # death probability of susceptibles
+  delta.s <- delta.s0 + tau*fc
+
+
+fc.loc <- sum(test[(row-1):(row+1), (column-1):(column+1)]==1)/9
+
+fr.loc <- sum(test[(row-1):(row+1), (column-1):(column+1)]==2)/9
+
+fs.loc <- sum(test[(row-1):(row+1), (column-1):(column+1)]==3)/9
+
+
+
+focal <- test[row, column]
+
+test[row, column] <- update(test, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
+
+abundance.c[k] <- sum(test==1)
+abundance.r[k] <- sum(test==2)
+abundance.s[k] <-  sum(test==3)
+}
+
+plot(x=1:1000, y=seq(from=1, to=5, by=4/999), type="n")
+  
+lines(log(abundance.r), col="green")
+lines(log(abundance.s), col="blue")
+lines(log(abundance.c), col="red")
+
+
+test
+```
