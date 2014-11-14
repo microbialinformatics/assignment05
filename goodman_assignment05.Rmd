@@ -84,12 +84,6 @@ if(index.value=="R"){
        index.value <- "C"
     } else {index.value<-"S"}
 } else {
-    fractionS <- sum(local=="S")/8
-    fractionR <- sum(local=="R")/8
-    fractionC <- sum(local=="C")/8
-    x <- c(fractionS, fractionR, fractionC)
-    if(max(x)==fractionS){index.value= "S"}
-    else if(max(x)==fractionR){index.value= "R"}
-    else if(max(x)==fractionC){index.value= "C"}
+    index.value <- local[sample(1:8, 1)]
 }
 }
