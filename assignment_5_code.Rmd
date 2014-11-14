@@ -108,8 +108,6 @@ fr.loc <- sum(rpsmat[(row-1):(row+1), (column-1):(column+1)]==2)/9
 
 fs.loc <- sum(rpsmat[(row-1):(row+1), (column-1):(column+1)]==3)/9
 
-
-
 focal <- rpsmat[row, column]
 
 rpsmat[row, column] <- update(rpsmat, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
@@ -190,4 +188,22 @@ lines(log(abundance.c), col="red")
 
 
 test
+
+
+update <- function(matrix, row, column, size){
+if(size == "local"){prob.e <- c(fc, fr, fs)} else prob.e <- c(fc.loc, fr.loc, fs.loc)
+if(focal==0){
+  matrix[row,column] = sample(c(1,2,3), 1, prob=prob.e, replace=TRUE)
+  } else if(focal==1) {
+    matrix[row, column] = sample(c(0,1), 1, prob=c(delta.c, 1-delta.c), replace=TRUE)
+     } else if(focal==2){
+       matrix[row, column] = sample(c(0,2), 1, prob=prob.s, replace=TRUE)
+       } else if (focal==3) matrix[row, column] = sample(c(0,3), 1, prob=c(delta.r, 1-delta.r), replace=TRUE)
+return(matrix[row, column])
+}  
+
+update(test, 7, 7, "local")
+
+
+
 ```
