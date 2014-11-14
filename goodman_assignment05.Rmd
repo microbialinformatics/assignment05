@@ -65,17 +65,17 @@ g <- matrix[nrow, ncol+1]
 h <- matrix[nrow, ncol-1] }
 local <- c(a,b,c,d,e,f,g,h) 
 
-if(index.value==R){
+if(index.value=="R"){
     present <- sum(local=="S")
     if(present>0){
         index.value <- "S"
         } else {index.value<-"R"}
-} else if(index.value==C){
+} else if(index.value=="C"){
     present <- sum(local=="R")
     if(present>0){
         index.value <- "R"
         } else {index.value<-"C"}
-} else if(index.value==S){
+} else if(index.value=="S"){
     present <- sum(local=="C")
     present <- present/8
     S <- 1/4 +3/4*present
