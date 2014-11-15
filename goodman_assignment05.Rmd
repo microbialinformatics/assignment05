@@ -131,3 +131,6 @@ m[1,1:5000] <- 1:5000
 m[2,] <- sapply(m[2,], log)
 m[3,] <- sapply(m[3,], log)
 m[4,] <- sapply(m[4,], log)
+plot(m[1,], m[2,], type="l", col="green", ylim=c(9.64,9.68),ylab="Log (Abundance)", xlab="Time", main="Local Neighborhood")
+lines(m[1,], m[3,], type="l", col="blue")
+lines(m[1,], m[4,], type="l", col="red")
