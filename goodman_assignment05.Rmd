@@ -12,11 +12,11 @@ create.matrix <- function(variable, nrows=250,ncols=250){
 
 # Pick random cell, sample surroundings, figure out what the cell will become
 
-simulation <- function(matrix, nSim){
-	nrow <- sample(1:nrow(matrix), 1)
-	ncol <- sample(1:ncol(matrix), 1)
-	index <- c(nrow,ncol)
-	index.value <- matrix[nrow,ncol]
+simulation <- function(matrix, nSim=5000){
+nrow <- sample(1:nrow(matrix), 1)
+ncol <- sample(1:ncol(matrix), 1)
+index <- c(nrow,ncol)
+index.value <- matrix[nrow,ncol]
 
 if(nrow==1 && ncol==1){
 a <- matrix[nrow(matrix),ncol]
@@ -123,9 +123,11 @@ if(index.value=="R"){
     index.value <- local[sample(1:8, 1)]
 }
 matrix[nrow,ncol] <- index.value
-abundance <- matrix(data=NA, nrow=4, ncol=nSim)
-sum(matrix=="R")
-sum(matrix=="S")
-sum(matrix=="C")
-print(matrix)
+rbind(1, sum(matrix=="R"), sum(matrix=="S"), sum(matrix=="C"))
 }
+
+m <- replicate(5000, cbind(abundance <- simulation(matrix)), simplify=T)
+m[1,1:5000] <- 1:5000
+m[2,] <- sapply(m[2,], log)
+m[3,] <- sapply(m[3,], log)
+m[4,] <- sapply(m[4,], log)
