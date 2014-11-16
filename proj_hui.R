@@ -64,6 +64,8 @@ return(lattice.new)
 time.rep <- function(n,lattice)
 {
   replicate(n,update(lattice))
+  lattice.final <- lattice.rep[,,n] 
+  return(lattice.final)
 }
 
 
@@ -72,7 +74,7 @@ time.rep <- function(n,lattice)
 x.y <- function(x,lattice,cell)
 {
   x.y <- matrix(data=NA,nrow=x,ncol=2,byrow=T)
-  i=0
+  i=1
   while(i < x+1)  
   {
     lattice.final <- time.rep(i,lattice)
