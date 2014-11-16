@@ -63,7 +63,7 @@ return(lattice.new)
 #replicate for n times
 time.rep <- function(n,lattice)
 {
-  replicate(n,update(lattice))
+  lattice.rep <- replicate(n,update(lattice))
   lattice.final <- lattice.rep[,,n] 
   return(lattice.final)
 }
