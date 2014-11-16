@@ -59,3 +59,40 @@ return(lattice.new)
 }
 
 
+
+#replicate for n times
+time.rep <- function(n,lattice)
+{
+  replicate(n,update(lattice))
+}
+
+
+
+#get x and y value
+x.y <- function(x,lattice,cell)
+{
+  x.y <- matrix(data=NA,nrow=x,ncol=2,byrow=T)
+  i=0
+  while(i < x+1)  
+  {
+    lattice.final <- time.rep(i,lattice)
+    total <- length(lattice.final)
+    n.cell <- length(which(lattice.final==cell))
+    y <- log(n.cell)
+    x.y[i,1] <- i
+    x.y[i,2] <- y
+    i <- i+1
+  }
+  
+  return(x.y)
+} 
+
+
+
+#plot
+x.y.C <- x.y(500,lattice,"C")
+plot(x.y.C,type="l",col="red",xlab="Time",ylab="Log(abundance)",main="Global neighbourhood",xlim=c(0,500))
+x.y.S <- x.y(100,lattice,"S")
+points(x.y.S[,1],x.y.S[,2],type="l",col="blue")
+x.y.R <- x.y(500,lattice,"R")
+points(x.y.R[,1],x.y.R[,2],type="l",col="green")
