@@ -77,7 +77,6 @@ return(matrix[row, column])
 
 rpsmat[row, column] <- update(rpsmat, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
 
-
 # for loop
 
 ngen=100000
@@ -112,6 +111,23 @@ focal <- rpsmat[row, column]
 
 rpsmat[row, column] <- update(rpsmat, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
 
+c1 <- rpsmat[,1]
+c252 <- rpsmat[,252]
+r1<- rpsmat[1,]
+r252 <- rpsmat[252,]
+corner1.1 <- rpsmat[1,1]
+corner1.2 <- rpsmat[1,252]
+corner2.1 <- rpsmat[252,1]
+corner2.2 <- rpsmat[252,252]
+
+rpsmat[,1] <- c252
+rpsmat[,252] <- c1
+rpsmat[1,] <- r252
+rpsmat[252,] <- r1
+rpsmat[1,1] <- corner2.2
+rpsmat[1,252] <- corner2.1
+rpsmat[252,1] <- corner1.2
+rpsmat[252,252] <- corner1.1
 
 abundance.c[k] <- sum(rpsmat==1)
 abundance.r[k] <- sum(rpsmat==2)
