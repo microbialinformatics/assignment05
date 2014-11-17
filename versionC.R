@@ -137,4 +137,3 @@ update_grid_epoch <- function(grid){
 #abundance_R <- sapply(time_lapse, length(grep("R", update_grid(62500))))
 #updated_grids<- mapply(update_grid, grid = grid, updates = 5000*62500)
 #abundance_R <- sapply(update_grid(grid), pmatch("R"))
-
