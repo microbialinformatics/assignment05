@@ -83,32 +83,38 @@ if(l.low.corner>10) l.low.corner<-1
    #Columns:
   #a upper
   up.col<-c
+if( up.col>10)  up.col<-1
+  if( up.col<1)  up.col<-10
   # b lower
   low.col<-c
+if( low.col>10)  low.col<-1
+  if( low.col<1)  low.col<-10
   # c right upper corner
   r.up.cor.col<-c+1
+if( r.up.cor.col>10)  r.up.cor.col<-1
+  if( r.up.cor.col<1)  r.up.cor.col<-10
   # d left upper corner
   l.up.cor.col<-c-1
+if( l.up.cor.col>10)  l.up.cor.col<-1
+  if( l.up.cor.col<1)  l.up.cor.col<-10
   # e center right
   center.r.col<-c+1
+if( center.r.col>10)  center.r.col<-1
+  if( center.r.col<1)  center.r.col<-10
   # f center left
   center.l.col<-c-1
+if( center.l.col>10)  center.l.col<-1
+  if( center.l.col<1)  center.l.col<-10
   # g right lower corner
   r.lower.cor.col<-c+1
+if( r.lower.cor.col>10)  r.lower.cor.col<-1
+  if( r.lower.cor.col<1)  r.lower.cor.col<-10
   # h left lower corner 
   l.lower.cor.col<-c-1
+if( l.lower.cor.col>10)  l.lower.cor.col<-1
+  if( l.lower.cor.col<1)  l.lower.cor.col<-10
   #function to account for wrapping
   #need to make these global variables
-  wrap.it.up<-function(up.row, down.row, r.up.corner, l.up.corner,center.r,center.l, r.low.corner,up.col,low.col,r.up.cor.col,l.up.cor.col,center.r.col,center.l.col, r.lower.cor.col,l.lower.cor.col)
-    {
-    #any are greater than max, make them 1
-    
-    return(up.row)
-    #any are less than 1, make them max
-    #otherwise leave them the same
-  }
-  wrap.it.up()
-  up.row
   # put together indices
   A<-empty.matrix[up.row,up.col]
   B<-empty.matrix[down.row,low.col]
