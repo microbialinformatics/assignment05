@@ -125,18 +125,25 @@ if( l.lower.cor.col>10)  l.lower.cor.col<-1
   I<-empty.matrix[l.low.corner, l.lower.cor.col]
   #change the type based on what is in neighborhood
     #if the cell is empty
-    #probability of it becoming 1,2,3 is based on fraction that is 1,2,3
-   change.the.type<-function(A,B,C,D,E,G,H,I){
-     #make the types into a vector
+    #probability of it becoming 1,2,3,0 is based on fraction that is 1,2,3,0
+    #make the types into a vector
      make.vec<-c(A,B,C,D,E,G,H,I)
-     #calculate probability of other types
-     #find how many of each kind there are in vector
-     #positions in vector for each type
+    #find how many of each kind there are in vector
+    #make vector containing the length ie number of 
+    #times the type of cell occurs          
+    #in the neighborhood
      ones<-length(grep(1,make.vec))
      twos<-length(grep(2,make.vec))
      threes<-length(grep(3,make.vec))
      fours<-length(grep(4,make.vec))
-    
+    #calculate probability of types
+    fract.ones<-ones/length(make.vec)
+    fract.twos<-twos/length(make.vec)
+    fract.threes<-threes/length(make.vec)
+    fract.fours<-fours/length(make.vec)
+    #find which one is most common
+
+
      #find the type that the index is
      type<-empty.matrix[r,c] #get type index is
      #find occurences of the type in the vector of neighbors
