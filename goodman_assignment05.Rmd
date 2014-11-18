@@ -123,14 +123,20 @@ if(index.value=="R"){
     index.value <- local[sample(1:8, 1)]
 }
 matrix[nrow,ncol] <- index.value
-rbind(1, sum(matrix=="R"), sum(matrix=="S"), sum(matrix=="C"))
 }
 
-m <- replicate(5000, cbind(abundance <- simulation(matrix)), simplify=T)
-m[1,1:5000] <- 1:5000
-m[2,] <- sapply(m[2,], log)
-m[3,] <- sapply(m[3,], log)
-m[4,] <- sapply(m[4,], log)
-plot(m[1,], m[2,], type="l", col="green", ylim=c(9.64,9.68),ylab="Log (Abundance)", xlab="Time", main="Local Neighborhood")
-lines(m[1,], m[3,], type="l", col="blue")
-lines(m[1,], m[4,], type="l", col="red")
+abundance <- 1
+for(i in 1:5000){
+simulation(matrix)
+column <- rbind(1, sum(matrix=="R"), sum(matrix=="S"), sum(matrix=="C"))
+abundance <- cbind(abundance, column)
+}
+
+abundance <- abundance[,-1]
+abundance[1,1:5000] <- 1:5000
+abundance[2,] <- sapply(abundance[2,], log10)
+abundance[3,] <- sapply(abundance[3,], log10)
+abundance[4,] <- sapply(abundance[4,], log10)
+plot(abundance[1,], abundance[2,], type="l", col="green", ylim=c(0,5), ylab="Log (Abundance)", xlab="Time", main="Local Neighborhood")
+lines(abundance[1,], abundance[3,], type="l", col="blue")
+lines(abundance[1,], abundance[4,], type="l", col="red")
