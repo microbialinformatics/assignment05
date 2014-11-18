@@ -4,13 +4,13 @@ data <- sample(types, 62500, replace = T)
 grid <- matrix(data, nrow = 250, ncol = 250)
 
 #Just to check outcomes without having super big matrices
-# smalldata <- sample(types, 25, replace = T)
-# smallgrid <- matrix(smalldata, nrow = 5, ncol = 5)
+smalldata <- sample(types, 25, replace = T)
+smallgrid <- matrix(smalldata, nrow = 5, ncol = 5)
 
 
 #Setting up local neighbourhood and calculating fractions
 #Input = the location of the focal point
-find_local <- function (focalpoint_row, focalpoint_column){
+find_local <- function (focalpoint_row, focalpoint_column, grid){
 #If the focal point is situated on the edges, the local neighbourhood will have strange shape. Therefore, all 
 #edge cases are one by one implemented:
   # if first row: that row + next,
@@ -93,13 +93,14 @@ update_grid_once <- function(grid){
 #update_grid_once <- function(grid, updates){
   #for (i in 1:updates){
   #first update
+  #Relocated to following code to find_local, so that the row + column are not inputs anymore of this function
   #randomly selecting a location + obtaining its value
   focalpoint_row = sample(1:nrow(grid), 1)
   focalpoint_column = sample(1:ncol(grid), 1)
   focalpoint <- grid[focalpoint_row, focalpoint_column]
   #is it E, R , S, C + change the focal point
     #call upon find_local to find the probabilities
-    info_local <- find_local(focalpoint_row, focalpoint_column)
+    info_local <- find_local(focalpoint_row, focalpoint_column, grid)
   if (focalpoint == "E"){
     #update empty space based on the occurence of the different types in the neighbourhood
     grid[focalpoint_row, focalpoint_column] <- sample(types, 1, replace = T, prob = c(info_local[[2]], info_local[[3]], info_local[[4]], info_local[[5]]))}
@@ -125,9 +126,38 @@ update_grid_epoch <- function(grid){
 }
 
 #Generating the plot of the abundance over time, for the local neighbourhoods. 
-#Need to 'update' the focalpoints 5000x62500 times. Every 62500 times, we need to calculate the abundances
+
+#We take a random point, and evaluate the local neighbourhood for this one 
+#=> is impossible: you need the neighbours to be able to update this section! 
+#We update the entire grid 5000x62500 times and then 
+#1. go through each point, saving the abundance information of each point and than adding these abundances(?)
+#2. Select a certain location and merely save the abundance information of that neighbourhood (?)
+
+#Need to 'update' this focalpoints 5000x62500 times. Every 62500 times, we need to calculate the abundances
 #of E, R, C, and S and save these to create a plot.
-#updated_grids<- replicate(5000, update_grid_epoch(grid)))
+#since neither my computer  nor VirtualSites can do this, I'm cutting the grid down to 5x5 to see
+#if that gives us the good results. 
+
+updated_smallgrids<- replicate(3, update_grid(smallgrid))
+#updated_smallgrids<- replicate(5000, update_grid_epoch(smallgrid)))
+last_updated <- updated_smallgrids[,,3]
+columns <- col(last_updated)
+rows <- row(last_updated)
+
+info_local <- mapply(find_local, columns, rows, last_updated)
+
+# abundance_local <- function(focalpoint_row, focalpoint_column, grid){
+#   local <- info_local(focalpoint_row, focalpoint_column, grid)
+#   E_abundance <- 
+  
+  
+
+  
+  
+  
+#}
+
+
 
 
 #try-outs
