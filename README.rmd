@@ -39,7 +39,7 @@ Daniel and Shawn
 ```{r}
 #initial set-up to start simulations
 #fill matrix with randomly selected 4 choices
-#C,S,R, E empty (4 choices)
+#C=1,S=2,R=3, E=4 empty (4 choices)
 seeds<-sample(1:4,100, replace=T) #pick the random numbers to fill matrix
 initial.matrix<-matrix(seeds ,nrow=10, ncol=10) #create matrix with random numbers
 #pick random cell in matrix to change
@@ -113,7 +113,6 @@ if( r.lower.cor.col>10)  r.lower.cor.col<-1
   l.lower.cor.col<-c-1
 if( l.lower.cor.col>10)  l.lower.cor.col<-1
   if( l.lower.cor.col<1)  l.lower.cor.col<-10
-  #function to account for wrapping
   #need to make these global variables
   # put together indices
   A<-empty.matrix[up.row,up.col]
@@ -124,15 +123,25 @@ if( l.lower.cor.col>10)  l.lower.cor.col<-1
   G<-empty.matrix[center.l, center.l.col]
   H<-empty.matrix[ r.low.corner,r.lower.cor.col]
   I<-empty.matrix[l.low.corner, l.lower.cor.col]
-  
-  
-  
   #change the type based on what is in neighborhood
+    #if the cell is empty
+    #probability of it becoming 1,2,3 is based on fraction that is 1,2,3
    change.the.type<-function(A,B,C,D,E,G,H,I){
-     make.vec<-as.vector(c(A,B,C,D,E,G,H,I))
+     #make the types into a vector
+     make.vec<-c(A,B,C,D,E,G,H,I)
+     #calculate probability of other types
+     #find how many of each kind there are in vector
+     #positions in vector for each type
+     ones<-length(grep(1,make.vec))
+     twos<-length(grep(2,make.vec))
+     threes<-length(grep(3,make.vec))
+     fours<-length(grep(4,make.vec))
+    
+     #find the type that the index is
      type<-empty.matrix[r,c] #get type index is
-     make.vec[type]
-     prob<- #number of type in neighborhood
+     #find occurences of the type in the vector of neighbors
+     occurence<-make.vec[type]
+     prob<-occurence #number of type in neighborhood
        #fraction of type in neighborhood=probability
        
     
