@@ -38,6 +38,19 @@ Complete the exercise and submit it as a pull request to the [Assignment 5 repos
 * Divide and conquer the functions with one person creating the repository and make the other person a collaborator. Synthesize your code using pull requests
 
 
+**Problem
+
+**Assumptions
+
+**line graphs
+
+**Experiment
+The authors use a wrap around matrix but do not explain why they do this.  It is not intuitive that bacterial "neighbors"" in a flask environment would include a bacterium that is in the farthest possible location from a given bacterium (i.e. on the other side of the flask.) We propose that the authors used this strategy to account for edge effects, such that the cells on the edge of the matrix did not have fewer neighbors than cells on the interior. We hypothesize that simulations with a matrix that does not include the wrap around feature will result in very different results after simulated competitions.  
+
+To test this, we have removed the code for wrapping the matrix, and have run the simulation X times.  These are our results: 
+
+
+
 Daniel and Shawn 
 ```{r}
 #initial set-up to start simulations
@@ -154,8 +167,10 @@ if(initial.matrix[r,c]==4)
      #change this cell [r,c] to the most common
     #reassigning cell in empty.matrix
     initial.matrix[r,c]<-newcell
-    return(initial.matrix) 
+    return(initial.matrix) ###not exactly right here
    }
+######### how to store the matrix...????
+
 #only want to run this function when cell selected is not empty
 #if it is not empty change based on the probabilities
 #start with vector of neighbors
