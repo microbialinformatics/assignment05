@@ -187,9 +187,15 @@ if( l.lower.cor.col>10)  l.lower.cor.col<-1
   #S0=1/4+(3/4*fractionC) s is 2
   #R is 10/32 R is 3
   #tau =3/4 and is used in delta S calculation
+#Cs= cell sample scheme
 Cs<-sample((c(1,2,3)),1,prob=(c((1/3),(.25+(.75*fract.ones)),(10/32))))
-
-
+if(Cs==1) newcell<-1
+if(Cs==2) newcell<-2
+if(Cs==3) newcell<-3
+#change the cell based on Cs
+initial.matrix[r,c]<-newcell
+return initial.matrix #need to make this global and store matrix
+}
 
 
 
