@@ -1,15 +1,17 @@
 
 conditions <- c("S", "R", "C", "E")
 matrix <- createMatrix(conditions, nrows=10, ncols=10)
-findLocal
-findWinner
+
+
+loc <- findLocal(matrix)
+blerp <- findWinner(matrix, loc);
+setdiff(matrix, blerp)
 
 
 
 
 
-
-
+###########################################################################################
 
 
 createMatrix <- function(variable, nrows=50, ncols=50){
@@ -31,6 +33,10 @@ findIndex <- function(matrix){
 
 
 findLocal <- function(matrix){ #, nsim=3000
+  info <- findIndex(matrix)
+  nrow <- as.numeric(info[1])  #get row index
+  ncol <- as.numeric(info[2])  #get column index
+  index_value <- info[3]  #get index value
   ####### FIND THE LOCAL INFORMATION
   if(nrow!=1 & nrow != nrow(matrix) & ncol != 1 & ncol != ncol(matrix)){ # IF IN MIDDLE
     cell1 <- matrix[nrow-1,ncol-1]
@@ -117,8 +123,7 @@ findLocal <- function(matrix){ #, nsim=3000
  return(local)
 }
 
-loc <- findLocal(matrix)
-blerp <- findWinner(matrix, loc)
+
 
 findWinner <- function (matrix, local){
   info <- findIndex(matrix)
@@ -150,8 +155,8 @@ findWinner <- function (matrix, local){
     fR <- probs["R"] #make proportion of local cells that are R 
     fE <- 1- fS - fR - fC #make proportion of local cells that are E
     e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
-    matrix[nrow1, ncol1] <- e_winner #replace with new outcome
-  }
+    matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
+ return(matrix)
 }
 
 
