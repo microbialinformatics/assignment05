@@ -1,6 +1,6 @@
 
 
-createMatrix <- function(variable, nrows=250, ncols=250){
+createMatrix <- function(variable, nrows=50, ncols=50){
   matrix(sample(variable, nrows*ncols, TRUE), nrow = nrows, ncol = ncols)
   #Variable must be a list of conditions to add to each cell of the matrix
   #Help from:  http://stackoverflow.com/questions/16915853/r-generate-an-simple-integer-matrix-with-defined-number-of-row-and-column
@@ -105,22 +105,24 @@ local <- c(cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8)
 
 
 # 
-#probability: 
-    # identify index_value 
-    # identify local cells 
-          ## proportion of C
-          #if index dies -> do 
-findWinner <- function (local){
-  index_death <- 
-  #combine probabilities + proportions
-  proportions <- table(local)
-  # random death?
-  winner <- 
-}
 
-# S beats R!
-# R beats C!
-# C beats S!
+     
+
+
+findWinner <- function (local){
+  ## proportion of C
+  pros <- prop.table(table(local))
+  c <- pros["C"]
+  if(index_value == "S") {
+    
+  } else if(index_value == "R") {
+    
+  } else if(index_value == "C") {
+    
+  } else {
+    
+  }
+}
 
         ##Probabilities of dispersal
             #  C = 0.25
