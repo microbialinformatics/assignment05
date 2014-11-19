@@ -107,25 +107,14 @@ deltaC <- 1/3
 tau <- 3/4
 
 if(index.value=="R"){
-    RtoE <- deltaR
-    RtoR <- 1 - RtoE
-    if(RtoE>RtoR){
-       index.value <- "E"
-    } else {index.value<-"R"}
+    index.value <- sample(c("R", "E"), 1, prob=c(1-deltaR, deltaR))
 } else if(index.value=="C"){
-    CtoE <- deltaC
-    CtoC <- 1 - CtoE
-    if(CtoE>CtoC){
-       index.value <- "E"
-    } else {index.value<-"C"}
+    index.value <- sample(c("C", "E"), 1, prob=c(1-deltaC, deltaC))
 } else if(index.value=="S"){
     present <- sum(local=="C")
     present <- present/8
-    StoE <- deltaS0 + tau*present
-    StoS <- 1 - StoE
-    if(StoE>StoS){
-       index.value <- "E"
-    } else {index.value<-"S"}
+    deltaS <- deltaS0 + tau*present
+    index.value <- sample(c("S", "E"), 1, prob=c(1-deltaS, deltaS))
 } else {
     index.value <- local[sample(1:8, 1)]
 }
@@ -144,7 +133,7 @@ abundance[1,1:1000] <- 1:1000
 abundance[2,] <- sapply(abundance[2,], log10)
 abundance[3,] <- sapply(abundance[3,], log10)
 abundance[4,] <- sapply(abundance[4,], log10)
-plot(abundance[1,], abundance[2,], type="l", col="green", ylim=c(0,5), ylab="Log (Abundance)", xlab="Time", main="Local Neighborhood")
+plot(abundance[1,], abundance[2,], type="l", col="green", ylim=c(1,4), ylab="Log (Abundance)", xlab="Time", main="Local Neighborhood")
 lines(abundance[1,], abundance[3,], type="l", col="blue")
 lines(abundance[1,], abundance[4,], type="l", col="red")
-legend(x=0,y=1.5, c("R","S","C"), lty=c(1,1), lwd=c(2.5,2.5),col=c("green","blue","red"),cex=0.7)
+legend(x=0,y=2, c("R","S","C"), lty=c(1,1), lwd=c(2.5,2.5),col=c("green","blue","red"),cex=0.7)
