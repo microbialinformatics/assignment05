@@ -12,7 +12,7 @@ create.matrix <- function(variable, nrows=50,ncols=50){
 
 # Pick random cell, sample surroundings, figure out what the cell will become
 
-simulation <- function(matrix, nSim=1000){
+simulation <- function(matrix){
 nrow <- sample(1:nrow(matrix), 1)
 ncol <- sample(1:ncol(matrix), 1)
 index <- c(nrow,ncol)
