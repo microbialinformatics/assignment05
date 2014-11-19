@@ -109,11 +109,10 @@ local <- c(cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8)
 
 
 findWinner <- function (matrix, local, index, index_value){
-  ## proportion of C
-  probs <- prop.table(table(local))
-  fC <- probs["C"]
-  nrow1 <- index[1]
-  ncol1 <- index[2]
+  probs <- prop.table(table(local)) # make proprotions of the local cells
+  fC <- probs["C"] #find proportion of C 
+  nrow1 <- index[1] #get row index
+  ncol1 <- index[2] #get column index
   if(index_value == "S") {
     deltaSO <- 1/4 #natural death of S
     tau <- 3/4 #toxicity of colicin 
@@ -134,16 +133,18 @@ findWinner <- function (matrix, local, index, index_value){
     c_winner <- sample(c("C", "E"), 1, prob = c(c_survive, c_death)) #survival vs death
     matrix[nrow1, ncol1] <- c_winner #replace with new outcome
   } else {
-    fS <- probs["S"]
-    fR <- probs["R"]
-    fE <- 1- fS - fR - fC
+    fS <- probs["S"] #make proportion of local cells that are S
+    fR <- probs["R"] #make proportion of local cells that are R 
+    fE <- 1- fS - fR - fC #make proportion of local cells that are E
     e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
     matrix[nrow1, ncol1] <- e_winner #replace with new outcome
   }
+}
 
 
-
-
+runSimulations <- function(){
+  1000*2500
+}
 
                     
  # C = Red
