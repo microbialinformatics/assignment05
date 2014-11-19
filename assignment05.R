@@ -10,14 +10,16 @@ conditions <- c("S", "R", "C", "E")
 matrix <- createMatrix(conditions, nrows=10, ncols=10)
 
 
+
 runSimulations <- function(matrix, nsim=3000){
   
   
-  
+
   nrow <- sample(1:nrow(matrix), 1)
   ncol <- sample(1:ncol(matrix), 1)
   index <- c(nrow, ncol)
   index_value <- matrix[nrow, ncol]  
+  
   if(nrow!=1 & nrow != nrow(matrix) & ncol != 1 & ncol != ncol(matrix)){ # IF IN MIDDLE
     cell1 <- matrix[nrow-1,ncol-1]
     cell2 <- matrix[nrow-1,ncol]
@@ -104,37 +106,46 @@ runSimulations <- function(matrix, nsim=3000){
 local <- c(cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8)   
 
 
-# 
-
-     
 
 
-findWinner <- function (local){
+findWinner <- function (matrix, local, index, index_value){
   ## proportion of C
-  pros <- prop.table(table(local))
-  c <- pros["C"]
+  probs <- prop.table(table(local))
+  fC <- probs["C"]
+  nrow1 <- index[1]
+  ncol1 <- index[2]
   if(index_value == "S") {
-    
+    deltaSO <- 1/4 #natural death of S
+    tau <- 3/4 #toxicity of colicin 
+    s_death <- deltaSO + tau*fC    #death
+    s_survive <- 1 - s_death    #survival
+    ## D(S, 0) + T(fC) = D (total death)
+    # fC = proportion C in local
+    s_winner <- sample(c("S", "E"), 1, prob = c(s_survive, s_death)) #survival vs. death
+    matrix[nrow1, ncol1] <- s_winner #replace with new outcome
   } else if(index_value == "R") {
-    
+    r_death <- 10/32  #death
+    r_survive <- 1- r_death   #survival
+    r_winner <- sample(c("R", "E"), 1, prob = c(r_survive, r_death)) #survival  
+    matrix[nrow1, ncol1] <- r_winner #replace with new outcome
   } else if(index_value == "C") {
-    
+    c_death <- 1/3  #death
+    c_survive <-  1 - c_death #survival
+    c_winner <- sample(c("C", "E"), 1, prob = c(c_survive, c_death)) #survival vs death
+    matrix[nrow1, ncol1] <- c_winner #replace with new outcome
   } else {
-    
+    fS <- probs["S"]
+    fR <- probs["R"]
+    fE <- 1- fS - fR - fC
+    e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
+    matrix[nrow1, ncol1] <- e_winner #replace with new outcome
   }
-}
 
-        ##Probabilities of dispersal
-            #  C = 0.25
-            #  S = 0.5
-            #  R = 0.25
-            ### Probability of Death
-                    ## D(C) = 1/3
-                    ## D(R) = 10/32
-                    ## D(S, 0) + T(fC) = D (total death)
-                            # D(S,0 = 1/4)
-                            # T = 3/4
-                            # fC = proportion C in local
+
+
+
+
+                    
  # C = Red
  # S = Blue
  # R = Green
