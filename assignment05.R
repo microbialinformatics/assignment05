@@ -1,4 +1,16 @@
 
+conditions <- c("S", "R", "C", "E")
+matrix <- createMatrix(conditions, nrows=10, ncols=10)
+findLocal
+findWinner
+
+
+
+
+
+
+
+
 
 createMatrix <- function(variable, nrows=50, ncols=50){
   matrix(sample(variable, nrows*ncols, TRUE), nrow = nrows, ncol = ncols)
@@ -6,20 +18,20 @@ createMatrix <- function(variable, nrows=50, ncols=50){
   #Help from:  http://stackoverflow.com/questions/16915853/r-generate-an-simple-integer-matrix-with-defined-number-of-row-and-column
 }
 
-conditions <- c("S", "R", "C", "E")
-matrix <- createMatrix(conditions, nrows=10, ncols=10)
 
-
-
-runSimulations <- function(matrix, nsim=3000){
-  
-  
-
-  nrow <- sample(1:nrow(matrix), 1)
-  ncol <- sample(1:ncol(matrix), 1)
+findIndex <- function(matrix){
+  ####### FIND THE INDEX
+  nrow <- sample(1:nrow(matrix), 1) #randomly creates a row index 
+  ncol <- sample(1:ncol(matrix), 1) #randomly creates a column index 
   index <- c(nrow, ncol)
-  index_value <- matrix[nrow, ncol]  
-  
+  index_value <- matrix[nrow, ncol] #Grabs the condition in that index
+  info <- c(index, index_value)
+  return(info); # print character list where seat 1 is nrow, seat 2 is ncol, and seat 3 is condition in cell
+}
+
+
+findLocal <- function(matrix){ #, nsim=3000
+  ####### FIND THE LOCAL INFORMATION
   if(nrow!=1 & nrow != nrow(matrix) & ncol != 1 & ncol != ncol(matrix)){ # IF IN MIDDLE
     cell1 <- matrix[nrow-1,ncol-1]
     cell2 <- matrix[nrow-1,ncol]
@@ -100,26 +112,27 @@ runSimulations <- function(matrix, nsim=3000){
       cell5 <- matrix[nrow,1]
       cell6 <- matrix[nrow+1,ncol-1]
       cell7 <- matrix[nrow+1,ncol]
-      cell8 <- matrix[nrow+1,1]
- }
- 
-local <- c(cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8)   
+      cell8 <- matrix[nrow+1,1] }
+ local <- c(cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8) 
+ return(local)
+}
 
+loc <- findLocal(matrix)
+blerp <- findWinner(matrix, loc)
 
-
-
-findWinner <- function (matrix, local, index, index_value){
+findWinner <- function (matrix, local){
+  info <- findIndex(matrix)
+  nrow1 <- as.numeric(info[1])  #get row index
+  ncol1 <- as.numeric(info[2])  #get column index
+  index_value <- info[3]  #get index value
+  ########## INCLUDE PROBABILITIES
   probs <- prop.table(table(local)) # make proprotions of the local cells
   fC <- probs["C"] #find proportion of C 
-  nrow1 <- index[1] #get row index
-  ncol1 <- index[2] #get column index
   if(index_value == "S") {
     deltaSO <- 1/4 #natural death of S
     tau <- 3/4 #toxicity of colicin 
     s_death <- deltaSO + tau*fC    #death
     s_survive <- 1 - s_death    #survival
-    ## D(S, 0) + T(fC) = D (total death)
-    # fC = proportion C in local
     s_winner <- sample(c("S", "E"), 1, prob = c(s_survive, s_death)) #survival vs. death
     matrix[nrow1, ncol1] <- s_winner #replace with new outcome
   } else if(index_value == "R") {
@@ -142,8 +155,14 @@ findWinner <- function (matrix, local, index, index_value){
 }
 
 
-runSimulations <- function(){
+runOneSim <- function(matrix){
+  findLocal(matrix)
+  
   1000*2500
+  
+  # 
+  #Output log(abundance) and each time step
+  
 }
 
                     
