@@ -122,7 +122,7 @@ if(index.value=="R"){
 } else {
     index.value <- local[sample(1:8, 1)]
 }
-matrix[nrow,ncol] <- index.value
+matrix[nrow,ncol] <<- index.value
 }
 
 abundance <- 1
