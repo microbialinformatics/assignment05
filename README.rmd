@@ -118,18 +118,18 @@ if( l.lower.cor.col>10)  l.lower.cor.col<-1
   if( l.lower.cor.col<1)  l.lower.cor.col<-10
   #need to make these global variables
   # put together indices
-  A<-empty.matrix[up.row,up.col]
-  B<-empty.matrix[down.row,low.col]
-  C<- empty.matrix[r.up.corner, r.up.cor.col]
-  D<-empty.matrix[l.up.corner, l.up.cor.col]
-  E<-empty.matrix[center.r, center.r.col]
-  G<-empty.matrix[center.l, center.l.col]
-  H<-empty.matrix[ r.low.corner,r.lower.cor.col]
-  I<-empty.matrix[l.low.corner, l.lower.cor.col]
+  A<-initial.matrix[up.row,up.col]
+  B<-initial.matrix[down.row,low.col]
+  C<-initial.matrix[r.up.corner, r.up.cor.col]
+  D<-initial.matrix[l.up.corner, l.up.cor.col]
+  E<-initial.matrix[center.r, center.r.col]
+  G<-initial.matrix[center.l, center.l.col]
+  H<-initial.matrix[ r.low.corner,r.lower.cor.col]
+  I<-initial.matrix[l.low.corner, l.lower.cor.col]
   #change the type based on what is in neighborhood
     #if the cell is empty
 emptycells<-function(r,c) {    
-if(empty.matrix[r,c]==4)
+if(initial.matrix[r,c]==4)
     #probability of it becoming 1,2,3,0 is based on fraction that is 1,2,3,0
     #make the types into a vector
      make.vec<-c(A,B,C,D,E,G,H,I)
@@ -147,17 +147,29 @@ if(empty.matrix[r,c]==4)
 #find position of cell
     #find which one is most common
     max.kind<-(max(c(fract.ones,fract.twos,fract.threes)))
-    if (max.kind==fract.ones) newcell<-1
-    if (max.kind==fract.twos) newcell<-2
-    if (max.kind==fract.threes) newcell<-3  
+    if(max.kind==fract.ones) newcell<-1
+    if(max.kind==fract.twos) newcell<-2
+    if(max.kind==fract.threes) newcell<-3  
      #find the type that the index is
      #change this cell [r,c] to the most common
     #reassigning cell in empty.matrix
-    empty.matrix[r,c]<-newcell
-    return(empty.matrix) 
+    initial.matrix[r,c]<-newcell
+    return(initial.matrix) 
    }
-
-
+#only want to run this function when cell selected is not empty
+#if it is not empty change based on the probabilities
+    make.vec<-c(A,B,C,D,E,G,H,I)
+#find how many Cs there are in neighborhood
+     ones<-length(grep(1,make.vec))
+#calculate fraction of C to use in delta_S calculation
+    fract.ones<-ones/length(make.vec)
+#change based on the given probabilities
+#first give it
+change.cell<-function(r,c){
+  #change 
+}
+ 
+  
 
 #based on what is in the cell, change to one of other 4
 #change to one of other 4 
