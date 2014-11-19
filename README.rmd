@@ -127,7 +127,7 @@ if( l.lower.cor.col>10)  l.lower.cor.col<-1
   H<-initial.matrix[ r.low.corner,r.lower.cor.col]
   I<-initial.matrix[l.low.corner, l.lower.cor.col]
   #change the type based on what is in neighborhood
-    #if the cell is empty
+#only want to run if the cell is empty
 emptycells<-function(r,c) {    
 if(initial.matrix[r,c]==4)
     #probability of it becoming 1,2,3,0 is based on fraction that is 1,2,3,0
