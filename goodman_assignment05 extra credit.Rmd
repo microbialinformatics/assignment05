@@ -1,0 +1,13 @@
+---
+title: "goodman_assignment05 extra credit"
+output: html_document
+---
+
+variable <- c("S", "R", "C", "E")
+variable.num <- c(1,2,3,4)
+create.matrix <- function(variable, nrows=50,ncols=50){
+	matrix(sample(variable, nrows*ncols, replace=TRUE), nrow=nrows, ncol=ncols)
+}
+matrix <- create.matrix(variable.num)
+
+heatmap(matrix)
