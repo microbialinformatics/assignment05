@@ -171,21 +171,33 @@ findLocalWinner <- function(matrix){
 
 
 
-  
-  #update matrix problem 
+runSims <- function(matrix){
   conds <- c("NA")
   rawsim <- createMatrix(conds, nrows = 100, ncols = 2500000)
-  rawsim[,1] <- max #data frame for raw (every sim) simulation data 
+  rawsim[,1] <- matrix #data frame for raw (every sim) simulation data 
   time_step <- createMatrix(conds, nrows = 100, ncols = 1000)
   for (i in 2:ncol(rawsim)-1){
-        work <- matrix(rawsim[,i], nrow = 10, ncol = 10)  #make matrix from nas
-        sim_win <- findLocalWinner(work)  #run findlocalwinner
-        vec <- as.vector(sim_win)  #make findlocalwiner a vector
-        rawsim[ ,i+1] <- vec #append vector to rawsim + 1
-      if ((i+1)%%2500 == 0){ #if divisible by 2500 do ...
-        time_step[,(i+1)/2500] <- rawsim[ ,i+1]  # append to new matrix called time_step 
-      }
+    work <- matrix(rawsim[,i], nrow = 10, ncol = 10)  #make matrix from nas
+    sim_win <- findLocalWinner(work)  #run findlocalwinner
+    vec <- as.vector(sim_win)  #make findlocalwiner a vector
+    rawsim[ ,i+1] <- vec #append vector to rawsim + 1
+    if ((i+1)%%2500 == 0){ #if divisible by 2500 do ...
+      time_step[,(i+1)/2500] <- rawsim[ ,i+1]  # append to new matrix called time_step 
+    }
   }  
+}  
+
+
+
+
+function()
+gahhh <- as.data.frame(time_step)
+please <- sapply(gahhh, table)
+
+
+oop <- sapply(gahhh, function(x) table(factor(x, levels=conditions)))
+plot()
+
 
 table()
 sum(time_step[,1])
