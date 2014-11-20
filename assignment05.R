@@ -2,13 +2,15 @@
 conditions <- c("S", "R", "C", "E")
 matrix <- createMatrix(conditions, nrows=10, ncols=10)
 
-
 loc <- findLocal(matrix)
 blerp <- findWinner(matrix, loc);
-setdiff(matrix, blerp)
+#setdiff(as.vector(matrix), as.vector(blerp))
+
+matrix == blerp
 
 
-
+### We are having a prop.table problem when index_value == "E" AND probs only has 3 of 4 conditions
+## 2.5% chance of happening! AHHHHHHHH
 
 
 ###########################################################################################
@@ -119,19 +121,20 @@ findLocal <- function(matrix){ #, nsim=3000
       cell6 <- matrix[nrow+1,ncol-1]
       cell7 <- matrix[nrow+1,ncol]
       cell8 <- matrix[nrow+1,1] }
- local <- c(cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8) 
+ local <- c(cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, nrow, ncol, index_value) 
  return(local)
 }
 
 
-
 findWinner <- function (matrix, local){
-  info <- findIndex(matrix)
-  nrow1 <- as.numeric(info[1])  #get row index
-  ncol1 <- as.numeric(info[2])  #get column index
-  index_value <- info[3]  #get index value
+  nrow1 <- as.numeric(local[9])  #get row index
+  ncol1 <- as.numeric(local[10])  #get column index
+  index_value <- local[11]  #get index value
+  local <- local[1:8]
   ########## INCLUDE PROBABILITIES
+  
   probs <- prop.table(table(local)) # make proprotions of the local cells
+  
   fC <- probs["C"] #find proportion of C 
   if(index_value == "S") {
     deltaSO <- 1/4 #natural death of S
