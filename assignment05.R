@@ -185,6 +185,7 @@ runSims <- function(matrix){
       time_step[,(i+1)/2500] <- rawsim[ ,i+1]  # append to new matrix called time_step 
     }
   } 
+  colnames(time_step) <- 1:1000
   return(time_step)
 }  
 
@@ -192,6 +193,77 @@ conditions <- c("S", "R", "C", "E")
 max <- createMatrix(conditions, nrows=10, ncols=10)
 rar <- runSims(max)
 eeee <- abundCols(rar)
+ff <- as.data.frame(t(eeee))
+plotLocal(eeee)
+
+image(x=1:5, y=1:10, z=agh, axes = FALSE, col = colors)
+
+colors <- c("red", "blue", "black", "forestgreen")
+agh <- createMatrix(c(1,4), nrows=5, ncols=10)
+
+poop <- t(agh)
+image(x=1:10, y=1:5, z=poop, axes = FALSE, col = colors)
+
+
+matnums <- rar
+tf_E <- matnums == "E"
+E_Index <- which(tf_E,TRUE)
+matnums[E_Index] <- 1
+
+tf_C <- matnums=="C"
+C_Index <- which(tf_C, TRUE)
+matnums[C_Index] <- 2
+
+tf_R <- matnums=="R"
+R_Index <- which(tf_R, TRUE)
+matnums[R_Index] <- 3
+
+tf_S <- matnums=="S"
+S_Index <- which(tf_S, TRUE)
+matnums[S_Index] <- 4
+
+
+colors <- c("black", "red", "forestgreen", "blue")
+
+bb <- t(matnums)
+colnames(bb) <- 1:100
+bb <- as.numeric(bb)
+bb <- as.matrix(bb)
+image(x=1:1000, y=1:100, z=bb, axes = FALSE, col = colors)
+
+
+
+
+
+
+
+
+
+
+ugh <- matrix(rar[,1], nrow = 10, ncol = 10)
+if (ugh == "S") <- 1 {
+  paste(1)
+} else if(ugh == "R"){
+  paste(2)
+} else if(igh == "C"){
+  paste(3)
+} else()
+
+
+
+ugh2 <- as.numeric(levels(1:4))[ugh]
+
+within(ugh <- factor(levels = c(1, 2, 3, 4)))
+
+factor(ugh)
+
+replace()
+
+
+
+
+
+
 
 
 abundCols <- function(time_step){ #create a table with 4 rows (S, R, E, C) and their freq in all columns
@@ -204,13 +276,15 @@ abundCols <- function(time_step){ #create a table with 4 rows (S, R, E, C) and t
   return(loop)
 }
 
-plotLocal <- function(){
-  
-  plot(eeee$S, eeee[,1:1000])
-  ggplot()
-  
+plotLocal <- function(abundCol_output){
+  ff <- as.data.frame(t(abundCol_output))
+  plot(ff$S, type = "l", col = "blue", xlim=c(0,1000),ylim=c(0,5), main = "Local neighborhood",
+       xlab = "Time", ylab = "Log(abundance)", lwd = 2) 
+  lines(ff$E, type = "l", col = "black", lwd = 2)  
+  lines(ff$C, type = "l", col = "red", lwd = 2)
+  lines(ff$R, type = "l", col = "forestgreen", lwd = 2) 
+  legend("bottomright",c("S","R","C","E"),col=c("blue","forestgreen","red","black"),lty = 1, lwd = 3)
 }
-library(ggplot2)
 
 plot()
 
