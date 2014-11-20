@@ -51,7 +51,7 @@ To test this, we have removed the code for wrapping the matrix, and have run the
 
 
 
-Daniel and Shawn 
+
 ```{r}
 #initial set-up to start simulations
 #fill matrix with randomly selected 4 choices
@@ -63,7 +63,7 @@ r<-initial.matrix[(sample(1:10,1, replace=T))]
 c<-initial.matrix[(sample(1:10,1, replace=T))]
 ####################
 #function takes initial random cell(row by column, and a number of times to run) and assesses local neighborhood dynamics
-local.hood<-function(r,c,50){
+local.comp<-function(r,c,n){
 #select local neighborhood based on index
 #local neighborhood is 3 above, 2 each side, 3 on bottom of index
  #rows:
@@ -145,7 +145,7 @@ if( l.lower.cor.col>10)  l.lower.cor.col<-1
     #only want to run if the cell is empty
     if(initial.matrix[r,c]==4) run.empty<-T
     if(initial.matrix[r,c]==(c(1,2,3))) run.full<-T  
-      emptycells<-function(run.empty<-F) {    
+      emptycells<-function(run.empty<-F)    
     #probability of it becoming 1,2,3,0 is based on fraction that is 1,2,3,0
     #make the types into a vector
      make.vec<-c(A,B,C,D,E,G,H,I)
@@ -163,6 +163,9 @@ if( l.lower.cor.col>10)  l.lower.cor.col<-1
     #find position of cell
     #find which one is most common
     max.kind<-(max(c(fract.ones,fract.twos,fract.threes)))
+#what to do if there are ties: re-run?
+    if(fract.ones==fract.twos) rerun<-T
+      #rerun function....
     if(max.kind==fract.ones) newcell<-1
     if(max.kind==fract.twos) newcell<-2
     if(max.kind==fract.threes) newcell<-3
@@ -197,8 +200,17 @@ initial.matrix[r,c]<-newcell
 return initial.matrix #need to make this global and store matrix
 }
 
-
-
+###loop to replicate the sampling and changing of cells
+replicate.comp<-function(){
+  local.results<<-rep(local.comp(), 50)
+  return(write.table(local.results, file="local.txt")
+}
+###replicate sampling for global
+replicate.comp.global<-function(){
+  global.results<<-rep(global.comp(),50)
+  return(write.table(global.results, file="global.txt"))
+  
+}
 
   #change 
 #store matrix
