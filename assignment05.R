@@ -174,7 +174,7 @@ findLocalWinner <- function(matrix){
   
   #update matrix problem 
   conds <- c("NA")
-  rawsim <- createMatrix(conds, nrows = 100, ncols = 250000)
+  rawsim <- createMatrix(conds, nrows = 100, ncols = 2500000)
   rawsim[,1] <- max #data frame for raw (every sim) simulation data 
   time_step <- createMatrix(conds, nrows = 100, ncols = 1000)
   for (i in 2:ncol(rawsim)-1){
@@ -182,13 +182,13 @@ findLocalWinner <- function(matrix){
         sim_win <- findLocalWinner(work)  #run findlocalwinner
         vec <- as.vector(sim_win)  #make findlocalwiner a vector
         rawsim[ ,i+1] <- vec #append vector to rawsim + 1
-      if (i+1)%%2500 == 0{ #if divisible by 2500 do ...
-        time_step[,(i+1)/2500] <- rawsim[ ,i+1] # append to new matrix called time_step
-      }   
+      if ((i+1)%%2500 == 0){ #if divisible by 2500 do ...
+        time_step[,(i+1)/2500] <- rawsim[ ,i+1]  # append to new matrix called time_step 
+      }
   }  
 
-
-
+table()
+sum(time_step[,1])
 
 
 
