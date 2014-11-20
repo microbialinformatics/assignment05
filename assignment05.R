@@ -199,15 +199,18 @@ abundCols <- function(time_step){ #create a table with 4 rows (S, R, E, C) and t
   oop <- sapply(gahhh, function(x) table(factor(x, levels=conditions)))
   loop <- log(oop)
   loop[is.infinite(loop)] = 0  
+  loop <- as.data.frame(loop)
+  colnames(loop) <- 1:1000
   return(loop)
 }
 
 plotLocal <- function(){
   
-  
+  plot(eeee$S, eeee[,1:1000])
+  ggplot()
   
 }
-
+library(ggplot2)
 
 plot()
 
