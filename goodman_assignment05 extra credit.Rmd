@@ -10,4 +10,4 @@ create.matrix <- function(variable, nrows=50,ncols=50){
 }
 matrix <- create.matrix(variable.num)
 
-heatmap(matrix)
+heatmap(matrix, Rowv=NA,Colv=NA, col=c("blue","green","red","white"), labCol=NA, labRow=NA)
