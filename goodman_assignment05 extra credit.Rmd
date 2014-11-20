@@ -138,3 +138,6 @@ dev.off()
 # in the terminal. the -delay flag sets the time between showing
 # the frames, i.e. the speed of the animation.
 system("convert -delay 80 *.png example_1.gif")
+# remove png files
+file.remove(list.files(pattern=".png"))
+
