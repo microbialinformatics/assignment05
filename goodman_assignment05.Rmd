@@ -143,7 +143,7 @@ lines(abundance[1,], abundance[4,], type="l", col="red")
 legend(x=0,y=1.5, c("R","S","C"), lty=c(1,1), lwd=c(2.5,2.5),col=c("green","blue","red"),cex=0.7)
 ```
 
-```{r}
+```{r echo=FALSE}
 matrix <- create.matrix(variable)
 global.simulation <- function(matrix){
 nrow <- sample(1:nrow(matrix), 1)
