@@ -184,18 +184,31 @@ runSims <- function(matrix){
     if ((i+1)%%2500 == 0){ #if divisible by 2500 do ...
       time_step[,(i+1)/2500] <- rawsim[ ,i+1]  # append to new matrix called time_step 
     }
-  }  
+  } 
+  return(time_step)
 }  
 
+conditions <- c("S", "R", "C", "E")
+max <- createMatrix(conditions, nrows=10, ncols=10)
+rar <- runSims(max)
+eeee <- abundCols(rar)
 
 
+abundCols <- function(time_step){ #create a table with 4 rows (S, R, E, C) and their freq in all columns
+  gahhh <- as.data.frame(time_step)
+  oop <- sapply(gahhh, function(x) table(factor(x, levels=conditions)))
+  loop <- log(oop)
+  loop[is.infinite(loop)] = 0  
+  return(loop)
+}
 
-function()
-gahhh <- as.data.frame(time_step)
-please <- sapply(gahhh, table)
+plotLocal <- function(){
+  
+  
+  
+}
 
 
-oop <- sapply(gahhh, function(x) table(factor(x, levels=conditions)))
 plot()
 
 
