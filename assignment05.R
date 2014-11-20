@@ -4,13 +4,8 @@ matrix <- createMatrix(conditions, nrows=10, ncols=10)
 
 loc <- findLocal(matrix)
 blerp <- findWinner(matrix, loc);
-#setdiff(as.vector(matrix), as.vector(blerp))
 
 matrix == blerp
-
-
-### We are having a prop.table problem when index_value == "E" AND probs only has 3 of 4 conditions
-## 2.5% chance of happening! AHHHHHHHH
 
 
 ###########################################################################################
@@ -132,10 +127,12 @@ findWinner <- function (matrix, local){
   index_value <- local[11]  #get index value
   local <- local[1:8]
   ########## INCLUDE PROBABILITIES
-  
-  probs <- prop.table(table(local)) # make proprotions of the local cells
-  
-  fC <- probs["C"] #find proportion of C 
+        #probs <- prop.table(table(local)) # make proprotions of the local cells
+  fC <- length(which(local == "C"))/8  
+  fR <- length(which(local == "R"))/8
+  fS <- length(which(local == "S"))/8
+  fE <- length(which(local == "E"))/8
+        #fC <- probs["C"] #find proportion of C 
   if(index_value == "S") {
     deltaSO <- 1/4 #natural death of S
     tau <- 3/4 #toxicity of colicin 
@@ -154,9 +151,9 @@ findWinner <- function (matrix, local){
     c_winner <- sample(c("C", "E"), 1, prob = c(c_survive, c_death)) #survival vs death
     matrix[nrow1, ncol1] <- c_winner #replace with new outcome
   } else {
-    fS <- probs["S"] #make proportion of local cells that are S
-    fR <- probs["R"] #make proportion of local cells that are R 
-    fE <- 1- fS - fR - fC #make proportion of local cells that are E
+        #fS <- probs["S"] #make proportion of local cells that are S
+        #fR <- probs["R"] #make proportion of local cells that are R 
+        #fE <- 1- fS - fR - fC #make proportion of local cells that are E
     e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
     matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
  return(matrix)
