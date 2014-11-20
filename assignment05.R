@@ -1,11 +1,12 @@
 
 conditions <- c("S", "R", "C", "E")
-matrix <- createMatrix(conditions, nrows=10, ncols=10)
+max <- createMatrix(conditions, nrows=10, ncols=10)
 
-loc <- findLocal(matrix)
-blerp <- findWinner(matrix, loc);
+loc <- findLocal(max)
+blerp <- findWinner(max, loc);
+arf <- findLocalWinner(max)
+max == arf
 
-matrix == blerp
 
 
 ###########################################################################################
@@ -159,9 +160,15 @@ findWinner <- function (matrix, local){
  return(matrix)
 }
 
+findLocalWinner <- function(matrix){
+  loca <- findLocal(matrix)
+  wins <- findWinner(matrix, loca)
+  return(wins)
+}
 
-runOneSim <- function(matrix){
-  findLocal(matrix)
+
+runSim <- function(matrix){
+  winner <- replicate(2500, findLocalWinner(max))
   
   1000*2500
   
