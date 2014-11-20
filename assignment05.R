@@ -2,6 +2,8 @@
 conditions <- c("S", "R", "C", "E")
 max <- createMatrix(conditions, nrows=10, ncols=10)
 
+
+
 loc <- findLocal(max)
 blerp <- findWinner(max, loc);
 arf <- findLocalWinner(max)
@@ -161,14 +163,63 @@ findWinner <- function (matrix, local){
 }
 
 findLocalWinner <- function(matrix){
-  loca <- findLocal(matrix)
-  wins <- findWinner(matrix, loca)
+    loca <- findLocal(matrix)
+    wins <- findWinner(matrix, loca)
+    return(wins)
+}
+  
+
+
+
+  
+  #update matrix problem 
+  conds <- c("NA")
+  nas <- createMatrix(conds, nrows = 100, ncols = 250000)
+  nas[,1] <- max
+  for (i in 2:ncol(nas)-1){
+        work <- matrix(nas[,i], nrow = 10, ncol = 10)  #make matrix from nas
+        sim_win <- findLocalWinner(work)  #run findlocalwinner
+        vec <- as.vector(sim_win)  #make findlocalwiner a vector
+        nas[ ,i+1] <- vec #append vector to nas + 1
+  }  
+
+
+
+
+
+
+
+
+nas[,i+1 ] <- findLocalWinner(nas[,i]))
+nas[,i+1 ] <- as.vector(findLocalWinner(nas[,i]))
+
+
+make matrix from nas
+fun findlocalwinner
+make findlocalwiner a vector
+append vector to nas + 1
+
+    
+    
+    winner <- replicate(2500, findLocalWinner(max), simplify = "list")
+    nas[,i] <- nas
+  
+  
+  na_mat <- rep(0, )
+  
+  
+  
+  
   return(wins)
 }
 
 
 runSim <- function(matrix){
-  winner <- replicate(2500, findLocalWinner(max))
+  for i in (1:2500){
+    
+    
+    winner <- replicate(2500, findLocalWinner(max), simplify = "list")
+  }
   
   1000*2500
   
@@ -187,8 +238,5 @@ runSim <- function(matrix){
 ### death within local?
 
 
-#  findAround <- function(matrix, index){   
-    
-#  }
   
   
