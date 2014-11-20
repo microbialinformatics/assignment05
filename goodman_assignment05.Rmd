@@ -3,15 +3,19 @@ title: "goodman_assignment05"
 output: html_document
 ---
 
-# First step... generate a matrix, size 50x50, and fill it randomly with values 1-4 to represent C, S, R, and empty spaces in the vector.
+#### First step... generate a matrix, size 50x50, and fill it randomly with C, S, R, and empty spaces (E).
 
+```{r echo=FALSE}
+variable <- c("S", "R", "C", "E")
 create.matrix <- function(variable, nrows=50,ncols=50){
 	matrix(sample(variable, nrows*ncols, replace=TRUE), nrow=nrows, ncol=ncols)
 }
+matrix <- create.matrix(variable)
+```
 
+#### Pick random cell, sample surroundings, figure out what the cell will become, update matrix, 2500 updates per time step, output 1000 time steps in graphical form, local and global
 
-# Pick random cell, sample surroundings, figure out what the cell will become
-
+```{r echo=FALSE}
 local.simulation <- function(matrix){
 nrow <- sample(1:nrow(matrix), 1)
 ncol <- sample(1:ncol(matrix), 1)
@@ -137,7 +141,10 @@ plot(abundance[1,], abundance[2,], type="l", col="green", ylim=c(0,5), ylab="Log
 lines(abundance[1,], abundance[3,], type="l", col="blue")
 lines(abundance[1,], abundance[4,], type="l", col="red")
 legend(x=0,y=1.5, c("R","S","C"), lty=c(1,1), lwd=c(2.5,2.5),col=c("green","blue","red"),cex=0.7)
+```
 
+```{r}
+matrix <- create.matrix(variable)
 global.simulation <- function(matrix){
 nrow <- sample(1:nrow(matrix), 1)
 ncol <- sample(1:ncol(matrix), 1)
@@ -176,13 +183,25 @@ abundance[1,1:500] <- 1:500
 abundance[2,] <- sapply(abundance[2,], log10)
 abundance[3,] <- sapply(abundance[3,], log10)
 abundance[4,] <- sapply(abundance[4,], log10)
-abundance <- replace(abundance, abundance == 0, -Inf)
 
 plot(abundance[1,], abundance[2,], type="l", col="green", xlim=c(0,500), ylim=c(0,5), ylab="Log (Abundance)", xlab="Time", main="Global Neighborhood")
 lines(abundance[1,], abundance[3,], type="l", col="blue")
 lines(abundance[1,], abundance[4,], type="l", col="red")
 legend(x=0,y=5, c("R","S","C"), lty=c(1,1), lwd=c(2.5,2.5),col=c("green","blue","red"),cex=0.7)
-if(abundance[300,3]==0){
-points(abundance[,3]==0, 0, type="p", pch=5,col="green")
+
+if(sum(abundance[3,]==0)>0){
+x <- which(abundance[3,]==0)
+x <- x[1]+1
+points(x, 0, type="p", pch=5,col="blue")
 }
-points(x=a$axis1[1],y=a$axis2[1],type="p",pch=16,col="black",cex=2)
+if(sum(abundance[2,]==0)>0){
+y <- which(abundance[2,]==0)
+y <- y[1]+1
+points(y, 0, type="p", pch=5,col="green")
+}
+if(sum(abundance[4,]==0)>0){
+z <- which(abundance[4,]==0)
+z <- z[1]+1
+points(z, 0, type="p", pch=5,col="red")
+}
+```
