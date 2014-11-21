@@ -206,14 +206,16 @@ points(z, 0, type="p", pch=5,col="red")
 }
 ```
 
-###Experiment: If there are initially more S bacteria in a global environment, then will the S population die out as quickly as in the simulation where there are equal proportions of each type of bacteria and empty spaces
+###Experiment: 
+The initial matrix generated from imitating the Nature paper assumes a random distribution of all four species will populate the cells. Over time, the rock-paper-scissors hierarchy results in the decline in the number of the susceptible species in the global population until it is totally out-competed by the other species. We hypothesize that if the "S" species has an advantage to begin with, it will not die off as quickly in the global environment. In order to test this, we can manipulate the random distribution of species within the initial matrix to preferentially choose "S" with a probability of 50%. Doing this ensures that about half of the cells in the matrix will be filled with the susceptible species. 
+
+Running the global simulation under these conditions shows that the abundance of "S" may initially decline, but quickly recovers and totally out competes the other two species. If there are significantly more "S" bacteria than "R" and "C" to begin with, "S" will not die out of the global population. 
 
 ```{r echo=FALSE}
 variable <- c("S", "R", "C", "E")
 create.p.matrix <- function(variable, nrows=50,ncols=50){
-	matrix(sample(variable, nrows*ncols, replace=TRUE, prob=c(0.5, 1/6, 1/6, 1/6)), nrow=nrows, ncol=ncols)
+	matrix(sample(variable, nrows*ncols, replace=TRUE, prob=c(1/2, 1/6, 1/6, 1/6)), nrow=nrows, ncol=ncols)
 }
-
 
 matrix <- create.p.matrix(variable)
 global.simulation <- function(matrix){
