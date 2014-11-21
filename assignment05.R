@@ -1,14 +1,26 @@
 
-
+########  RUN LOCAL SIMULATIONS 
 conditions <- c("S", "R", "C", "E")
 max <- createMatrix(conditions, nrows = 50, ncols = 50)
 bigmax <- runLocalSims2(max)
-
+### TIME TO GIF IT OUT! (not walk it out)
 dood <- charToNum(bigmax)
 gif(dood)
-
+###### MAKE LINE PLOT FOR LOCAL
 eeee <- abundCols(bigmax)
 plotLocal(eeee)
+
+########  RUN GLOBAL SIMULATIONS 
+cultmax <- findWinnerGlob(max) # cult = culture, we're going global, baby
+cultbigmax <- runGlobalSims2(cultmax)
+### TIME TO GIF IT OUT!
+cultdood <- charToNum(cultbigmax)
+gif(cultdood)
+###### MAKE LINE PLOT FOR GLOBAL
+abundCondsGlob <- abundCols(cultbigmax)
+plotLocal(abundCondsGlob)
+
+
 
 
 
@@ -126,7 +138,7 @@ findLocal <- function(matrix){ #, nsim=3000
 }
 
 
-findWinner <- function (matrix, local){
+findWinnerLoc <- function (matrix, local){
   nrow1 <- as.numeric(local[9])  #get row index
   ncol1 <- as.numeric(local[10])  #get column index
   index_value <- local[11]  #get index value
@@ -166,20 +178,20 @@ findWinner <- function (matrix, local){
 
 findLocalWinner <- function(matrix){
     loca <- findLocal(matrix)
-    wins <- findWinner(matrix, loca)
+    wins <- findWinnerLoc(matrix, loca)
     return(wins)
 }
   
 
 
-runLocalSims <- function(matrix_){  # this one is very inefficient!  Don't run it if its bigger than 10 by 10
-  colDim <- nrow(matrix_)*ncol(matrix_)
-  conds <- c("NA")
+runLocalSims <- function(matrix){  # this one is very inefficient!  Don't run it if its bigger than 10 by 10
+  colDim <- nrow(matrix)*ncol(matrix) # column dimensions
+  conds <- c("NA") #fill matrix on next line with NAs
   rawsim <- createMatrix(conds, nrows = colDim, ncols = (colDim*1000)) # bigass data frame 2500 * 2500000
-  rawsim[,1] <- matrix_ #data frame for raw (every sim) simulation data 
+  rawsim[,1] <- matrix #data frame for raw (every sim) simulation data 
   time_step <- createMatrix(conds, nrows = colDim, ncols = 1000)
-  for (i in 2:ncol(rawsim)-1){
-    work <- matrix(rawsim[,i], nrow = nrow(matrix_), ncol = ncol(matrix_))  #make matrix from nas
+  for (i in 2:ncol(rawsim)-1){ 
+    work <- matrix(rawsim[,i], nrow = nrow(matrix), ncol = ncol(matrix))  #make matrix from nas
     sim_win <- findLocalWinner(work)  #run findlocalwinner
     vec <- as.vector(sim_win)  #make findlocalwiner a vector
     rawsim[ ,i+1] <- vec #append vector to rawsim + 1
@@ -187,26 +199,25 @@ runLocalSims <- function(matrix_){  # this one is very inefficient!  Don't run i
       time_step[,(i+1)/colDim] <- rawsim[ ,i+1]  # append to new matrix called time_step 
     }
   } 
-  colnames(time_step) <- 1:1000
-  return(time_step)
+  colnames(time_step) <- 1:1000 #name all columns by number of col
+  return(time_step) 
 }  
 
 
 
-runLocalSims2 <- function(matrix_){ #This one goes faster!
-  colDim <- nrow(matrix_)*ncol(matrix_)
-  conds <- c("NA")
-  time_step <- createMatrix(conds, nrows = colDim, ncols = 1001)
-  j <- 1
-  work <- matrix_ 
-  for (i in 1:(colDim*1000)){
-    if (i == 1 | i %% colDim == 0){ # ORDER IMPORTANT: if divisible by 2500 do ...
-      time_step[,j] <- work  # append to new matrix called time_step
-      j <- j + 1
+runLocalSims2 <- function(matrix){ #This one goes faster!
+  colDim <- nrow(matrix)*ncol(matrix) # column dimensions
+  conds <- c("NA")  #fill matrix on next line with NAs
+  time_step <- createMatrix(conds, nrows = colDim, ncols = 1001) #Make a matrix of NAs 
+  j <- 1 # column to be filled in time_step matrix
+  for (i in 1:(colDim*1000)) {
+    if (i == 1 | i %% colDim == 0) { # ORDER IMPORTANT: if divisible by 2500 do ...
+      time_step[,j] <- matrix  # append to new matrix called time_step
+      j <- j + 1 # for next iteration
     }
     work <- findLocalWinner(work)  #run findlocalwinner
   } 
-  colnames(time_step) <- 1:1001
+  colnames(time_step) <- 1:1001 # name all columns by numer of col
   return(time_step)
 }  
 
@@ -215,12 +226,69 @@ runLocalSims2 <- function(matrix_){ #This one goes faster!
 
 ##############################   Global Calculations and Simulations   ########################
 
+findWinnerGlob <- function(matrix) {  #This finds the global winner
+  
+  
+  index_info <- findIndex(max) #nrow, ncol, 
+  nrow1 <- as.numeric(index_info[1])  #get row index
+  ncol1 <- as.numeric(index_info[2])  #get column index
+  index_value <- index_info[3]  #get index value
+  colDim <- nrow(max)*ncol(max)
+  ########## INCLUDE PROBABILITIES
+  maxVec <- as.vector(max)
+  
+  ?find, inject, reduct, fold, select, detect
+  
+  
+  apropos("C", where = maxVec)
+  
+  
+  #The following takes too much time.  :(  :( 
+              fC <- length(which(maxVec == "C"))/colDim  
+              fR <- length(which(maxVec == "R"))/colDim
+              fS <- length(which(maxVec == "S"))/colDim
+              fE <- length(which(maxVec == "E"))/colDim
+  if(index_value == "S") {
+    deltaSO <- 1/4 #natural death of S
+    tau <- 3/4 #toxicity of colicin 
+    s_death <- deltaSO + tau*fC    #death
+    s_survive <- 1 - s_death    #survival
+    s_winner <- sample(c("S", "E"), 1, prob = c(s_survive, s_death)) #survival vs. death
+    matrix[nrow1, ncol1] <- s_winner #replace with new outcome
+  } else if(index_value == "R") {
+    r_death <- 10/32  #death
+    r_survive <- 1- r_death   #survival
+    r_winner <- sample(c("R", "E"), 1, prob = c(r_survive, r_death)) #survival  
+    matrix[nrow1, ncol1] <- r_winner #replace with new outcome
+  } else if(index_value == "C") {
+    c_death <- 1/3  #death
+    c_survive <-  1 - c_death #survival
+    c_winner <- sample(c("C", "E"), 1, prob = c(c_survive, c_death)) #survival vs death
+    matrix[nrow1, ncol1] <- c_winner #replace with new outcome
+  } else {
+    e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
+    matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
+  return(matrix)
+}
 
 
 
-
-
-
+runGlobalSims2  <- function(matrix) {  #Runs global simulations
+    colDim <- nrow(matrix)*ncol(matrix)
+    conds <- c("NA")
+    time_step <- createMatrix(conds, nrows = colDim, ncols = 501)
+    j <- 1
+    work <- matrix 
+    for (i in 1:(colDim*500)){
+      if (i == 1 | i %% colDim == 0){ # ORDER IMPORTANT: if divisible by 2500 do ...
+        time_step[,j] <- work  # append to new matrix called time_step
+        j <- j + 1
+      }
+      work <- findWinnerGlob(work)  #run findlocalwinner
+    } 
+    colnames(time_step) <- 1:501
+    return(time_step)
+  }  
 
 
 
@@ -282,7 +350,7 @@ colMatrix <- function(colMat){  #for one column make a matrix
 }
 
 plotHeat <- function(newmat){
-  colors <- c("black", "red", "forestgreen", "blue")
+  colors <- c("white", "red", "forestgreen", "blue")
   image(z=newmat, axes = FALSE, col = colors) #x=1:nrow(newmat), y=1:ncol(newmat),
 }
 
