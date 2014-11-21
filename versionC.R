@@ -1,3 +1,14 @@
+#Test code
+# source("versionC.R")
+# grid <- create_grid(50)
+# output_update_local <- update_grid("local", grid, 50, 1000)
+# output_update_global <- update_grid("global", grid, 50, 1000)
+# pdf("try3_local1000.pdf")
+# plot_abundance(output_update_local, 1000)
+# pdf("try3_global1000.pdf")
+# plot_abundance(output_update_global, 1000)
+#install.packages("animation")
+
 #Creation of grid
 create_grid <- function(size){
   types <- c("E", "R", "C", "S")
@@ -9,7 +20,7 @@ return(grid)
 
 #Setting up local neighbourhood and calculating fractions
 #Input = the location of the focal point. Size corresponds to the amount of rows = of columns in this grid.
-find_local <- function (focalpoint_row, focalpoint_column, grid, size){
+find_local <- function (focalpoint_row, focalpoint_column, grid, size){  
 #If the focal point is situated on the edges, the local neighbourhood will have strange shape. Therefore, all 
 #edge cases are one by one implemented:
   # if first row: that row + next,
@@ -18,94 +29,82 @@ find_local <- function (focalpoint_row, focalpoint_column, grid, size){
   # if first column: that column + next,
   # if last column: previous column + that column,
   # if inbetween: previous column + that column + next column.
-  
-  # When the focal point is found on the first row, ...
-  if (focalpoint_row == 1){
+    
+#When the focal point is found somehwere in the middle,...
+### Do this first because will happen the most: save computation time! ###
+if(focalpoint_row != 1 && focalpoint_row != size){
+    local <- grid[(focalpoint_row-1):(focalpoint_row+1),]
+    if (focalpoint_column != 1 && focalpoint_column != size){
+      local <- local[, (focalpoint_column-1):(focalpoint_column+1)]
+      local[2, 2] <- NA
+      divider <- 8}      
+    else if (focalpoint_column == size){
+      local <- local[, (focalpoint_column-1):(focalpoint_column)]
+      local[2, 2] <- NA
+      divider <- 5}
+    else{
+      local <- local[, (focalpoint_column):(focalpoint_column+1)]
+      local[2, 1] <- NA
+      divider <- 5}
+}
+# When the focal point is found on the first row, ...
+else if (focalpoint_row == 1){
     local <- grid[(focalpoint_row):(focalpoint_row+1),]
-    if (focalpoint_column == 1){
+    if (focalpoint_column != 1 && focalpoint_column != size){
+      local <- local[, (focalpoint_column-1):(focalpoint_column+1)]
+      local[1, 2] <- NA
+      divider <- 5}   
+    else if (focalpoint_column == size){
+      local <- local[, (focalpoint_column-1):(focalpoint_column)]
+      local[1, 2] <- NA
+      divider <- 3}
+    else{
       local <- local[, (focalpoint_column):(focalpoint_column+1)]
       local[1, 1] <- NA
-      divider <- 3}
-    #INSERTION OF SIZE
-    else if (focalpoint_column == size){
-      local <- local[, (focalpoint_column-1):(focalpoint_column)]
-      local[1, 2] <- NA
-      divider <- 3}
-    else{
-      local <- local[, (focalpoint_column-1):(focalpoint_column+1)]
-      local[1, 2] <- NA
-      divider <- 5
-    }
-  }
-  #When the focal point is found on the last row, ...
-  #INSERTION OF SIZE
-  else if (focalpoint_row == size){
+      divider <- 3}}
+#When the focal point is found on the last row, ...
+else{
     local <- grid[(focalpoint_row-1):(focalpoint_row),]
-    if (focalpoint_column == 1){
-      local <- local[, (focalpoint_column):(focalpoint_column+1)]
-      local[2, 1] <- NA
-      divider <- 3}
-    #INSERTION OF SIZE
+    if (focalpoint_column != 1 && focalpoint_column != size){
+      local <- local[, (focalpoint_column-1):(focalpoint_column+1)]
+      local[2, 2] <- NA
+      divider <- 5}
     else if (focalpoint_column == size){
       local <- local[, (focalpoint_column-1):(focalpoint_column)]
       local[2, 2] <- NA
       divider <- 3}
     else{
-      local <- local[, (focalpoint_column-1):(focalpoint_column+1)]
-      local[2, 2] <- NA
-      divider <- 5
-    }
-  }
-  #When the focal point is found in between, ...
-  else {
-  local <- grid[(focalpoint_row-1):(focalpoint_row+1),]
-    if (focalpoint_column == 1){
       local <- local[, (focalpoint_column):(focalpoint_column+1)]
       local[2, 1] <- NA
-      divider <- 5}
-      #INSERTION OF SIZE
-    else if (focalpoint_column == size){
-      local <- local[, (focalpoint_column-1):(focalpoint_column)]
-      local[2, 2] <- NA
-      divider <- 5}
-    else{
-      local <- local[, (focalpoint_column-1):(focalpoint_column+1)]
-      local[2, 2] <- NA
-      divider <- 8}
-  }
+      divider <- 3}}
   
   f_e <- length(grep("E", local))/divider
   f_r <- length(grep("R", local))/divider
   f_c <- length(grep("C", local))/divider
   f_s <- length(grep("S", local))/divider
-  #Not used further on.
-  #E_ab <- length(grep("E", local))
   R_ab <- length(grep("R", grid))
   C_ab <- length(grep("C", grid))
   S_ab <- length(grep("S", grid))
   
-  info_local <- list(f_e, f_r, f_c, f_s, R_ab, C_ab, S_ab)
-  return(info_local)
+  info <- list(f_e, f_r, f_c, f_s, R_ab, C_ab, S_ab)
+  return(info)
 }
 
 find_global <- function (focalpoint_row, focalpoint_column, grid, size){
   #the global neighbourhood consists of all entries in the grid except for the given one. We can therefore
   #simply remove the given one from the grid and then calculate the abundances. 
-  global <- grid
-  global[focalpoint_row, focalpoint_column] <- NA
+  grid[focalpoint_row, focalpoint_column] <- NA
   #Could replace with 1-f_r-f_c-f_s to save computation time
-  f_e <- length(grep("E", global))/(size*size-1)
-  f_r <- length(grep("R", global))/(size*size-1)
-  f_c <- length(grep("C", global))/(size*size-1)
-  f_s <- length(grep("S", global))/(size*size-1)
-  #Not used later on.
-  #E_ab <- length(grep("E", global))
-  R_ab <- length(grep("R", global))
-  C_ab <- length(grep("C", global))
-  S_ab <- length(grep("S", global))
+  f_e <- length(grep("E", grid))/(size*size-1)
+  f_r <- length(grep("R", grid))/(size*size-1)
+  f_c <- length(grep("C", grid))/(size*size-1)
+  f_s <- length(grep("S", grid))/(size*size-1)
+  R_ab <- length(grep("R", grid))
+  C_ab <- length(grep("C", grid))
+  S_ab <- length(grep("S", grid))
   
-  info_global <- list(f_e, f_r, f_c, f_s, R_ab, C_ab, S_ab)
-  return(info_global)
+  info <- list(f_e, f_r, f_c, f_s, R_ab, C_ab, S_ab)
+  return(info)
 }
 
 #Setting up parameters. Should be converted into a function in the end, with the actual values as input. 
@@ -132,23 +131,19 @@ replace_focal <- function(focalpoint, neighbourhood_info){
 }
 
 #Updating the grid. This happens randomly and 62500 updates are called an 'epoch'.
-#Input = the amount of updates you want to occur
-update_grid <- function(grid, size, updates){
+#Inputs: the type of interaction (either "local" or "global"), the grid you want to update, 
+# the size of this grid, and the amount of updates you want to occur
+update_grid <- function(interaction, grid, size, updates){
 #update_grid_once <- function(grid, updates){
-  #initializing
+  #Initializing
   epoch <- size*size
   counter <- 0
   epochcounter <- 0
-  #Not used: E_abundance_local <- 0
-  R_abundance_local <- 0
-  C_abundance_local <- 0
-  S_abundance_local <- 0
-  #Not used: E_abundance_global <- 0
-  R_abundance_global <- 0
-  C_abundance_global <- 0
-  S_abundance_global <- 0 
-  localgrid <- grid
-  globalgrid <- grid
+  R_abundance <- 0
+  C_abundance <- 0
+  S_abundance <- 0
+  
+  print(epoch)
   
   #Updating the grid using two approachinges: local interactions, or global interactions. 
   for (i in 1:(epoch*updates)){
@@ -157,70 +152,66 @@ update_grid <- function(grid, size, updates){
   #and the one made with global interactions. 
   focalpoint_row = sample(1:nrow(grid), 1)
   focalpoint_column = sample(1:ncol(grid), 1)
-  focalpoint_local <- localgrid[focalpoint_row, focalpoint_column]
-  focalpoint_global <- globalgrid[focalpoint_row, focalpoint_column]
+  focalpoint <- grid[focalpoint_row, focalpoint_column]
   
-  #Call upon find_local to find the probabilities for both grids. 
-  info_local <- find_local(focalpoint_row, focalpoint_column, localgrid, size)
-  info_global <- find_global(focalpoint_row, focalpoint_column, globalgrid, size)
-  
-  #Replace the focal points in both grids according to their neighbourhoods (call upon replace_focal).
-  localgrid[focalpoint_row, focalpoint_column] <- replace_focal(focalpoint_local, info_local) 
-  globalgrid[focalpoint_row, focalpoint_column] <- replace_focal(focalpoint_global, info_global)
+  if (interaction == "local"){
+    #Call upon find_local to find the probabilities.
+    info <- find_local(focalpoint_row, focalpoint_column, grid, size)
+    #Replace the focal points according to their neighbourhoods (call upon replace_focal).
+    grid[focalpoint_row, focalpoint_column] <- replace_focal(focalpoint, info)}
+  else{    
+    #Call upon find_global to find the probabilities for both grids. 
+    info <- find_global(focalpoint_row, focalpoint_column, grid, size)
+    #Replace the focal points in both grids according to their neighbourhoods (call upon replace_focal).
+    grid[focalpoint_row, focalpoint_column] <- replace_focal(focalpoint, info)}     
 
   #For each epoch, save the abundance information to generate the plots later on. This abundance information is
   #already present in both info_local and info_global, so we only have to save this information in new vectors.
   if (counter == epoch) {
     epochcounter <- epochcounter + 1
     counter <- 0
+    #To follow progress:     
+    print(epochcounter)
     
-    #For plot of local neighbourhood.
-    #Not used: E_abundance_local[epochcounter] <- info_local[[5]]
-    R_abundance_local[epochcounter] <- info_local[[5]]
-    C_abundance_local[epochcounter] <- info_local[[6]]
-    S_abundance_local[epochcounter] <- info_local[[7]]
-      
-    #for plot of global neighboorhood. This plot only goes for 500 updates, so we cut it off here in any situation.
-    if (epochcounter < 501){
-    #Not used: E_abundance_global[epochcounter] <- info_global[[5]]
-    R_abundance_global[epochcounter] <- info_global[[5]]
-    C_abundance_global[epochcounter] <- info_global[[6]]
-    S_abundance_global[epochcounter] <- info_global[[7]]
-    }
-  }
-  }
+    R_abundance[epochcounter] <- info[[5]]
+    C_abundance[epochcounter] <- info[[6]]
+    S_abundance[epochcounter] <- info[[7]]}
+
+  #Create the heatmap for this grid
+  #Convert the letters to numbers: "E" = 1, "R" = 2, "C" = "3", "S"= 4.
+  first <- gsub("E", 1, grid)
+  second <- gsub("R", 2, first)
+  third <- gsub("C", 3, second)
+  fourth <- gsub("S", 4, third)
+  vector_numbers <- as.numeric(fourth)
+  matrix_numbers <- matrix(vector_numbers, nrow = size, ncol = size, byrow = FALSE)
   
-  output_update <- list(localgrid, globalgrid, R_abundance_local, C_abundance_local, S_abundance_local, 
-                        R_abundance_global, C_abundance_global, S_abundance_global)
+  #GIF DOES NOT WORK YET
+  #png(file="example%02d.png", width=200, height=200)
+    heatmap(matrix_numbers, Rowv = NA, Colv = NA, col = c("white", "green", "red", "blue"), labRow = NA, labCol = NA)
+  
+  }
+  #GIF DOES NOT WORK YET
+  #system("convert -delay 80 *.png example_1.gif")
+  
+  output_update <- list(grid, R_abundance, C_abundance, S_abundance)
   return(output_update)
 }
 
 #Now we need to plot the abundances of the local neighbourhoods. Be certain to also input the amount of updates
 #that were performed. 
-localplot <- function(output_update, updates){
+plot_abundance <- function(output_update, updates){
   x <- c(1:updates)
   #plot the abundance of R
-  localplot <- plot(x, log10(output_update[[3]]), ylim = c(0,10), type = "l", col = "green")
+  plot <- plot(x, log10(output_update[[2]]), ylim = c(0,10), type = "l", col = "green")
   #plot the abundance of C
-  points(x, log10(output_update[[4]]), type = "l", col = "red")
+  points(x, log10(output_update[[3]]), type = "l", col = "red")
   #plot the abundance of S
-  points(x, log10(output_update[[5]]), type = "l", col = "blue")
+  points(x, log10(output_update[[4]]), type = "l", col = "blue")
   #empty is not plotted
 #   return(localplot)
 }
 
-#now we need to plot the abundances of the global neighbourhoods. Be certain to also input the amount of updates
-#that were performed. 
-globalplot <- function(output_update, updates){
-  x <- c(1:updates)
-  #plot the abundance of R
-  globalplot <- plot(x, log10(output_update[[6]]), ylim = c(0,10), type = "l", col = "green")
-  #plot the abundance of C
-  points(x, log10(output_update[[7]]), type = "l", col = "red")
-  #plot the abundance of S
-  points(x, log10(output_update[[8]]), type = "l", col = "blue")
-#   return(globalplot)
-}
 
 ##### TRY OUTS ####
 
