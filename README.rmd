@@ -63,7 +63,7 @@ r<-initial.matrix[(sample(1:50,1, replace=T))]
 c<-initial.matrix[(sample(1:50,1, replace=T))]
 ####################
 #function takes initial random cell(row by column, and a number of times to run) and assesses local neighborhood dynamics
-local.comp<-function(r,c,n){
+local.comp<-function(r,c) {
 #select local neighborhood based on index
 #local neighborhood is 3 above, 2 each side, 3 on bottom of index
  #rows:
@@ -141,61 +141,48 @@ if( l.lower.cor.col>50)  l.lower.cor.col<-1
   G<-initial.matrix[center.l, center.l.col]
   H<-initial.matrix[ r.low.corner,r.lower.cor.col]
   I<-initial.matrix[l.low.corner, l.lower.cor.col]
-  #change the type based on what is in neighborhood
-    #only want to run if the cell is empty
-    if(initial.matrix[r,c]==4) run.empty<-T
-    if(initial.matrix[r,c]==(c(1,2,3))) run.full<-T  
-      emptycells<-function(run.empty<-F)    
-    #probability of it becoming 1,2,3,0 is based on fraction that is 1,2,3,0
-    #make the types into a vector
-     make.vec<-c(A,B,C,D,E,G,H,I)
-    #find how many of each kind there are in vector
-    #make vector containing the length ie number of 
-    #times the type of cell occurs          
-    #in the neighborhood
-     ones<-length(grep(1,make.vec))
-     twos<-length(grep(2,make.vec))
-     threes<-length(grep(3,make.vec))
-    #calculate probability of types
-    fract.ones<-ones/length(make.vec)
-    fract.twos<-twos/length(make.vec)
-    fract.threes<-threes/length(make.vec)
-    #find position of cell
-    #find which one is most common
-    max.kind<-(max(c(fract.ones,fract.twos,fract.threes)))
-#what to do if there are ties: re-run?
-    if(fract.ones==fract.twos) rerun<-T
-      #rerun function....
-    if(max.kind==fract.ones) newcell<-1
-    if(max.kind==fract.twos) newcell<-2
-    if(max.kind==fract.threes) newcell<-3
-     #find the type that the index is
-     #change this cell [r,c] to the most common
-    #reassigning cell in empty.matrix
-    initial.matrix[r,c]<-newcell
-    return(initial.matrix)
-   }
-#only want to run this function when cell selected is not empty
-#if it is not empty change based on the probabilities
-  run.full<-function(run.full<-F){
-######### how to store the matrix...????
-#start with vector of neighbors
-    make.vec<-c(A,B,C,D,E,G,H,I)
-#find how many Cs there are in neighborhood
-     ones<-length(grep(1,make.vec))
-#calculate fraction of C to use in delta_S calculation
-    fract.ones<-ones/length(make.vec)
-#change based on the given probabilities
-  #C=1/3 C is 1
+
+  #if the cell is not empty
+  #change based on given probabilities:#C=1/3 C is 1
   #S0=1/4+(3/4*fractionC) s is 2
   #R is 10/32 R is 3
   #tau =3/4 and is used in delta S calculation
-#Cs= cell sample scheme
+  #start with vector of neighbors
+    make.vec<-c(A,B,C,D,E,G,H,I)
+#find how many Cs there are in neighborhood
+#calculate fraction of C to use in delta_S calculation
+     ones<-length(grep(1,make.vec))
+    fract.ones<-ones/length(make.vec)
+#change based on the given probabilities. Cs= cell sample scheme
+if
 Cs<-sample((c(1,2,3)),1,prob=(c((1/3),(.25+(.75*fract.ones)),(10/32))))
 if(Cs==1) newcell<-1
 if(Cs==2) newcell<-2
 if(Cs==3) newcell<-3
-#change the cell based on Cs
+#change the cell based on Cs  
+
+
+  #change the type based on what is in neighborhood if cell is empty
+  #probability of it becoming 1,2,3,0 is based on probability 
+    if(initial.matrix[r,c]==4) change.type<-sample(1:8,1, replace=F)
+    if(change.type==1) newcell==A
+    if(change.type==2) newcell==B
+    if(change.type==3) newcell==C
+    if(change.type==4) newcell==D
+    if(change.type==5) newcell==E
+    if(change.type==6) newcell==G
+    if(change.type==7) newcell==H
+    if(change.type==8) newcell==I
+    initial.matrix[r,c]<<-newcell
+    initial.matrix<<-initial.matrix
+    return(initial.matrix)
+   }
+
+    }
+
+   
+
+
 initial.matrix[r,c]<-newcell
 return initial.matrix #need to make this global and store matrix
 }
