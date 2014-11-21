@@ -11,7 +11,6 @@ plotLogTime(bigmax, "Local")
 
 ########  RUN GLOBAL SIMULATIONS 
 cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global, baby
-danmax <- DanGlobal(max)
 ### TIME TO GIF IT OUT!
 gif(cultbigmax)
 ###### MAKE LINE PLOT FOR GLOBAL
@@ -230,9 +229,6 @@ findWinnerGlobal <- function(matrix) {  #This finds the global winner
   colDim <- nrow(max)*ncol(max)
   ########## INCLUDE PROBABILITIES
   maxVec <- as.vector(max)
-  #?find, inject, reduct, fold, select, detect
-  #apropos("C", where = maxVec)
-        #fC <- (sum(maxVec == "C") - sum(index_value == "C"))/colDim 
   if(index_value == "S") {
     fC <- sum(maxVec == "C")/colDim
     deltaSO <- 1/4 #natural death of S
@@ -253,12 +249,11 @@ findWinnerGlobal <- function(matrix) {  #This finds the global winner
     matrix[nrow1, ncol1] <- c_winner #replace with new outcome
   } else {
     fC <- sum(maxVec == "C")/colDim
-    #fR <- sum(maxVec == "R")/colDim 
-    #fS <- sum(maxVec == "S")/colDim
-    #fE <- (sum(maxVec == "E") - sum(index_value == "E"))/colDim 
-    #e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
-    #matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
-    matrix[nrow1, ncol1] <- sample(matrix, 1) } #
+    fR <- sum(maxVec == "R")/colDim 
+    fS <- sum(maxVec == "S")/colDim
+    fE <- (sum(maxVec == "E") - sum(index_value == "E"))/colDim 
+    e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
+    matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
   return(matrix)
 }
 
