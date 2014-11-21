@@ -3,7 +3,6 @@ title: "goodman_assignment05"
 output: html_document
 ---
 
-#### First step... generate a matrix, size 50x50, and fill it randomly with C, S, R, and empty spaces (E).
 
 ```{r echo=FALSE}
 variable <- c("S", "R", "C", "E")
@@ -13,7 +12,6 @@ create.matrix <- function(variable, nrows=50,ncols=50){
 matrix <- create.matrix(variable)
 ```
 
-#### Pick random cell, sample surroundings, figure out what the cell will become, update matrix, 2500 updates per time step, output 1000 time steps in graphical form, local and global
 
 ```{r echo=FALSE}
 local.simulation <- function(matrix){
