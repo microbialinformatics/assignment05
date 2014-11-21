@@ -141,3 +141,18 @@ system("convert -delay 80 *.png example_1.gif")
 # remove png files
 file.remove(list.files(pattern=".png"))
 
+make.plots <- function(nums){
+matrix <- create.matrix(variable.num)
+for (i in 1:nums){
+    replicate(2500, local.simulation(matrix))
+    heatmap(matrix, Rowv=NA,Colv=NA, col=c("blue","green","red","white"), labCol=NA, labRow=NA)}
+}
+
+write.gif(make.plots(5), "animation.gif")
+ 
+
+saveGIF(
+  for (i in 1:5){
+    replicate(2500, local.simulation(matrix))
+    heatmap(matrix, Rowv=NA,Colv=NA, col=c("blue","green","red","white"), labCol=NA, labRow=NA)}
+) 
