@@ -6,18 +6,16 @@ bigmax <- runLocalSims2(max)
 ### TIME TO GIF IT OUT! (not walk it out)
 gif(bigmax)
 ###### MAKE LINE PLOT FOR LOCAL
-eeee <- abundCols(bigmax)
-plotLocal(eeee)
+plotLogTime(bigmax, "Local")
+
 
 ########  RUN GLOBAL SIMULATIONS 
-cultmax <- findWinnerGlob(max) # cult = culture, we're going global, baby
-cultbigmax <- runGlobalSims2(max)
+cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global, baby
+danmax <- DanGlobal(max)
 ### TIME TO GIF IT OUT!
-cultdood <- charToNum(cultbigmax)
 gif(cultbigmax)
 ###### MAKE LINE PLOT FOR GLOBAL
-abundCondsGlob <- abundCols(cultbigmax)
-plotLocal(abundCondsGlob)
+plotLogTime(cultbigmax, "Global")
 
 
 
@@ -27,11 +25,12 @@ mat <- chartoNumNum(max)
 
 
 
+
+
+
 ###########################################################################################
-
-
 createMatrix <- function(variable, nrows=50, ncols=50){
-  matrix(sample(variable, nrows*ncols, TRUE), nrow = nrows, ncol = ncols)
+  matrix(sample(variable, nrows*ncols, replace =TRUE), nrow = nrows, ncol = ncols)
   #Variable must be a list of conditions to add to each cell of the matrix
   #Help from:  http://stackoverflow.com/questions/16915853/r-generate-an-simple-integer-matrix-with-defined-number-of-row-and-column
 }
@@ -207,7 +206,7 @@ runLocalSims2 <- function(matrix){ #This one goes faster!
   conds <- c("NA")  #fill matrix on next line with NAs
   time_step <- createMatrix(conds, nrows = colDim, ncols = 1001) #Make a matrix of NAs 
   j <- 1 # column to be filled in time_step matrix
-  work <- matrix
+  work <- matrix # will be updated with each for loop, this initiates the process.
   for (i in 1:(colDim*1000)) {
     if (i == 1 | i %% colDim == 0) { # ORDER IMPORTANT: if divisible by 2500 do ...
       time_step[,j] <- work  # append to new matrix called time_step
@@ -223,8 +222,7 @@ runLocalSims2 <- function(matrix){ #This one goes faster!
 
 
 ##############################   Global Calculations and Simulations   ########################
-
-findWinnerGlob <- function(matrix) {  #This finds the global winner
+findWinnerGlobal <- function(matrix) {  #This finds the global winner
   index_info <- findIndex(max) #nrow, ncol, 
   nrow1 <- as.numeric(index_info[1])  #get row index
   ncol1 <- as.numeric(index_info[2])  #get column index
@@ -234,8 +232,9 @@ findWinnerGlob <- function(matrix) {  #This finds the global winner
   maxVec <- as.vector(max)
   #?find, inject, reduct, fold, select, detect
   #apropos("C", where = maxVec)
-  fC <- (sum(maxVec == "C")/colDim) - sum(index_value == "C") 
+        #fC <- (sum(maxVec == "C") - sum(index_value == "C"))/colDim 
   if(index_value == "S") {
+    fC <- sum(maxVec == "C")/colDim
     deltaSO <- 1/4 #natural death of S
     tau <- 3/4 #toxicity of colicin 
     s_death <- deltaSO + tau*fC    #death
@@ -253,28 +252,29 @@ findWinnerGlob <- function(matrix) {  #This finds the global winner
     c_winner <- sample(c("C", "E"), 1, prob = c(c_survive, c_death)) #survival vs death
     matrix[nrow1, ncol1] <- c_winner #replace with new outcome
   } else {
-    fR <- (sum(maxVec == "R")/colDim) - sum(index_value == "C") 
-    fS <- (sum(maxVec == "S")/colDim) - sum(index_value == "C") 
-    fE <- (sum(maxVec == "E")/colDim) - sum(index_value == "C") 
-    e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
-    matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
+    fC <- sum(maxVec == "C")/colDim
+    #fR <- sum(maxVec == "R")/colDim 
+    #fS <- sum(maxVec == "S")/colDim
+    #fE <- (sum(maxVec == "E") - sum(index_value == "E"))/colDim 
+    #e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
+    #matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
+    matrix[nrow1, ncol1] <- sample(matrix, 1) } #
   return(matrix)
 }
 
 
-
 runGlobalSims2  <- function(matrix) {  #Runs global simulations
-    colDim <- nrow(matrix)*ncol(matrix)
-    conds <- c("NA")
-    time_step <- createMatrix(conds, nrows = colDim, ncols = 501)
-    j <- 1
-    work <- matrix
+    colDim <- nrow(matrix)*ncol(matrix) # column dimensions
+    conds <- c("NA") #fill matrix on next line with NAs
+    time_step <- createMatrix(conds, nrows = colDim, ncols = 501) #Make a matrix of NAs 
+    j <- 1 # column to be filled in time_step matrix
+    work <- matrix # will be updated with each for loop, this initiates the process.
     for (i in 1:(colDim*500)){
       if (i == 1 | i %% colDim == 0){ # ORDER IMPORTANT: if divisible by 2500 do ...
         time_step[,j] <- work  # append to new matrix called time_step
-        j <- j + 1
+        j <- j + 1 #next for loop, fill in the next column
       }
-      work <- findWinnerGlob(work)  #run findlocalwinner
+      work <- findWinnerGlobal(work)  #run findlocalwinner
     } 
     colnames(time_step) <- 1:501
     return(time_step)
@@ -285,22 +285,90 @@ runGlobalSims2  <- function(matrix) {  #Runs global simulations
 
 
 
-
-
-
-
-
-
-########################   CHANGE NUMBERS 
-
+########################   CHANGE FROM CHARACTERS TO NUMBERS   ##########################
 #This function is an all-in-one charToNum + numMat, thanks to pat :)
 chartoNumNum <- function(matrix){  
   ifelse(matrix == "S",1, ifelse(matrix == "C",2, ifelse(matrix == "R", 3, 4)))
 }
 
 
+########################## TAKE A COLUMN AND MAKE A MATRIX  ##########################
+colMatrix <- function(colMat){  #for one column make a matrix
+  #i <- sqrt(nrow(colMat))
+  return(matrix(colMat, nrow = 50, ncol = 50))
+}
+
+########################## TAKE MATRIX MAKE HEATPLOT  ##########################
+plotHeat <- function(newmat){
+  colors <- c("white", "red", "forestgreen", "blue")
+  image(z=newmat, axes = FALSE, col = colors) #x=1:nrow(newmat), y=1:ncol(newmat),
+}
+
+##########################  MAKE A GIF WITH MANY PLOTS ##########################
+gif <- function(bigmatrix) {
+  library(animation)
+  namat <- chartoNumNum(bigmax)
+  oopt <- ani.options(interval = 0.1, nmax = ncol(namat))
+  for(i in 1:ani.options("nmax")){
+    mat <- colMatrix(namat[,5])
+    plotHeat(mat)
+    ani.pause()
+  }
+}
 
 
+
+
+##############################################################################
+##########################   FREQUENCY OF EACH CONDITION ##########################
+freqConds <- function(time_step){ #create a table with 4 rows (S, R, E, C) and their freq in all columns
+  gahhh <- as.data.frame(time_step)
+  oop <- sapply(gahhh, function(x) table(factor(x, levels=conditions)))
+  loop <- log10(oop)
+  loop[is.infinite(loop)] = 0  
+  loop <- as.data.frame(loop)
+  colnames(loop) <- 1:ncol(time_step)
+  return(loop)
+}
+
+
+
+plotLogTime <- function(time_step, title){
+  freqConds_output <- freqConds(time_step)
+  ff <- as.data.frame(t(freqConds_output))
+  plot(ff$S, type = "l", col = "blue", xlim=c(0,ncol(freqConds_output)),ylim=c(0,5), main = c(title, "Neighborhood"),
+       xlab = "Time", ylab = "Log(abundance)", lwd = 2, bty = "n") 
+  lines(ff$E, type = "l", col = "black", lwd = 2)  
+  lines(ff$C, type = "l", col = "red", lwd = 2)
+  lines(ff$R, type = "l", col = "forestgreen", lwd = 2) 
+  legend("bottomright",c("S","R","C","E"),col=c("blue","forestgreen","red","black"),lty = 1, lwd = 3)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#No need for this an
 #This function makes a character number matrix from a character character matrix
 charToNum <- function(matnums){
   tf_E <- matnums == "E"
@@ -336,73 +404,6 @@ numMat <- function(charMat) {
   }
   return(namat)
 }
-
-
-
-
-
-
-colMatrix <- function(colMat){  #for one column make a matrix
-  #i <- sqrt(nrow(colMat))
-  return(matrix(colMat, nrow = 50, ncol = 50))
-}
-
-plotHeat <- function(newmat){
-  colors <- c("white", "red", "forestgreen", "blue")
-  image(z=newmat, axes = FALSE, col = colors) #x=1:nrow(newmat), y=1:ncol(newmat),
-}
-
-gif <- function(bigmatrix) {
-  library(animation)
-  namat <- chartoNumNum(bigmax)
-  oopt <- ani.options(interval = 0.1, nmax = ncol(namat))
-  for(i in 1:ani.options("nmax")){
-    mat <- colMatrix(namat[,5])
-    plotHeat(mat)
-    ani.pause()
-  }
-}
-
-
-
-abundCols <- function(time_step){ #create a table with 4 rows (S, R, E, C) and their freq in all columns
-  gahhh <- as.data.frame(time_step)
-  oop <- sapply(gahhh, function(x) table(factor(x, levels=conditions)))
-  loop <- log(oop)
-  loop[is.infinite(loop)] = 0  
-  loop <- as.data.frame(loop)
-  colnames(loop) <- 1:ncol(time_step)
-  return(loop)
-}
-
-
-
-plotLocal <- function(abundCol_output){
-  ff <- as.data.frame(t(abundCol_output))
-  plot(ff$S, type = "l", col = "blue", xlim=c(0,ncol(abundCol_output)),ylim=c(0,10), main = "Neighborhood",
-       xlab = "Time", ylab = "Log(abundance)", lwd = 2) 
-  lines(ff$E, type = "l", col = "black", lwd = 2)  
-  lines(ff$C, type = "l", col = "red", lwd = 2)
-  lines(ff$R, type = "l", col = "forestgreen", lwd = 2) 
-  legend("bottomright",c("S","R","C","E"),col=c("blue","forestgreen","red","black"),lty = 1, lwd = 3)
-}
-
-
-
-
-
-
-#max <- createMatrix(conditions)
-#rar <- runSims(max)
-
-
-
-
-
-
-
-
-
 
 
 
