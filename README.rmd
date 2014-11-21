@@ -56,11 +56,11 @@ To test this, we have removed the code for wrapping the matrix, and have run the
 #initial set-up to start simulations
 #fill matrix with randomly selected 4 choices
 #C=1,S=2,R=3, E=4 empty (4 choices)
-seeds<-sample(1:4,100, replace=T) #pick the random numbers to fill matrix
-initial.matrix<-matrix(seeds ,nrow=10, ncol=10) #create matrix with random numbers
+seeds<-sample(1:4,2500, replace=T) #pick the random numbers to fill matrix
+initial.matrix<-matrix(seeds ,nrow=50, ncol=50) #create matrix with random numbers
 #pick random cell in matrix to change
-r<-initial.matrix[(sample(1:10,1, replace=T))]
-c<-initial.matrix[(sample(1:10,1, replace=T))]
+r<-initial.matrix[(sample(1:50,1, replace=T))]
+c<-initial.matrix[(sample(1:50,1, replace=T))]
 ####################
 #function takes initial random cell(row by column, and a number of times to run) and assesses local neighborhood dynamics
 local.comp<-function(r,c,n){
@@ -69,69 +69,69 @@ local.comp<-function(r,c,n){
  #rows:
 #a center upper
   up.row<-r+1
-  if(up.row>10) up.row<-1
-  if(up.row<1) up.row<-10
+  if(up.row>50) up.row<-1
+  if(up.row<1) up.row<-50
   # b center lower
   down.row<-r-1
-  if(down.row>10) down.row<-1
-  if(down.row<1) down.row<-10
+  if(down.row>50) down.row<-1
+  if(down.row<1) down.row<-50
   #c right upper corner
   r.up.corner<-r+1
-  if(r.up.corner>10) r.up.corner<-1
-  if(r.up.corner<1) r.up.corner<-10
+  if(r.up.corner>50) r.up.corner<-1
+  if(r.up.corner<1) r.up.corner<-50
   #d left upper corner
   l.up.corner<-r+1
- if(l.up.corner>10) l.up.corner<-1
-  if(l.up.corner<1) l.up.corner<-10
+ if(l.up.corner>50) l.up.corner<-1
+  if(l.up.corner<1) l.up.corner<-50
   #e center right
   center.r<-r
- if(center.r>10) center.r<-1
-  if(center.r<1) center.r<-10
+ if(center.r>50) center.r<-1
+  if(center.r<1) center.r<-50
   # f center left
   center.l<-r
- if(center.l>10) center.l<-1
-  if(center.l<1) center.l<-10
+ if(center.l>50) center.l<-1
+  if(center.l<1) center.l<-50
   #g right lower corner
   r.low.corner<-r-1
-if(r.low.corner>10) r.low.corner<-1
-  if(r.low.corner<1) r.low.corner<-10
+if(r.low.corner>50) r.low.corner<-1
+  if(r.low.corner<1) r.low.corner<-50
   #h left lower corner 
   l.low.corner<-r-1
-if(l.low.corner>10) l.low.corner<-1
-  if(l.low.corner<1) l.low.corner<-10
+if(l.low.corner>50) l.low.corner<-1
+  if(l.low.corner<1) l.low.corner<-50
    #Columns:
   #a upper
   up.col<-c
-if( up.col>10)  up.col<-1
-  if( up.col<1)  up.col<-10
+if( up.col>50)  up.col<-1
+  if( up.col<1)  up.col<-50
   # b lower
   low.col<-c
-if( low.col>10)  low.col<-1
-  if( low.col<1)  low.col<-10
+if( low.col>50)  low.col<-1
+  if( low.col<1)  low.col<-50
   # c right upper corner
   r.up.cor.col<-c+1
-if( r.up.cor.col>10)  r.up.cor.col<-1
-  if( r.up.cor.col<1)  r.up.cor.col<-10
+if( r.up.cor.col>50)  r.up.cor.col<-1
+  if( r.up.cor.col<1)  r.up.cor.col<-50
   # d left upper corner
   l.up.cor.col<-c-1
-if( l.up.cor.col>10)  l.up.cor.col<-1
-  if( l.up.cor.col<1)  l.up.cor.col<-10
+if( l.up.cor.col>50)  l.up.cor.col<-1
+  if( l.up.cor.col<1)  l.up.cor.col<-50
   # e center right
   center.r.col<-c+1
-if( center.r.col>10)  center.r.col<-1
-  if( center.r.col<1)  center.r.col<-10
+if( center.r.col>50)  center.r.col<-1
+  if( center.r.col<1)  center.r.col<-50
   # f center left
   center.l.col<-c-1
-if( center.l.col>10)  center.l.col<-1
-  if( center.l.col<1)  center.l.col<-10
+if( center.l.col>50)  center.l.col<-1
+  if( center.l.col<1)  center.l.col<-50
   # g right lower corner
   r.lower.cor.col<-c+1
-if( r.lower.cor.col>10)  r.lower.cor.col<-1
-  if( r.lower.cor.col<1)  r.lower.cor.col<-10
+if( r.lower.cor.col>50)  r.lower.cor.col<-1
+  if( r.lower.cor.col<1)  r.lower.cor.col<-50
   # h left lower corner 
   l.lower.cor.col<-c-1
-if( l.lower.cor.col>10)  l.lower.cor.col<-1
-  if( l.lower.cor.col<1)  l.lower.cor.col<-10
+if( l.lower.cor.col>50)  l.lower.cor.col<-1
+  if( l.lower.cor.col<1)  l.lower.cor.col<-50
   # put together indices
   A<-initial.matrix[up.row,up.col]
   B<-initial.matrix[down.row,low.col]
