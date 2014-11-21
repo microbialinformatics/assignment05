@@ -78,7 +78,7 @@ rep <- function(n,lattice,cell)
 
 #plot
 x.y.C <- rep(1000,lattice,"C")
-plot(x.y.C,type="l",col="red",xlab="Time",ylab="Log(abundance)",main="Global neighbourhood",xlim=c(0,1000))
+plot(x.y.C,type="l",col="red",xlab="Time",ylab="Log(abundance)",main="Global neighbourhood",xlim=c(0,1000),ylim=c(0,5))
 x.y.S <- rep(1000,lattice,"S")
 points(x.y.S[,1],x.y.S[,2],type="l",col="blue")
 x.y.R <- rep(1000,lattice,"R")
