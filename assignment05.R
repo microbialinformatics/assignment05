@@ -4,15 +4,14 @@ conditions <- c("S", "R", "C", "E")
 max <- createMatrix(conditions, nrows = 50, ncols = 50)
 bigmax <- runLocalSims2(max)
 ### TIME TO GIF IT OUT! (not walk it out)
-dood <- charToNum(bigmax)
-gif(dood)
+gif(bigmax)
 ###### MAKE LINE PLOT FOR LOCAL
 eeee <- abundCols(bigmax)
 plotLocal(eeee)
 
 ########  RUN GLOBAL SIMULATIONS 
 cultmax <- findWinnerGlob(max) # cult = culture, we're going global, baby
-cultbigmax <- runGlobalSims2(cultmax)
+cultbigmax <- runGlobalSims2(max)
 ### TIME TO GIF IT OUT!
 cultdood <- charToNum(cultbigmax)
 gif(cultdood)
@@ -22,6 +21,9 @@ plotLocal(abundCondsGlob)
 
 
 
+image(z = mat, axes = FALSE, col = colors)
+colors <- c("white", "red", "forestgreen", "blue")
+mat <- chartoNumNum(max)
 
 
 
@@ -144,12 +146,7 @@ findWinnerLoc <- function (matrix, local){
   index_value <- local[11]  #get index value
   local <- local[1:8]
   ########## INCLUDE PROBABILITIES
-        #probs <- prop.table(table(local)) # make proprotions of the local cells
-  fC <- length(which(local == "C"))/8  
-  fR <- length(which(local == "R"))/8
-  fS <- length(which(local == "S"))/8
-  fE <- length(which(local == "E"))/8
-        #fC <- probs["C"] #find proportion of C 
+  fC <- sum(local == "C")/8  
   if(index_value == "S") {
     deltaSO <- 1/4 #natural death of S
     tau <- 3/4 #toxicity of colicin 
@@ -168,9 +165,9 @@ findWinnerLoc <- function (matrix, local){
     c_winner <- sample(c("C", "E"), 1, prob = c(c_survive, c_death)) #survival vs death
     matrix[nrow1, ncol1] <- c_winner #replace with new outcome
   } else {
-        #fS <- probs["S"] #make proportion of local cells that are S
-        #fR <- probs["R"] #make proportion of local cells that are R 
-        #fE <- 1- fS - fR - fC #make proportion of local cells that are E
+    fR <- sum(local == "R")/8
+    fS <- sum(local == "S")/8
+    fE <- sum(local == "E")/8
     e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
     matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
  return(matrix)
@@ -215,7 +212,7 @@ runLocalSims2 <- function(matrix){ #This one goes faster!
       time_step[,j] <- matrix  # append to new matrix called time_step
       j <- j + 1 # for next iteration
     }
-    work <- findLocalWinner(work)  #run findlocalwinner
+    work <- findLocalWinner(matrix)  #run findlocalwinner
   } 
   colnames(time_step) <- 1:1001 # name all columns by numer of col
   return(time_step)
@@ -227,8 +224,6 @@ runLocalSims2 <- function(matrix){ #This one goes faster!
 ##############################   Global Calculations and Simulations   ########################
 
 findWinnerGlob <- function(matrix) {  #This finds the global winner
-  
-  
   index_info <- findIndex(max) #nrow, ncol, 
   nrow1 <- as.numeric(index_info[1])  #get row index
   ncol1 <- as.numeric(index_info[2])  #get column index
@@ -236,18 +231,9 @@ findWinnerGlob <- function(matrix) {  #This finds the global winner
   colDim <- nrow(max)*ncol(max)
   ########## INCLUDE PROBABILITIES
   maxVec <- as.vector(max)
-  
-  ?find, inject, reduct, fold, select, detect
-  
-  
-  apropos("C", where = maxVec)
-  
-  
-  #The following takes too much time.  :(  :( 
-              fC <- length(which(maxVec == "C"))/colDim  
-              fR <- length(which(maxVec == "R"))/colDim
-              fS <- length(which(maxVec == "S"))/colDim
-              fE <- length(which(maxVec == "E"))/colDim
+  #?find, inject, reduct, fold, select, detect
+  #apropos("C", where = maxVec)
+  fC <- sum(maxVec == "C")/colDim  
   if(index_value == "S") {
     deltaSO <- 1/4 #natural death of S
     tau <- 3/4 #toxicity of colicin 
@@ -266,6 +252,9 @@ findWinnerGlob <- function(matrix) {  #This finds the global winner
     c_winner <- sample(c("C", "E"), 1, prob = c(c_survive, c_death)) #survival vs death
     matrix[nrow1, ncol1] <- c_winner #replace with new outcome
   } else {
+    fR <- sum(maxVec == "R")/colDim
+    fS <- sum(maxVec == "S")/colDim
+    fE <- sum(maxVec == "E")/colDim
     e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
     matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
   return(matrix)
@@ -278,13 +267,13 @@ runGlobalSims2  <- function(matrix) {  #Runs global simulations
     conds <- c("NA")
     time_step <- createMatrix(conds, nrows = colDim, ncols = 501)
     j <- 1
-    work <- matrix 
     for (i in 1:(colDim*500)){
       if (i == 1 | i %% colDim == 0){ # ORDER IMPORTANT: if divisible by 2500 do ...
-        time_step[,j] <- work  # append to new matrix called time_step
+        time_step[,j] <- matrix  # append to new matrix called time_step
         j <- j + 1
       }
-      work <- findWinnerGlob(work)  #run findlocalwinner
+      work <- findWinnerGlob(matrix)  #run findlocalwinner
+      
     } 
     colnames(time_step) <- 1:501
     return(time_step)
@@ -301,13 +290,17 @@ runGlobalSims2  <- function(matrix) {  #Runs global simulations
 
 
 
+########################   CHANGE NUMBERS 
+
+#This function is an all-in-one charToNum + numMat, thanks to pat :)
+chartoNumNum <- function(matrix){  
+  ifelse(matrix == "S",1, ifelse(matrix == "C",2, ifelse(matrix == "R", 3, 4)))
+}
 
 
 
 
-
-
-
+#This function makes a character number matrix from a character character matrix
 charToNum <- function(matnums){
   tf_E <- matnums == "E"
   E_Index <- which(tf_E,TRUE)
@@ -330,7 +323,7 @@ charToNum <- function(matnums){
 
 
 
-# converts a character column to numeric in place
+# creates numeric matrix:  converts a character column to numeric in place
 numMat <- function(charMat) {
   ncols <- ncol(charMat)
   nrows <- nrow(charMat)
@@ -342,6 +335,10 @@ numMat <- function(charMat) {
   }
   return(namat)
 }
+
+
+
+
 
 
 colMatrix <- function(colMat){  #for one column make a matrix
@@ -356,10 +353,11 @@ plotHeat <- function(newmat){
 
 gif <- function(bigmatrix) {
   library(animation)
-  namat <- numMat(bigmatrix)
-  ani.options(interval = 0.1, nmax = ncol(namat))
+  
+  namat <- chartoNumNum(bigmax)
+  oopt <- ani.options(interval = 0.1, nmax = ncol(namat))
   for(i in 1:ani.options("nmax")){
-    mat <- colMatrix(namat[,i])
+    mat <- colMatrix(namat[,5])
     plotHeat(mat)
     ani.pause()
   }
