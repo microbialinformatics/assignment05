@@ -171,56 +171,165 @@ findLocalWinner <- function(matrix){
 
 
 
-runSims <- function(matrix){
+runSims <- function(matrix_){
+  colDim <- nrow(matrix_)*ncol(matrix_)
   conds <- c("NA")
-  rawsim <- createMatrix(conds, nrows = 100, ncols = 2500000)
-  rawsim[,1] <- matrix #data frame for raw (every sim) simulation data 
-  time_step <- createMatrix(conds, nrows = 100, ncols = 1000)
+  rawsim <- createMatrix(conds, nrows = colDim, ncols = (colDim*1000))
+  rawsim[,1] <- matrix_ #data frame for raw (every sim) simulation data 
+  time_step <- createMatrix(conds, nrows = colDim, ncols = 1000)
   for (i in 2:ncol(rawsim)-1){
-    work <- matrix(rawsim[,i], nrow = 10, ncol = 10)  #make matrix from nas
+    work <- matrix(rawsim[,i], nrow = nrow(matrix_), ncol = ncol(matrix_))  #make matrix from nas
     sim_win <- findLocalWinner(work)  #run findlocalwinner
     vec <- as.vector(sim_win)  #make findlocalwiner a vector
     rawsim[ ,i+1] <- vec #append vector to rawsim + 1
-    if ((i+1)%%2500 == 0){ #if divisible by 2500 do ...
-      time_step[,(i+1)/2500] <- rawsim[ ,i+1]  # append to new matrix called time_step 
+    if ((i+1)%%colDim == 0){ #if divisible by 2500 do ...
+      time_step[,(i+1)/colDim] <- rawsim[ ,i+1]  # append to new matrix called time_step 
     }
   } 
   colnames(time_step) <- 1:1000
   return(time_step)
 }  
 
-conditions <- c("S", "R", "C", "E")
-max <- createMatrix(conditions, nrows=10, ncols=10)
-rar <- runSims(max)
-eeee <- abundCols(rar)
-ff <- as.data.frame(t(eeee))
-plotLocal(eeee)
+
+
+
+
+runSims2 <- function(matrix_){
+  colDim <- nrow(matrix_)*ncol(matrix_)
+  conds <- c("NA")
+  time_step <- createMatrix(conds, nrows = colDim, ncols = 1001)
+  j <- 1
+  work <- matrix_ 
+  for (i in 1:(colDim*1000)){
+    if (i == 1 | i %% colDim == 0){ # ORDER IMPORTANT: if divisible by 2500 do ...
+      time_step[,j] <- work  # append to new matrix called time_step
+      j <- j + 1
+    }
+    work <- findLocalWinner(work)  #run findlocalwinner
+  } 
+  colnames(time_step) <- 1:1001
+  return(time_step)
+}  
+
+
+
+
+
+
+
+
+
+
+
 
 image(x=1:5, y=1:10, z=agh, axes = FALSE, col = colors)
 
 colors <- c("red", "blue", "black", "forestgreen")
-agh <- createMatrix(c(1,4), nrows=5, ncols=10)
+agh <- createMatrix(c(1:4), nrows=10, ncols=10)
 
 poop <- t(agh)
-image(x=1:10, y=1:5, z=poop, axes = FALSE, col = colors)
+image(x=1:10, y=1:10, z=poop, axes = FALSE, col = colors)
 
 
-matnums <- rar
-tf_E <- matnums == "E"
-E_Index <- which(tf_E,TRUE)
-matnums[E_Index] <- 1
+#first function: takes column and makes a matrix 
 
-tf_C <- matnums=="C"
-C_Index <- which(tf_C, TRUE)
-matnums[C_Index] <- 2
+#2nd function:  takes matrix and makes plot
+poop <- t(agh)
+image(x=1:10, y=1:10, z=poop, axes = FALSE, col = colors)
 
-tf_R <- matnums=="R"
-R_Index <- which(tf_R, TRUE)
-matnums[R_Index] <- 3
 
-tf_S <- matnums=="S"
-S_Index <- which(tf_S, TRUE)
-matnums[S_Index] <- 4
+
+# converts a character column to numeric in place
+numMat <- function(charMat) {
+  ncols <- ncol(charMat)
+  nrows <- nrow(charMat)
+  namat <- matrix(0, nrow = nrows, ncol = ncols)
+  for(i in 1:nrows) {
+    for(j in 1:ncols) {
+      namat[i,j] = as.numeric(charMat[i,j])
+    }
+  }
+  return(namat)
+}
+
+
+
+colMatrix <- function(colMat){  #for one column make a matrix
+  #i <- sqrt(nrow(colMat))
+  return(matrix(colMat, nrow = 50, ncol = 50))
+}
+
+plotHeat <- function(newmat){
+  colors <- c("black", "red", "forestgreen", "blue")
+  image(z=newmat, axes = FALSE, col = colors) #x=1:nrow(newmat), y=1:ncol(newmat),
+}
+
+
+
+#max <- createMatrix(conditions)
+#rar <- runSims(max)
+
+conditions <- c("S", "R", "C", "E")
+max <- createMatrix(conditions, nrows = 50, ncols = 50)
+bigmax <- runSims2(max)
+dood <- charToNum(bigmax)
+gif(dood)
+
+eeee <- abundCols(rar)
+plotLocal(eeee)
+
+
+
+
+gif <- function(bigmatrix) {
+  library(animation)
+  namat <- numMat(bigmatrix)
+  oopt <- ani.options(interval = 0.1, nmax = ncol(namat))
+  for(i in 1:ani.options("nmax")){
+     mat <- colMatrix(namat[,i])
+     plotHeat(mat)
+     ani.pause()
+  }
+}
+gif(matnums)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+charToNum <- function(matnums){
+  tf_E <- matnums == "E"
+  E_Index <- which(tf_E,TRUE)
+  matnums[E_Index] <- 1
+  
+  tf_C <- matnums=="C"
+  C_Index <- which(tf_C, TRUE)
+  matnums[C_Index] <- 2
+  
+  tf_R <- matnums=="R"
+  R_Index <- which(tf_R, TRUE)
+  matnums[R_Index] <- 3
+  
+  tf_S <- matnums=="S"
+  S_Index <- which(tf_S, TRUE)
+  matnums[S_Index] <- 4  
+  
+  return(matnums)
+}
+
+
+
+bigdata <- data.matrix(matnums)
 
 
 colors <- c("black", "red", "forestgreen", "blue")
