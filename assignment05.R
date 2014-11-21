@@ -212,33 +212,6 @@ runSims2 <- function(matrix_){
 }  
 
 
-
-
-
-
-
-
-
-
-
-
-image(x=1:5, y=1:10, z=agh, axes = FALSE, col = colors)
-
-colors <- c("red", "blue", "black", "forestgreen")
-agh <- createMatrix(c(1:4), nrows=10, ncols=10)
-
-poop <- t(agh)
-image(x=1:10, y=1:10, z=poop, axes = FALSE, col = colors)
-
-
-#first function: takes column and makes a matrix 
-
-#2nd function:  takes matrix and makes plot
-poop <- t(agh)
-image(x=1:10, y=1:10, z=poop, axes = FALSE, col = colors)
-
-
-
 # converts a character column to numeric in place
 numMat <- function(charMat) {
   ncols <- ncol(charMat)
@@ -251,61 +224,6 @@ numMat <- function(charMat) {
   }
   return(namat)
 }
-
-
-
-colMatrix <- function(colMat){  #for one column make a matrix
-  #i <- sqrt(nrow(colMat))
-  return(matrix(colMat, nrow = 50, ncol = 50))
-}
-
-plotHeat <- function(newmat){
-  colors <- c("black", "red", "forestgreen", "blue")
-  image(z=newmat, axes = FALSE, col = colors) #x=1:nrow(newmat), y=1:ncol(newmat),
-}
-
-
-
-#max <- createMatrix(conditions)
-#rar <- runSims(max)
-
-conditions <- c("S", "R", "C", "E")
-max <- createMatrix(conditions, nrows = 50, ncols = 50)
-bigmax <- runSims2(max)
-dood <- charToNum(bigmax)
-gif(dood)
-
-eeee <- abundCols(rar)
-plotLocal(eeee)
-
-
-
-
-gif <- function(bigmatrix) {
-  library(animation)
-  namat <- numMat(bigmatrix)
-  oopt <- ani.options(interval = 0.1, nmax = ncol(namat))
-  for(i in 1:ani.options("nmax")){
-     mat <- colMatrix(namat[,i])
-     plotHeat(mat)
-     ani.pause()
-  }
-}
-gif(matnums)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 charToNum <- function(matnums){
   tf_E <- matnums == "E"
@@ -328,17 +246,91 @@ charToNum <- function(matnums){
 }
 
 
+colMatrix <- function(colMat){  #for one column make a matrix
+  #i <- sqrt(nrow(colMat))
+  return(matrix(colMat, nrow = 50, ncol = 50))
+}
+
+plotHeat <- function(newmat){
+  colors <- c("black", "red", "forestgreen", "blue")
+  image(z=newmat, axes = FALSE, col = colors) #x=1:nrow(newmat), y=1:ncol(newmat),
+}
+
+gif <- function(bigmatrix) {
+  library(animation)
+  namat <- numMat(bigmatrix)
+  oopt <- ani.options(interval = 0.1, nmax = ncol(namat))
+  for(i in 1:ani.options("nmax")){
+    mat <- colMatrix(namat[,i])
+    plotHeat(mat)
+    ani.pause()
+  }
+}
+
+abundCols <- function(time_step){ #create a table with 4 rows (S, R, E, C) and their freq in all columns
+  gahhh <- as.data.frame(time_step)
+  oop <- sapply(gahhh, function(x) table(factor(x, levels=conditions)))
+  loop <- log(oop)
+  loop[is.infinite(loop)] = 0  
+  loop <- as.data.frame(loop)
+  colnames(loop) <- 1:ncol(time_step)
+  return(loop)
+}
+
+
+
+plotLocal <- function(abundCol_output){
+  ff <- as.data.frame(t(abundCol_output))
+  plot(ff$S, type = "l", col = "blue", xlim=c(0,1000),ylim=c(0,10), main = "Local neighborhood",
+       xlab = "Time", ylab = "Log(abundance)", lwd = 2) 
+  lines(ff$E, type = "l", col = "black", lwd = 2)  
+  lines(ff$C, type = "l", col = "red", lwd = 2)
+  lines(ff$R, type = "l", col = "forestgreen", lwd = 2) 
+  legend("bottomright",c("S","R","C","E"),col=c("blue","forestgreen","red","black"),lty = 1, lwd = 3)
+}
+
+
+
+
+
+
+
+
+#max <- createMatrix(conditions)
+#rar <- runSims(max)
+
+conditions <- c("S", "R", "C", "E")
+max <- createMatrix(conditions, nrows = 50, ncols = 50)
+bigmax <- runSims2(max)
+dood <- charToNum(bigmax)
+gif(dood)
+
+eeee <- abundCols(bigmax)
+plotLocal(eeee)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 bigdata <- data.matrix(matnums)
 
-
-colors <- c("black", "red", "forestgreen", "blue")
-
-bb <- t(matnums)
-colnames(bb) <- 1:100
-bb <- as.numeric(bb)
-bb <- as.matrix(bb)
-image(x=1:1000, y=1:100, z=bb, axes = FALSE, col = colors)
 
 
 
@@ -360,46 +352,9 @@ if (ugh == "S") <- 1 {
 
 
 
-ugh2 <- as.numeric(levels(1:4))[ugh]
-
-within(ugh <- factor(levels = c(1, 2, 3, 4)))
-
-factor(ugh)
-
-replace()
 
 
 
-
-
-
-
-
-abundCols <- function(time_step){ #create a table with 4 rows (S, R, E, C) and their freq in all columns
-  gahhh <- as.data.frame(time_step)
-  oop <- sapply(gahhh, function(x) table(factor(x, levels=conditions)))
-  loop <- log(oop)
-  loop[is.infinite(loop)] = 0  
-  loop <- as.data.frame(loop)
-  colnames(loop) <- 1:1000
-  return(loop)
-}
-
-plotLocal <- function(abundCol_output){
-  ff <- as.data.frame(t(abundCol_output))
-  plot(ff$S, type = "l", col = "blue", xlim=c(0,1000),ylim=c(0,5), main = "Local neighborhood",
-       xlab = "Time", ylab = "Log(abundance)", lwd = 2) 
-  lines(ff$E, type = "l", col = "black", lwd = 2)  
-  lines(ff$C, type = "l", col = "red", lwd = 2)
-  lines(ff$R, type = "l", col = "forestgreen", lwd = 2) 
-  legend("bottomright",c("S","R","C","E"),col=c("blue","forestgreen","red","black"),lty = 1, lwd = 3)
-}
-
-plot()
-
-
-table()
-sum(time_step[,1])
 
 
 
