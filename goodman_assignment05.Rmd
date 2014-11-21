@@ -3,7 +3,16 @@ title: "goodman_assignment05"
 output: html_document
 ---
 
+###Problem
 
+It is seen in nature that species can coexist with each other in various circumstances, even among those that have a naturally antagonistic relationship.  The means by which this biodiversity is maintained is unclear, as one would assume that competition among the species, especially in communities with antagonistic species, would result in the elimination of susceptible species. 
+
+The study published in Nature addresses the effect of inter-species competition on biodiversity, using a rock-paper-scissors model to simulate a community of three competing species.  The nature of the simulation is to account for interaction and dispersal of the species over time in both a localized and large-scale population to determine the resulting effects on each species' survival.
+
+###Assumptions
+
+We assume that in the simulated community of three species, the S strain always displaces the R strain, R always displaces C, and C can only displace S if its local population around a colony of S is large enough.  It is also assumed that each unpopulated point in the matrix has a chance to remain unpopulated after a simulation equal to the chance of it being populated by one of the strains.  Finally, the populations are assumed to be equal in the beginning and each strain's characteristics remain unchanged over the course of multiple generations (i.e., there are no mutations or other changes that would affect the interaction/dispersal patterns of a species).
+ 
 ```{r echo=FALSE}
 variable <- c("S", "R", "C", "E")
 create.matrix <- function(variable, nrows=50,ncols=50){
