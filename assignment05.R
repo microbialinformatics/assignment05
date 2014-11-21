@@ -1,13 +1,15 @@
 
+
 conditions <- c("S", "R", "C", "E")
-max <- createMatrix(conditions, nrows=10, ncols=10)
+max <- createMatrix(conditions, nrows = 50, ncols = 50)
+bigmax <- runLocalSims2(max)
 
+dood <- charToNum(bigmax)
+gif(dood)
 
+eeee <- abundCols(bigmax)
+plotLocal(eeee)
 
-loc <- findLocal(max)
-blerp <- findWinner(max, loc);
-arf <- findLocalWinner(max)
-max == arf
 
 
 
@@ -170,11 +172,10 @@ findLocalWinner <- function(matrix){
   
 
 
-
-runSims <- function(matrix_){
+runLocalSims <- function(matrix_){  # this one is very inefficient!  Don't run it if its bigger than 10 by 10
   colDim <- nrow(matrix_)*ncol(matrix_)
   conds <- c("NA")
-  rawsim <- createMatrix(conds, nrows = colDim, ncols = (colDim*1000))
+  rawsim <- createMatrix(conds, nrows = colDim, ncols = (colDim*1000)) # bigass data frame 2500 * 2500000
   rawsim[,1] <- matrix_ #data frame for raw (every sim) simulation data 
   time_step <- createMatrix(conds, nrows = colDim, ncols = 1000)
   for (i in 2:ncol(rawsim)-1){
@@ -192,9 +193,7 @@ runSims <- function(matrix_){
 
 
 
-
-
-runSims2 <- function(matrix_){
+runLocalSims2 <- function(matrix_){ #This one goes faster!
   colDim <- nrow(matrix_)*ncol(matrix_)
   conds <- c("NA")
   time_step <- createMatrix(conds, nrows = colDim, ncols = 1001)
@@ -212,18 +211,34 @@ runSims2 <- function(matrix_){
 }  
 
 
-# converts a character column to numeric in place
-numMat <- function(charMat) {
-  ncols <- ncol(charMat)
-  nrows <- nrow(charMat)
-  namat <- matrix(0, nrow = nrows, ncol = ncols)
-  for(i in 1:nrows) {
-    for(j in 1:ncols) {
-      namat[i,j] = as.numeric(charMat[i,j])
-    }
-  }
-  return(namat)
-}
+
+
+##############################   Global Calculations and Simulations   ########################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 charToNum <- function(matnums){
   tf_E <- matnums == "E"
@@ -246,6 +261,21 @@ charToNum <- function(matnums){
 }
 
 
+
+# converts a character column to numeric in place
+numMat <- function(charMat) {
+  ncols <- ncol(charMat)
+  nrows <- nrow(charMat)
+  namat <- matrix(0, nrow = nrows, ncol = ncols)
+  for(i in 1:nrows) {
+    for(j in 1:ncols) {
+      namat[i,j] = as.numeric(charMat[i,j])
+    }
+  }
+  return(namat)
+}
+
+
 colMatrix <- function(colMat){  #for one column make a matrix
   #i <- sqrt(nrow(colMat))
   return(matrix(colMat, nrow = 50, ncol = 50))
@@ -259,13 +289,15 @@ plotHeat <- function(newmat){
 gif <- function(bigmatrix) {
   library(animation)
   namat <- numMat(bigmatrix)
-  oopt <- ani.options(interval = 0.1, nmax = ncol(namat))
+  ani.options(interval = 0.1, nmax = ncol(namat))
   for(i in 1:ani.options("nmax")){
     mat <- colMatrix(namat[,i])
     plotHeat(mat)
     ani.pause()
   }
 }
+
+
 
 abundCols <- function(time_step){ #create a table with 4 rows (S, R, E, C) and their freq in all columns
   gahhh <- as.data.frame(time_step)
@@ -294,19 +326,9 @@ plotLocal <- function(abundCol_output){
 
 
 
-
-
 #max <- createMatrix(conditions)
 #rar <- runSims(max)
 
-conditions <- c("S", "R", "C", "E")
-max <- createMatrix(conditions, nrows = 50, ncols = 50)
-bigmax <- runSims2(max)
-dood <- charToNum(bigmax)
-gif(dood)
-
-eeee <- abundCols(bigmax)
-plotLocal(eeee)
 
 
 
