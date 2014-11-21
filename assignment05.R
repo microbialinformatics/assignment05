@@ -14,7 +14,7 @@ cultmax <- findWinnerGlob(max) # cult = culture, we're going global, baby
 cultbigmax <- runGlobalSims2(max)
 ### TIME TO GIF IT OUT!
 cultdood <- charToNum(cultbigmax)
-gif(cultdood)
+gif(cultbigmax)
 ###### MAKE LINE PLOT FOR GLOBAL
 abundCondsGlob <- abundCols(cultbigmax)
 plotLocal(abundCondsGlob)
@@ -207,12 +207,13 @@ runLocalSims2 <- function(matrix){ #This one goes faster!
   conds <- c("NA")  #fill matrix on next line with NAs
   time_step <- createMatrix(conds, nrows = colDim, ncols = 1001) #Make a matrix of NAs 
   j <- 1 # column to be filled in time_step matrix
+  work <- matrix
   for (i in 1:(colDim*1000)) {
     if (i == 1 | i %% colDim == 0) { # ORDER IMPORTANT: if divisible by 2500 do ...
-      time_step[,j] <- matrix  # append to new matrix called time_step
+      time_step[,j] <- work  # append to new matrix called time_step
       j <- j + 1 # for next iteration
     }
-    work <- findLocalWinner(matrix)  #run findlocalwinner
+    work <- findLocalWinner(work)  #run findlocalwinner
   } 
   colnames(time_step) <- 1:1001 # name all columns by numer of col
   return(time_step)
@@ -233,7 +234,7 @@ findWinnerGlob <- function(matrix) {  #This finds the global winner
   maxVec <- as.vector(max)
   #?find, inject, reduct, fold, select, detect
   #apropos("C", where = maxVec)
-  fC <- sum(maxVec == "C")/colDim  
+  fC <- (sum(maxVec == "C")/colDim) - sum(index_value == "C") 
   if(index_value == "S") {
     deltaSO <- 1/4 #natural death of S
     tau <- 3/4 #toxicity of colicin 
@@ -252,9 +253,9 @@ findWinnerGlob <- function(matrix) {  #This finds the global winner
     c_winner <- sample(c("C", "E"), 1, prob = c(c_survive, c_death)) #survival vs death
     matrix[nrow1, ncol1] <- c_winner #replace with new outcome
   } else {
-    fR <- sum(maxVec == "R")/colDim
-    fS <- sum(maxVec == "S")/colDim
-    fE <- sum(maxVec == "E")/colDim
+    fR <- (sum(maxVec == "R")/colDim) - sum(index_value == "C") 
+    fS <- (sum(maxVec == "S")/colDim) - sum(index_value == "C") 
+    fE <- (sum(maxVec == "E")/colDim) - sum(index_value == "C") 
     e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
     matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
   return(matrix)
@@ -267,13 +268,13 @@ runGlobalSims2  <- function(matrix) {  #Runs global simulations
     conds <- c("NA")
     time_step <- createMatrix(conds, nrows = colDim, ncols = 501)
     j <- 1
+    work <- matrix
     for (i in 1:(colDim*500)){
       if (i == 1 | i %% colDim == 0){ # ORDER IMPORTANT: if divisible by 2500 do ...
-        time_step[,j] <- matrix  # append to new matrix called time_step
+        time_step[,j] <- work  # append to new matrix called time_step
         j <- j + 1
       }
-      work <- findWinnerGlob(matrix)  #run findlocalwinner
-      
+      work <- findWinnerGlob(work)  #run findlocalwinner
     } 
     colnames(time_step) <- 1:501
     return(time_step)
@@ -353,7 +354,6 @@ plotHeat <- function(newmat){
 
 gif <- function(bigmatrix) {
   library(animation)
-  
   namat <- chartoNumNum(bigmax)
   oopt <- ani.options(interval = 0.1, nmax = ncol(namat))
   for(i in 1:ani.options("nmax")){
@@ -379,7 +379,7 @@ abundCols <- function(time_step){ #create a table with 4 rows (S, R, E, C) and t
 
 plotLocal <- function(abundCol_output){
   ff <- as.data.frame(t(abundCol_output))
-  plot(ff$S, type = "l", col = "blue", xlim=c(0,1000),ylim=c(0,10), main = "Local neighborhood",
+  plot(ff$S, type = "l", col = "blue", xlim=c(0,ncol(abundCol_output)),ylim=c(0,10), main = "Neighborhood",
        xlab = "Time", ylab = "Log(abundance)", lwd = 2) 
   lines(ff$E, type = "l", col = "black", lwd = 2)  
   lines(ff$C, type = "l", col = "red", lwd = 2)
