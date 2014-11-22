@@ -161,17 +161,17 @@ if( l.lower.cor.col>50){l.lower.cor.col<-1}
   else if(initial.matrix[r,c]==3) { newcell<-sample((c(3,4)),1,prob=(c((1-10/32),(10/32))))}
 #change the type based on what is in neighborhood if cell is empty
   #probability of it becoming 1,2,3,0 is based on probability 
-  else {newcell<-sample(1:8,1) 
-        if(newcell<-1){ newcell<-A
-        else if(newcell<-2) newcell<-B
-        else if(newcell<-3) newcell<-C
-        else if(newcell<-4) newcell<-D
-        else if(newcell<-5) newcell<-E
-        else if(newcell<-6) newcell<-G
-        else if(newcell<-7) newcell<-H
-        else if(newcell<-8) newcell<-I}}
-
-initial.matrix[r,c]<<-newcell
+  else{newcell<-sample(1:8,1)} 
+        if(newcell<-1) {newcell<-A}
+        else if(newcell<-2){newcell<-B}
+        else if(newcell<-3){newcell<-C}
+        else if(newcell<-4){newcell<-D}
+        else if(newcell<-5){newcell<-E}
+        else if(newcell<-6){newcell<-G}
+        else if(newcell<-7){newcell<-H}
+        else if(newcell<-8){newcell<-I}
+initial.matrix[r,c]<-newcell
+return(initial.matrix)
 #return matrix
    }
 
