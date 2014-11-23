@@ -3,7 +3,7 @@
 conditions <- c("S", "R", "C", "E")
 max <- createMatrix(conditions, nrows = 50, ncols = 50)
 bigmax <- runLocalSims2(max)
-### TIME TO GIF IT OUT! (not walk it out)
+### TIME TO GIF IT OUT
 gif(bigmax)
 ###### MAKE LINE PLOT FOR LOCAL
 plotLogTime(bigmax, "Local")
@@ -11,20 +11,10 @@ plotLogTime(bigmax, "Local")
 
 ########  RUN GLOBAL SIMULATIONS 
 cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global, baby
-### TIME TO GIF IT OUT!
+### TIME TO GIF IT OUT
 gif(cultbigmax)
 ###### MAKE LINE PLOT FOR GLOBAL
 plotLogTime(cultbigmax, "Global")
-
-
-
-image(z = mat, axes = FALSE, col = colors)
-colors <- c("white", "red", "forestgreen", "blue")
-mat <- chartoNumNum(max)
-
-
-
-
 
 
 ###########################################################################################
@@ -45,7 +35,7 @@ findIndex <- function(matrix){
   return(info); # print character list where seat 1 is nrow, seat 2 is ncol, and seat 3 is condition in cell
 }
 
-
+##############################   Search for the Local Cells ########################
 findLocal <- function(matrix){ #, nsim=3000
   info <- findIndex(matrix)
   nrow <- as.numeric(info[1])  #get row index
@@ -137,7 +127,7 @@ findLocal <- function(matrix){ #, nsim=3000
  return(local)
 }
 
-
+#######################  FIND THE LOCAL WINNER ######################################
 findWinnerLoc <- function (matrix, local){
   nrow1 <- as.numeric(local[9])  #get row index
   ncol1 <- as.numeric(local[10])  #get column index
@@ -171,6 +161,8 @@ findWinnerLoc <- function (matrix, local){
  return(matrix)
 }
 
+
+##########################  Combine the local and calculate the winner #####################################
 findLocalWinner <- function(matrix){
     loca <- findLocal(matrix)
     wins <- findWinnerLoc(matrix, loca)
@@ -178,28 +170,7 @@ findLocalWinner <- function(matrix){
 }
   
 
-
-runLocalSims <- function(matrix){  # this one is very inefficient!  Don't run it if its bigger than 10 by 10
-  colDim <- nrow(matrix)*ncol(matrix) # column dimensions
-  conds <- c("NA") #fill matrix on next line with NAs
-  rawsim <- createMatrix(conds, nrows = colDim, ncols = (colDim*1000)) # bigass data frame 2500 * 2500000
-  rawsim[,1] <- matrix #data frame for raw (every sim) simulation data 
-  time_step <- createMatrix(conds, nrows = colDim, ncols = 1000)
-  for (i in 2:ncol(rawsim)-1){ 
-    work <- matrix(rawsim[,i], nrow = nrow(matrix), ncol = ncol(matrix))  #make matrix from nas
-    sim_win <- findLocalWinner(work)  #run findlocalwinner
-    vec <- as.vector(sim_win)  #make findlocalwiner a vector
-    rawsim[ ,i+1] <- vec #append vector to rawsim + 1
-    if ((i+1)%%colDim == 0){ #if divisible by 2500 do ...
-      time_step[,(i+1)/colDim] <- rawsim[ ,i+1]  # append to new matrix called time_step 
-    }
-  } 
-  colnames(time_step) <- 1:1000 #name all columns by number of col
-  return(time_step) 
-}  
-
-
-
+##########################  LOCAL SIMULATIONS #####################################
 runLocalSims2 <- function(matrix){ #This one goes faster!
   colDim <- nrow(matrix)*ncol(matrix) # column dimensions
   conds <- c("NA")  #fill matrix on next line with NAs
@@ -216,6 +187,7 @@ runLocalSims2 <- function(matrix){ #This one goes faster!
   colnames(time_step) <- 1:1001 # name all columns by numer of col
   return(time_step)
 }  
+##############################################################################
 
 
 
@@ -295,22 +267,24 @@ colMatrix <- function(colMat){  #for one column make a matrix
 
 ########################## TAKE MATRIX MAKE HEATPLOT  ##########################
 plotHeat <- function(newmat){
-  colors <- c("white", "red", "forestgreen", "blue")
+  colors <- c("blue", "red", "forestgreen","white")
   image(z=newmat, axes = FALSE, col = colors) #x=1:nrow(newmat), y=1:ncol(newmat),
 }
 
 ##########################  MAKE A GIF WITH MANY PLOTS ##########################
+#http://stackoverflow.com/questions/9973610/using-the-animation-package
+install.packages(animation)
+library(animation)
 gif <- function(bigmatrix) {
-  library(animation)
-  namat <- chartoNumNum(bigmax)
+  namat <- chartoNumNum(bigmatrix)
   oopt <- ani.options(interval = 0.1, nmax = ncol(namat))
   for(i in 1:ani.options("nmax")){
-    mat <- colMatrix(namat[,5])
+    mat <- colMatrix(namat[,i])
     plotHeat(mat)
     ani.pause()
   }
 }
-
+##############################################################################
 
 
 
@@ -327,7 +301,6 @@ freqConds <- function(time_step){ #create a table with 4 rows (S, R, E, C) and t
 }
 
 
-
 plotLogTime <- function(time_step, title){
   freqConds_output <- freqConds(time_step)
   ff <- as.data.frame(t(freqConds_output))
@@ -338,154 +311,9 @@ plotLogTime <- function(time_step, title){
   lines(ff$R, type = "l", col = "forestgreen", lwd = 2) 
   legend("bottomright",c("S","R","C","E"),col=c("blue","forestgreen","red","black"),lty = 1, lwd = 3)
 }
+##############################################################################
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#No need for this an
-#This function makes a character number matrix from a character character matrix
-charToNum <- function(matnums){
-  tf_E <- matnums == "E"
-  E_Index <- which(tf_E,TRUE)
-  matnums[E_Index] <- 1
-  
-  tf_C <- matnums=="C"
-  C_Index <- which(tf_C, TRUE)
-  matnums[C_Index] <- 2
-  
-  tf_R <- matnums=="R"
-  R_Index <- which(tf_R, TRUE)
-  matnums[R_Index] <- 3
-  
-  tf_S <- matnums=="S"
-  S_Index <- which(tf_S, TRUE)
-  matnums[S_Index] <- 4  
-  
-  return(matnums)
-}
-
-
-
-# creates numeric matrix:  converts a character column to numeric in place
-numMat <- function(charMat) {
-  ncols <- ncol(charMat)
-  nrows <- nrow(charMat)
-  namat <- matrix(0, nrow = nrows, ncol = ncols)
-  for(i in 1:nrows) {
-    for(j in 1:ncols) {
-      namat[i,j] = as.numeric(charMat[i,j])
-    }
-  }
-  return(namat)
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-bigdata <- data.matrix(matnums)
-
-
-
-
-
-
-
-
-
-
-
-ugh <- matrix(rar[,1], nrow = 10, ncol = 10)
-if (ugh == "S") <- 1 {
-  paste(1)
-} else if(ugh == "R"){
-  paste(2)
-} else if(igh == "C"){
-  paste(3)
-} else()
-
-
-
-
-
-
-
-
-
-
-
-nas[,i+1 ] <- findLocalWinner(nas[,i]))
-nas[,i+1 ] <- as.vector(findLocalWinner(nas[,i]))
-
-
-make matrix from nas
-fun findlocalwinner
-make findlocalwiner a vector
-append vector to nas + 1
-
-    
-    
-    winner <- replicate(2500, findLocalWinner(max), simplify = "list")
-    nas[,i] <- nas
-  
-  
-  na_mat <- rep(0, )
-  
-  
-  
-  
-  return(wins)
-}
-
-
-runSim <- function(matrix){
-  for i in (1:2500){
-    
-    
-    winner <- replicate(2500, findLocalWinner(max), simplify = "list")
-  }
-  
-  1000*2500
-  
-  # 
-  #Output log(abundance) and each time step
-  
-}
-
-                    
- # C = Red
- # S = Blue
- # R = Green
   
 #drawbacks of this model:
 ### Evolution of S to R?????
