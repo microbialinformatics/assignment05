@@ -1,21 +1,21 @@
+### Uncomment line 11 and line 18 to see the local and global GIFs
+
 
 ########  RUN LOCAL SIMULATIONS 
 conditions <- c("S", "R", "C", "E")
 max <- createMatrix(conditions, nrows = 50, ncols = 50)
 bigmax <- runLocalSims2(max)
-### TIME TO GIF IT OUT
-gif(bigmax)
 ###### MAKE LINE PLOT FOR LOCAL
 plotLogTime(bigmax, "Local")
-
+### TIME TO GIF IT OUT  
+#gif(bigmax)
 
 ########  RUN GLOBAL SIMULATIONS 
-cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global, baby
-### TIME TO GIF IT OUT
-gif(cultbigmax)
+cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global
 ###### MAKE LINE PLOT FOR GLOBAL
 plotLogTime(cultbigmax, "Global")
-
+### TIME TO GIF IT OUT
+#gif(cultbigmax)
 
 ###########################################################################################
 createMatrix <- function(variable, nrows=50, ncols=50){
