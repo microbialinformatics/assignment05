@@ -246,20 +246,20 @@ runGlobalSims2  <- function(matrix) {  #Runs global simulations
     colnames(time_step) <- 1:501
     return(time_step)
   }  
+###########################################################################################
 
 
 
 
-
-
-########################   CHANGE FROM CHARACTERS TO NUMBERS   ##########################
+###########################################################################################
+########################   CHANGE MATRIX FROM CHARACTERS TO NUMBERS   ##########################
 #This function is an all-in-one charToNum + numMat, thanks to pat :)
 chartoNumNum <- function(matrix){  
   ifelse(matrix == "S",1, ifelse(matrix == "C",2, ifelse(matrix == "R", 3, 4)))
 }
 
 
-########################## TAKE A COLUMN AND MAKE A MATRIX  ##########################
+########################## TAKE A COLUMN of TABLE AND MAKE A MATRIX  ##########################
 colMatrix <- function(colMat){  #for one column make a matrix
   #i <- sqrt(nrow(colMat))
   return(matrix(colMat, nrow = 50, ncol = 50))
