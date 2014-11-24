@@ -302,20 +302,28 @@ return(results)
 
 ########################
 ### replicate the sampling and changing of cells for local competiton
-write.table(replicate(10,(local.comp(initial.matrix))),file="local.txt", header=T)
+write.table(replicate(25,(local.comp(initial.matrix))),file="local.txt")
 #transpose matrix so that the types of cells are the variable names
 local.results<-read.table("local.txt", header=T)
 #transpose matrix so that the types of cells are the variable names
 #iteration is the row
-trans.local.results<-(t(local.results[,2:ncol(local.results)]))
+trans.local.results<-(t(local.results[,1:ncol(local.results)]))
 colnames(trans.local.results)[1]<-"C"
 colnames(trans.local.results)[2]<-"S"
 colnames(trans.local.results)[3]<-"R"
 colnames(trans.local.results)[4]<-"E"
 #convert from matrix to dataframe to manipulate variables
 trans.local.results<-as.data.frame(trans.local.results)
+#add new counter column 
+trans.local.results["counter"]<-1:25
 #make a plot of the results
-plot
+plot(log10(trans.local.results$R)~trans.local.results$counter, type="l", col="green", ylim=c(0,5))
+lines(log10(trans.local.results$C)~trans.local.results$counter, type="l",col="red")
+lines(log10(trans.local.results$S)~trans.local.results$counter,type="l",col="blue")
+
+
+
+
 
 #replicate the sampling and changing of cells for the global competition
             
