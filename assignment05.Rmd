@@ -316,11 +316,11 @@ plotLogTime(cultbigmax, "Global")
 As you can see above, the resistant *E.coli* (R) wins the global scenario.  This is because R has a slighly lower death rate of 10/32 than the colicin-producing *E.coli* (C), which has a death rate of 1/3.  
 
 **Research questions:**  
-1.  If R and C have the same death rate, do R, C, & S coexist in the **local** simulations?
-2.  If R and C have the same death rate, do R, C & S coexist in the **global** simulations?
+1.  If R and C have the same death rate, do R, C, & S coexist in the **local** simulations?  
+2.  If R and C have the same death rate, do R, C & S coexist in the **global** simulations?  
 **Hypotheses:**   
-1.  R, C, and S will coexist if R & C have the same death rate in **local** simulations. 
-2.  R and C will coexist and cause S to go extinct if R & C have the same death rate in **global** simulations. 
+1.  R, C, and S will coexist if R & C have the same death rate in **local** simulations.  
+2.  R and C will coexist and cause S to go extinct if R & C have the same death rate in **global** simulations.   
 
 
 ```{r, echo = FALSE}
