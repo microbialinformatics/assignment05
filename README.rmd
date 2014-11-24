@@ -206,7 +206,7 @@ c<<-initial.matrix[(sample(1:50,1, replace=T))]
 results<<-initial.matrix
 }
 
-#experimental: non-wrapping matrix for local competition
+#EXPERIMENTAL: non-wrapping matrix for local competition
 experimental.comp<-function(initial.matrix) {
 r<<-initial.matrix[(sample(1:50,1, replace=T))]
 c<<-initial.matrix[(sample(1:50,1, replace=T))]
@@ -214,19 +214,75 @@ c<<-initial.matrix[(sample(1:50,1, replace=T))]
   up.row<-r+1
   # b center lower
   down.row<-r-1
-#c right upper corner
+  #c right upper corner
   r.up.corner<-r+1
-   #d left upper corner
+  #d left upper corner
   l.up.corner<-r+1
-    #e center right
+  #e center right
   center.r<-r
   # f center left
   center.l<-r
-    #g right lower corner
+  #g right lower corner
   r.low.corner<-r-1
   #h left lower corner 
   l.low.corner<-r-1
-
+   #Columns:
+  #a upper
+  up.col<-c
+  # b lower
+  low.col<-c
+   # c right upper corner
+  r.up.cor.col<-c+1
+  # d left upper corner
+  l.up.cor.col<-c-1
+  # e center right
+  center.r.col<-c+1
+  # f center left
+  center.l.col<-c-1
+  # g right lower corner
+  r.lower.cor.col<-c+1
+  # h left lower corner 
+  l.lower.cor.col<-c-1
+  # put together neighbor indices
+  A<<-initial.matrix[up.row,up.col]
+  B<<-initial.matrix[down.row,low.col]
+  C<<-initial.matrix[r.up.corner, r.up.cor.col]
+  D<<-initial.matrix[l.up.corner, l.up.cor.col]
+  E<<-initial.matrix[center.r, center.r.col]
+  G<<-initial.matrix[center.l, center.l.col]
+  H<<-initial.matrix[ r.low.corner,r.lower.cor.col]
+  I<<-initial.matrix[l.low.corner, l.lower.cor.col]
+#if the cell is not empty
+  #change based on given probabilities:#C=1/3 C is 1
+  #S0=1/4+(3/4*fractionC) s is 2
+  #R is 10/32 R is 3
+  #tau =3/4 and is used in delta S calculation
+  #start with vector of neighbors
+    make.vec<-c(A,B,C,D,E,G,H,I)
+  #find how many Cs there are in neighborhood
+  #calculate fraction of C to use in delta_S calculation
+    ones<-length(grep(1,make.vec))
+    fract.ones<-ones/length(make.vec)
+#change based on the given probabilities. Cs= cell sample scheme 
+  #C=1
+  if(initial.matrix[r,c]==1) {newcell<-sample((c(4,1)),1,prob=(c((1/3),(1-1/3))))}
+  #S=2
+  else if(initial.matrix[r,c]==2) {newcell<-sample((c(4,2)),1,prob=(c(((.25+.75*fract.ones)),(1-(.25+(.75*fract.ones))))))}
+  #R=3
+  else if(initial.matrix[r,c]==3) {newcell<-sample((c(3,4)),1,prob=(c((1-10/32),(10/32))))}
+#change the type based on what is in neighborhood if cell is empty
+  #probability of it becoming 1,2,3,0 is based on probability 
+  else if(initial.matrix[r,c]==4){newcell<-sample(1:8,1)} 
+        if(newcell<-1){newcell<-A}
+        else if(newcell<-2){newcell<-B}
+        else if(newcell<-3){newcell<-C}
+        else if(newcell<-4){newcell<-D}
+        else if(newcell<-5){newcell<-E}
+        else if(newcell<-6){newcell<-G}
+        else if(newcell<-7){newcell<-H}
+        else if(newcell<-8){newcell<-I}
+initial.matrix[r,c]<-newcell
+results<<-initial.matrix
 
 ########################
 ### replicate the sampling and changing of cells for local and global
