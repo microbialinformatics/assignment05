@@ -13,8 +13,8 @@ output: html_document
 
 ##Our Assumptions
 * Simple community that perfectly follows Rock-Paper-Scissors model:
-      + R beats C
-      + S beats R 
+      + Resistant *E.coli* (R) beats colicin-producing *E.coli* (C)
+      + Sensitive *E.coli* (S) beats R 
       + C beats S 
 * No top-down or bottom up controls on community.
       + No outside disturbance.
@@ -261,8 +261,164 @@ runGlobalSims2  <- function(matrix) {  #Runs global simulations
 ###########################################################################################
 
 
+##############################################################################
+##########################   FREQUENCY OF EACH CONDITION ##########################
+freqConds <- function(time_step){ #create a table with 4 rows (S, R, E, C) and their freq in all columns
+  gahhh <- as.data.frame(time_step)
+  oop <- sapply(gahhh, function(x) table(factor(x, levels=conditions)))
+  loop <- log10(oop)
+  loop[is.infinite(loop)] = 0  
+  loop <- as.data.frame(loop)
+  colnames(loop) <- 1:ncol(time_step)
+  return(loop)
+}
 
 
+plotLogTime <- function(time_step, title){
+  freqConds_output <- freqConds(time_step)
+  ff <- as.data.frame(t(freqConds_output))
+  plot(ff$S, type = "l", col = "blue", xlim=c(0,ncol(freqConds_output)),ylim=c(0,5), main = c(title, "Neighborhood"),
+       xlab = "Time", ylab = "Log(abundance)", lwd = 2, bty = "n") 
+  #lines(ff$E, type = "l", col = "black", lwd = 2)  
+  lines(ff$C, type = "l", col = "red", lwd = 2)
+  lines(ff$R, type = "l", col = "forestgreen", lwd = 2) 
+  legend("bottomright",c("S","R","C"),col=c("blue","forestgreen","red"),lty = 1, lwd = 3)
+}
+##############################################################################
+
+
+
+########  RUN LOCAL SIMULATIONS 
+conditions <- c("S", "R", "C", "E")
+max <- createMatrix(conditions, nrows = 50, ncols = 50)
+bigmax <- runLocalSims2(max)
+###### MAKE LINE PLOT FOR LOCAL
+plotLogTime(bigmax, "Local")
+
+########  RUN GLOBAL SIMULATIONS 
+cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global
+###### MAKE LINE PLOT FOR GLOBAL
+plotLogTime(cultbigmax, "Global")
+
+
+#### MAKE PLOT
+par(mfrow=c(2,1))
+plotLogTime(bigmax, "Local")
+plotLogTime(cultbigmax, "Global")
+
+```
+
+
+
+
+
+##Experiment
+As you can see above, the resistant *E.coli* (R) wins the global scenario.  This is because R has a slighly lower death rate of 10/32 than the colicin-producing *E.coli* (C), which has a death rate of 1/3.  
+
+**Research questions:**  
+1.  If R and C have the same death rate, do R, C, & S coexist in the **local** simulations?
+2.  If R and C have the same death rate, do R, C & S coexist in the **global** simulations?
+**Hypotheses:**   
+1.  R, C, and S will coexist if R & C have the same death rate in **local** simulations. 
+2.  R and C will coexist and cause S to go extinct if R & C have the same death rate in **global** simulations. 
+
+
+```{r, echo = FALSE}
+#######################  FIND THE LOCAL WINNER ######################################
+findWinnerLoc <- function (matrix, local){
+  nrow1 <- as.numeric(local[9])  #get row index
+  ncol1 <- as.numeric(local[10])  #get column index
+  index_value <- local[11]  #get index value
+  local <- local[1:8]
+  ########## INCLUDE PROBABILITIES
+  fC <- sum(local == "C")/8  
+  if(index_value == "S") {
+    deltaSO <- 1/4 #natural death of S
+    tau <- 3/4 #toxicity of colicin 
+    s_death <- deltaSO + tau*fC    #death
+    s_survive <- 1 - s_death    #survival
+    s_winner <- sample(c("S", "E"), 1, prob = c(s_survive, s_death)) #survival vs. death
+    matrix[nrow1, ncol1] <- s_winner #replace with new outcome
+  } else if(index_value == "R") {
+    r_death <- 10/30  #death
+    r_survive <- 1- r_death   #survival
+    r_winner <- sample(c("R", "E"), 1, prob = c(r_survive, r_death)) #survival  
+    matrix[nrow1, ncol1] <- r_winner #replace with new outcome
+  } else if(index_value == "C") {
+    c_death <- 1/3  #death
+    c_survive <-  1 - c_death #survival
+    c_winner <- sample(c("C", "E"), 1, prob = c(c_survive, c_death)) #survival vs death
+    matrix[nrow1, ncol1] <- c_winner #replace with new outcome
+  } else {
+    fR <- sum(local == "R")/8
+    fS <- sum(local == "S")/8
+    fE <- sum(local == "E")/8
+    e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
+    matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
+ return(matrix)
+}
+
+
+
+
+findWinnerGlobal <- function(matrix) {  #This finds the global winner
+  index_info <- findIndex(matrix) #nrow, ncol, 
+  nrow1 <- as.numeric(index_info[1])  #get row index
+  ncol1 <- as.numeric(index_info[2])  #get column index
+  index_value <- index_info[3]  #get index value
+  colDim <- nrow(matrix)*ncol(matrix)
+  ########## INCLUDE PROBABILITIES
+  maxVec <- as.vector(matrix)
+  if(index_value == "S") { 
+    fC <- sum(maxVec == "C")/colDim
+    deltaSO <- 1/4 #natural death of S
+    tau <- 3/4 #toxicity of colicin 
+    s_death <- deltaSO + tau*fC    #death
+    s_survive <- 1 - s_death    #survival
+    s_winner <- sample(c("S", "E"), 1, prob = c(s_survive, s_death)) #survival vs. death
+    matrix[nrow1, ncol1] <- s_winner #replace with new outcome
+  } else if(index_value == "R") {
+    r_death <- 10/32  #death
+    r_survive <- 1- r_death   #survival
+    r_winner <- sample(c("R", "E"), 1, prob = c(r_survive, r_death)) #survival  
+    matrix[nrow1, ncol1] <- r_winner #replace with new outcome
+  } else if(index_value == "C") {
+    c_death <- 1/3  #death
+    c_survive <-  1 - c_death #survival
+    c_winner <- sample(c("C", "E"), 1, prob = c(c_survive, c_death)) #survival vs death
+    matrix[nrow1, ncol1] <- c_winner #replace with new outcome
+  } else {
+    fC <- sum(maxVec == "C")/colDim
+    fR <- sum(maxVec == "R")/colDim 
+    fS <- sum(maxVec == "S")/colDim
+    fE <- (sum(maxVec == "E") - sum(index_value == "E"))/colDim 
+    e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
+    matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
+  return(matrix)
+}
+
+
+
+
+########  RUN LOCAL SIMULATIONS 
+conditions <- c("S", "R", "C", "E")
+max <- createMatrix(conditions, nrows = 50, ncols = 50)
+expmax <- runLocalSims2(max)
+plotLogTime(expmax, "Local")
+
+########  RUN GLOBAL SIMULATIONS 
+expbigmax <- runGlobalSims2(max) # cult = culture, we're going global
+###### MAKE LINE PLOT FOR GLOBAL
+plotLogTime(expbigmax, "Global")
+```
+
+
+
+
+
+## TIME TO GIF IT OUT  
+
+```{r, echo = FALSE}
 ###########################################################################################
 ########################   CHANGE MATRIX FROM CHARACTERS TO NUMBERS   ##########################
 #This function is an all-in-one charToNum + numMat, thanks to pat :)
@@ -300,65 +456,9 @@ gif <- function(bigmatrix) {
 
 
 
-##############################################################################
-##########################   FREQUENCY OF EACH CONDITION ##########################
-freqConds <- function(time_step){ #create a table with 4 rows (S, R, E, C) and their freq in all columns
-  gahhh <- as.data.frame(time_step)
-  oop <- sapply(gahhh, function(x) table(factor(x, levels=conditions)))
-  loop <- log10(oop)
-  loop[is.infinite(loop)] = 0  
-  loop <- as.data.frame(loop)
-  colnames(loop) <- 1:ncol(time_step)
-  return(loop)
-}
-
-
-plotLogTime <- function(time_step, title){
-  freqConds_output <- freqConds(time_step)
-  ff <- as.data.frame(t(freqConds_output))
-  plot(ff$S, type = "l", col = "blue", xlim=c(0,ncol(freqConds_output)),ylim=c(0,5), main = c(title, "Neighborhood"),
-       xlab = "Time", ylab = "Log(abundance)", lwd = 2, bty = "n") 
-  #lines(ff$E, type = "l", col = "black", lwd = 2)  
-  lines(ff$C, type = "l", col = "red", lwd = 2)
-  lines(ff$R, type = "l", col = "forestgreen", lwd = 2) 
-  legend("bottomright",c("S","R","C"),col=c("blue","forestgreen","red"),lty = 1, lwd = 3)
-}
-##############################################################################
-
-
-
-########  RUN LOCAL SIMULATIONS 
-conditions <- c("S", "R", "C", "E")
-max <- createMatrix(conditions, nrows = 50, ncols = 50)
-bigmax <- runLocalSims2(max)
-###### MAKE LINE PLOT FOR LOCAL
-plotLogTime(bigmax, "Local")
-### TIME TO GIF IT OUT  
-gif(bigmax)
-
-########  RUN GLOBAL SIMULATIONS 
-cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global
-###### MAKE LINE PLOT FOR GLOBAL
-plotLogTime(cultbigmax, "Global")
-### TIME TO GIF IT OUT
-gif(cultbigmax)
-
-
-#### MAKE PLOT
-par(mfrow=c(2,1))
-plotLogTime(bigmax, "Local")
-plotLogTime(cultbigmax, "Global")
-
-```
-
-```{r}
-
 ```
 
 
 
-
-##Experiment
-
-GIF
+##GIF
 
