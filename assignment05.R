@@ -6,16 +6,45 @@ conditions <- c("S", "R", "C", "E")
 max <- createMatrix(conditions, nrows = 50, ncols = 50)
 bigmax <- runLocalSims2(max)
 ###### MAKE LINE PLOT FOR LOCAL
-plotLogTime(bigmax, "Local")
+plot_local <- plotLogTime(bigmax, "Local")
 ### TIME TO GIF IT OUT  
-#gif(bigmax)
+gif_local <- gif(bigmax)
 
 ########  RUN GLOBAL SIMULATIONS 
 cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global
 ###### MAKE LINE PLOT FOR GLOBAL
-plotLogTime(cultbigmax, "Global")
+plot_global <- plotLogTime(cultbigmax, "Global")
 ### TIME TO GIF IT OUT
-#gif(cultbigmax)
+gif_global <- gif(cultbigmax)
+
+
+?par
+
+loc <- chartoNumNum(bigmax)
+loc1 <- colMatrix(loc[,300])
+
+glob <- chartoNumNum(cultbigmax)
+glob1 <- colMatrix(glob[,300])
+
+colors <- c("forestgreen", "red", "blue","white")
+par(mfrow=c(2,2))
+
+image(z=loc1, axes = FALSE, col = colors)
+plotLogTime(bigmax, "Local")
+
+image(z=glob1, axes = FALSE, col = colors)
+plotLogTime(cultbigmax, "Global")
+
+
+par(mfrow=c(2,1))
+
+plotLogTime(bigmax, "Local")
+
+plotLogTime(cultbigmax, "Global")
+
+
+
+
 
 ###########################################################################################
 createMatrix <- function(variable, nrows=50, ncols=50){

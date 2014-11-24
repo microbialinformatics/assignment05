@@ -325,9 +325,35 @@ plotLogTime <- function(time_step, title){
 }
 ##############################################################################
 
+
+
+########  RUN LOCAL SIMULATIONS 
+conditions <- c("S", "R", "C", "E")
+max <- createMatrix(conditions, nrows = 50, ncols = 50)
+bigmax <- runLocalSims2(max)
+###### MAKE LINE PLOT FOR LOCAL
+plotLogTime(bigmax, "Local")
+### TIME TO GIF IT OUT  
+gif(bigmax)
+
+########  RUN GLOBAL SIMULATIONS 
+cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global
+###### MAKE LINE PLOT FOR GLOBAL
+plotLogTime(cultbigmax, "Global")
+### TIME TO GIF IT OUT
+gif(cultbigmax)
+
+
+#### MAKE PLOT
+par(mfrow=c(2,1))
+plotLogTime(bigmax, "Local")
+plotLogTime(cultbigmax, "Global")
+
 ```
 
+```{r}
 
+```
 
 
 
@@ -335,16 +361,4 @@ plotLogTime <- function(time_step, title){
 ##Experiment
 
 GIF
-
-
-
-```{r}
-summary(cars)
-```
-
-You can also embed plots, for example:
-
-```{r, echo=FALSE}
-plot(cars)
-```
 
