@@ -142,7 +142,7 @@ update_local <- function(lattice)
     f.C <- length(which(l.neighbor=="C"))/divider
     f.S <- length(which(l.neighbor=="S"))/divider
     f.R <- length(which(l.neighbor=="R"))/divider
-    f.E <- 1-f.C-f.S-f.R
+    f.E <- length(which(l.neighbor=="E"))/divider
     delta.C <- 1/3
     delta.S <- (1/4+3/4*f.C)
     delta.R <- 10/32
@@ -196,9 +196,9 @@ rep_local <- function(n,lattice,cell)
 }
 
 #plot
-x.y.C_local <- rep(1000,lattice,"C")
+x.y.C_local <- rep_local(1000,lattice,"C")
 plot(x.y.C_local,type="l",col="red",xlab="Time",ylab="Log(abundance)",main="Local neighbourhood",xlim=c(0,1000),ylim=c(0,5))
-x.y.S_local <- rep(1000,lattice,"S")
+x.y.S_local <- rep_local(1000,lattice,"S")
 points(x.y.S_local[,1],x.y.S_local[,2],type="l",col="blue")
-x.y.R_local <- rep(1000,lattice,"R")
+x.y.R_local <- rep_local(1000,lattice,"R")
 points(x.y.R_local[,1],x.y.R_local[,2],type="l",col="green")
