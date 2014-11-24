@@ -170,32 +170,20 @@ if( l.lower.cor.col>50){l.lower.cor.col<-1}
         else if(newcell<-6){newcell<-G}
         else if(newcell<-7){newcell<-H}
         else if(newcell<-8){newcell<-I}
-initial.matrix[r,c]<<-newcell
+initial.matrix[r,c]<-newcell
+results<<-initial.matrix
 #return matrix
    }
 
-#now to run the sampling scheme multiple times and save the matrices each time for the local competition
-repeat.local.comp<-function(n){
-  n<-10
-rep((local.comp(initial.matrix)),n)
-  }
-  
-
-   
-
-
-initial.matrix[r,c]<-newcell
-return initial.matrix #need to make this global and store matrix
+### replicate the sampling and changing of cells
+replicate.comp<-function(initial.matrix){
+  local.results<<-replicate(10,(local.comp(initial.matrix)))
+  return(write.table(results, file="local.txt"))
 }
 
-###loop to replicate the sampling and changing of cells
-replicate.comp<-function(){
-  local.results<<-rep(local.comp(), 50)
-  return(write.table(local.results, file="local.txt")
-}
 ###replicate sampling for global
 replicate.comp.global<-function(){
-  global.results<<-rep(global.comp(),50)
+  global.results<<-replicate(global.comp(),50)
   return(write.table(global.results, file="global.txt"))
   
 }
