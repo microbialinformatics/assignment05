@@ -174,7 +174,8 @@ initial.matrix[r,c]<-newcell
 results<<-initial.matrix
 #return matrix
    }
-###Sampling for global competition
+
+#Sampling for global competition
 global.comp<-function(initial.matrix) {
   #creating random cell to pick for type to change to if cell picked is empty
   new.row<-sample(1:50,1)
@@ -204,6 +205,28 @@ c<<-initial.matrix[(sample(1:50,1, replace=T))]
   initial.matrix[r,c]<-newcell
 results<<-initial.matrix
 }
+
+#experimental: non-wrapping matrix for local competition
+experimental.comp<-function(initial.matrix) {
+r<<-initial.matrix[(sample(1:50,1, replace=T))]
+c<<-initial.matrix[(sample(1:50,1, replace=T))]
+  #a center upper
+  up.row<-r+1
+  # b center lower
+  down.row<-r-1
+#c right upper corner
+  r.up.corner<-r+1
+   #d left upper corner
+  l.up.corner<-r+1
+    #e center right
+  center.r<-r
+  # f center left
+  center.l<-r
+    #g right lower corner
+  r.low.corner<-r-1
+  #h left lower corner 
+  l.low.corner<-r-1
+
 
 ########################
 ### replicate the sampling and changing of cells for local and global
