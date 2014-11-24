@@ -15,7 +15,7 @@ cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global
 ###### MAKE LINE PLOT FOR GLOBAL
 plotLogTime(cultbigmax, "Global")
 ### TIME TO GIF IT OUT
-#gif(cultbigmax)
+gif(cultbigmax)
 
 ###########################################################################################
 createMatrix <- function(variable, nrows=50, ncols=50){
@@ -194,14 +194,14 @@ runLocalSims2 <- function(matrix){ #This one goes faster!
 
 ##############################   Global Calculations and Simulations   ########################
 findWinnerGlobal <- function(matrix) {  #This finds the global winner
-  index_info <- findIndex(max) #nrow, ncol, 
+  index_info <- findIndex(matrix) #nrow, ncol, 
   nrow1 <- as.numeric(index_info[1])  #get row index
   ncol1 <- as.numeric(index_info[2])  #get column index
   index_value <- index_info[3]  #get index value
-  colDim <- nrow(max)*ncol(max)
+  colDim <- nrow(matrix)*ncol(matrix)
   ########## INCLUDE PROBABILITIES
-  maxVec <- as.vector(max)
-  if(index_value == "S") {
+  maxVec <- as.vector(matrix)
+  if(index_value == "S") { 
     fC <- sum(maxVec == "C")/colDim
     deltaSO <- 1/4 #natural death of S
     tau <- 3/4 #toxicity of colicin 
