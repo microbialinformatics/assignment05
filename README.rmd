@@ -302,7 +302,7 @@ return(results)
 
 ########################
 ### replicate the sampling and changing of cells for local competiton
-write.table(replicate(25,(local.comp(initial.matrix))),file="local.txt")
+write.table(replicate(5000,(local.comp(initial.matrix))),file="local.txt")
 #transpose matrix so that the types of cells are the variable names
 local.results<-read.table("local.txt", header=T)
 #transpose matrix so that the types of cells are the variable names
@@ -315,9 +315,9 @@ colnames(trans.local.results)[4]<-"E"
 #convert from matrix to dataframe to manipulate variables
 trans.local.results<-as.data.frame(trans.local.results)
 #add new counter column 
-trans.local.results["counter"]<-1:25
+trans.local.results["counter"]<-1:5000
 #make a plot of the results
-plot(log10(trans.local.results$R)~trans.local.results$counter, type="l", col="green", ylim=c(0,5))
+plot(log10(trans.local.results$R)~trans.local.results$counter, type="l", col="green",ylim=(c(0,5)))
 lines(log10(trans.local.results$C)~trans.local.results$counter, type="l",col="red")
 lines(log10(trans.local.results$S)~trans.local.results$counter,type="l",col="blue")
 
