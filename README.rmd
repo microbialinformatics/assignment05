@@ -302,17 +302,18 @@ return(results)
 
 ########################
 ### replicate the sampling and changing of cells for local competiton
-
-write.table(replicate(25,(local.comp(initial.matrix))),file="local.txt")
+write.table(replicate(10,(local.comp(initial.matrix))),file="local.txt", header=T)
 #transpose matrix so that the types of cells are the variable names
-local.results<-read.table("local.txt")
+local.results<-read.table("local.txt", header=T)
 #transpose matrix so that the types of cells are the variable names
 #iteration is the row
-trans.local.results<-t(local.results[,2:ncol(local.results)])
-names(trans.local)[1]<-paste("C")
-names(trans.local)[2]<-paste("S")
-names(trans.local)[3]<-paste("R")
-names(trans.local)[4]<-paste("E")
+trans.local.results<-(t(local.results[,2:ncol(local.results)]))
+colnames(trans.local.results)[1]<-"C"
+colnames(trans.local.results)[2]<-"S"
+colnames(trans.local.results)[3]<-"R"
+colnames(trans.local.results)[4]<-"E"
+#convert from matrix to dataframe to manipulate variables
+trans.local.results<-as.data.frame(trans.local.results)
 #make a plot of the results
 plot
 
