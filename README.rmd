@@ -174,25 +174,14 @@ initial.matrix[r,c]<-newcell
 results<<-initial.matrix
 #return matrix
    }
+###replicate sampling for global
 
 ### replicate the sampling and changing of cells
-replicate.comp<-function(initial.matrix){
-  local.results<<-replicate(10,(local.comp(initial.matrix)))
-  return(write.table(results, file="local.txt"))
-}
+write.table(replicate(10,(local.comp(initial.matrix))),file="local.txt")
+            
 
-###replicate sampling for global
-replicate.comp.global<-function(){
-  global.results<<-replicate(global.comp(),50)
-  return(write.table(global.results, file="global.txt"))
-  
-}
 
-  #change 
-#store matrix
-#run again using stored matrix...
-}
- 
+
   
 
 
