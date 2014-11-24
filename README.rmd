@@ -60,8 +60,8 @@ seeds<-sample(1:4,2500, replace=T) #pick the random numbers to fill matrix
 initial.matrix<-matrix(seeds,nrow=50, ncol=50) #create matrix with random numbers
 #pick random cell in matrix to change
 ####################
-#function takes initial random cellfrom matrix and changes it based on local neighborhood dynamics
-local.comp<-function(initial.matrix) {  
+#function takes initial random cell from matrix and changes it based on local neighborhood dynamics
+local.comp<-function(initial.matrix) { 
 r<<-initial.matrix[(sample(1:50,1, replace=T))]
 c<<-initial.matrix[(sample(1:50,1, replace=T))]
 #select local neighborhood based on index
@@ -163,21 +163,20 @@ if( l.lower.cor.col>50){l.lower.cor.col<-1}
   #probability of it becoming 1,2,3,0 is based on probability 
   else if(initial.matrix[r,c]==4){newcell<-sample(1:8,1)} 
         if(newcell<-1){newcell<-A}
-        else if(newcell<-2){newcell<-B}
-        else if(newcell<-3){newcell<-C}
-        else if(newcell<-4){newcell<-D}
-        else if(newcell<-5){newcell<-E}
-        else if(newcell<-6){newcell<-G}
-        else if(newcell<-7){newcell<-H}
-        else if(newcell<-8){newcell<-I}
-initial.matrix[r,c]<-newcell
+        else if(newcell<-2){newcell<<-B}
+        else if(newcell<-3){newcell<<-C}
+        else if(newcell<-4){newcell<<-D}
+        else if(newcell<-5){newcell<<-E}
+        else if(newcell<-6){newcell<<-G}
+        else if(newcell<-7){newcell<<-H}
+        else if(newcell<-8){newcell<<-I}
+initial.matrix[r,c]<<-newcell
 results.c<<-length(grep(1,initial.matrix))
 results.s<<-length(grep(2,initial.matrix))
 results.r<<-length(grep(3,initial.matrix))
 results.e<<-length(grep(4,initial.matrix))
 results<<-((c(results.c,results.s, results.r, results.e)))
 #reassign initial.matrix for next round
-initial.matrix<<-initial.matrix
 return(results)
 #return matrix
    }
@@ -209,7 +208,7 @@ c<<-initial.matrix[(sample(1:50,1, replace=T))]
 #change the type based on what is in neighborhood if cell is empty
   #probability of it becoming 1,2,3,0 is based on probability 
   else if (initial.matrix[r,c]==4){newcell<-initial.matrix[new.row,new.col]}
-  initial.matrix[r,c]<-newcell
+  initial.matrix[r,c]<<-newcell
 results.c<<-length(grep(1,initial.matrix))
 results.s<<-length(grep(2,initial.matrix))
 results.r<<-length(grep(3,initial.matrix))
