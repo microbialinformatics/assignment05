@@ -255,7 +255,7 @@ runGlobalSims2  <- function(matrix) {  #Runs global simulations
 ########################   CHANGE MATRIX FROM CHARACTERS TO NUMBERS   ##########################
 #This function is an all-in-one charToNum + numMat, thanks to pat :)
 chartoNumNum <- function(matrix){  
-  ifelse(matrix == "S",1, ifelse(matrix == "C",2, ifelse(matrix == "R", 3, 4)))
+  ifelse(matrix == "R",1, ifelse(matrix == "C",2, ifelse(matrix == "S", 3, 4)))
 }
 
 
@@ -267,13 +267,13 @@ colMatrix <- function(colMat){  #for one column make a matrix
 
 ########################## TAKE MATRIX MAKE HEATPLOT  ##########################
 plotHeat <- function(newmat){
-  colors <- c("blue", "red", "forestgreen","white")
+  colors <- c("forestgreen", "red", "blue","white")
   image(z=newmat, axes = FALSE, col = colors) #x=1:nrow(newmat), y=1:ncol(newmat),
 }
 
 ##########################  MAKE A GIF WITH MANY PLOTS ##########################
 #http://stackoverflow.com/questions/9973610/using-the-animation-package
-install.packages(animation)
+install.packages("animation")
 library(animation)
 gif <- function(bigmatrix) {
   namat <- chartoNumNum(bigmatrix)
