@@ -174,7 +174,6 @@ if( l.lower.cor.col>50){l.lower.cor.col<-1}
         else if(newcell<-8){newcell<<-I}
 initial.matrix[r,c]<<-newcell
 repeat.matrix<<-initial.matrix
-rm(initial.matrix)
 results.c<<-length(grep(1,initial.matrix))
 results.s<<-length(grep(2,initial.matrix))
 results.r<<-length(grep(3,initial.matrix))
