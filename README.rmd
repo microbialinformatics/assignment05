@@ -208,7 +208,12 @@ c<<-initial.matrix[(sample(1:50,1, replace=T))]
   #probability of it becoming 1,2,3,0 is based on probability 
   else if (initial.matrix[r,c]==4){newcell<-initial.matrix[new.row,new.col]}
   initial.matrix[r,c]<-newcell
-results<<-initial.matrix
+results.c<<-length(grep(1,initial.matrix))
+results.s<<-length(grep(2,initial.matrix))
+results.r<<-length(grep(3,initial.matrix))
+results.e<<-length(grep(4,initial.matrix))
+results<<-((c(results.c,results.s, results.r, results.e)))
+return(results)
 }
 
 #EXPERIMENTAL: non-wrapping matrix for local competition
@@ -287,17 +292,29 @@ c<<-initial.matrix[(sample(1:50,1, replace=T))]
         else if(newcell<-7){newcell<-H}
         else if(newcell<-8){newcell<-I}
 initial.matrix[r,c]<-newcell
-results<<-initial.matrix
+results.c<<-length(grep(1,initial.matrix))
+results.s<<-length(grep(2,initial.matrix))
+results.r<<-length(grep(3,initial.matrix))
+results.e<<-length(grep(4,initial.matrix))
+results<<-((c(results.c,results.s, results.r, results.e)))
+return(results)
 }
 
 ########################
 ### replicate the sampling and changing of cells for local competiton
 
-write.table(replicate(2500,(local.comp(initial.matrix))),file="local.txt")
+write.table(replicate(25,(local.comp(initial.matrix))),file="local.txt")
+#transpose matrix so that the types of cells are the variable names
+local.results<-read.table("local.txt")
 #transpose matrix so that the types of cells are the variable names
 #iteration is the row
-local.results<-read.table("local.txt")
-trans.local.results<-t(test[,2:ncol(test)])
+trans.local.results<-t(local.results[,2:ncol(local.results)])
+names(trans.local)[1]<-paste("C")
+names(trans.local)[2]<-paste("S")
+names(trans.local)[3]<-paste("R")
+names(trans.local)[4]<-paste("E")
+#make a plot of the results
+plot
 
 #replicate the sampling and changing of cells for the global competition
             
