@@ -57,7 +57,7 @@ To test this, we have removed the code for wrapping the matrix, and have run the
 #fill matrix with randomly selected 4 choices
 #C=1,S=2,R=3, E=4 empty (4 choices)
 seeds<-sample(1:4,2500, replace=T) #pick the random numbers to fill matrix
-initial.matrix<-matrix(seeds,nrow=50, ncol=50) #create matrix with random numbers
+test.matrix<-matrix(seeds,nrow=50, ncol=50) #create matrix with random numbers
 #pick random cell in matrix to change
 ####################
 #function takes initial random cell from matrix and changes it based on local neighborhood dynamics
@@ -209,6 +209,7 @@ c<<-initial.matrix[(sample(1:50,1, replace=T))]
   #probability of it becoming 1,2,3,0 is based on probability 
   else if (initial.matrix[r,c]==4){newcell<-initial.matrix[new.row,new.col]}
   initial.matrix[r,c]<<-newcell
+result.matrix<<-initial.matrix
 results.c<<-length(grep(1,initial.matrix))
 results.s<<-length(grep(2,initial.matrix))
 results.r<<-length(grep(3,initial.matrix))
@@ -292,7 +293,7 @@ c<<-initial.matrix[(sample(1:50,1, replace=T))]
         else if(newcell<-6){newcell<-G}
         else if(newcell<-7){newcell<-H}
         else if(newcell<-8){newcell<-I}
-initial.matrix[r,c]<-newcell
+initial.matrix[r,c]<<-newcell
 results.c<<-length(grep(1,initial.matrix))
 results.s<<-length(grep(2,initial.matrix))
 results.r<<-length(grep(3,initial.matrix))
@@ -304,7 +305,14 @@ return(results)
 ########################
 ### replicate the sampling and changing of cells for local competiton
 #problem!: this is not using previous matrix to fill 
-write.table(replicate(5000,(local.comp(initial.matrix))),file="local.txt")
+#set up first run
+
+#use results of first run to replicate and write to file
+local.comp(test.matrix)
+write.table(replicate(500,(local.comp(initial.matrix))),file="local.txt")
+
+
+#format data
 #transpose matrix so that the types of cells are the variable names
 local.results<-read.table("local.txt", header=T)
 #transpose matrix so that the types of cells are the variable names
