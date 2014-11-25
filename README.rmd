@@ -352,7 +352,7 @@ frequencies<-function(empty.matrix){
 freq.matrix<-frequencies(empty.matrix)                    
 #transpose
 freq.matrix.t<-as.data.frame(t(freq.matrix))
-plot(freq.matrix.t$"1",type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="Local neighbourhood", xlim=c(0,ncol(freq.matrix.t)))
+plot(freq.matrix.t$"1",type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="Local neighbourhood", xlim=c(0,ncol(freq.matrix)))
 lines(freq.matrix.t$"2", type="l", col="red")
 lines(freq.matrix.t$"3", type="l", col="blue")
 #plot the abundances
@@ -360,44 +360,38 @@ plot(abundance.1[1,],abundance.1[2,], type="l",
 lines(abundance.1[1,],abundance.1[3,], type="l",col="red")
 lines(abundance.1[1,],abundance.1[4,],type="l",col="blue")
 ############################################
-####deleted global sampling because it is not letting me run my knit doc
+#global competition
+fill<-(c("NA"))
+empty.matrix<-matrix(fill,nrow=2500,ncol=501) #make empty matrix to fill 
+update.matrix<-initial.matrix #call input matrix something else to update it
+j<-1
+for( i in 1:((2500)*500)) { #for each update
+  if (i==1 | i %% 2500==0){ #
+    empty.matrix[,j]<-update.matrix
+    j <-j+1
+  }
+  update.matrix<-global.comp(initial.matrix)
+  }
+colnames(empty.matrix)<-1:501
+return(empty.matrix)
+}
+frequencies<-function(empty.matrix){
+  empty.matrix.df<-as.data.frame(empty.matrix)
+  label.matrix<-sapply(empty.matrix.df, function(x) table(factor(x, levels=(c("1","2","3","4")))))
+  lable.matrix.log<-log10(label.matrix)
+  lable.matrix.log[is.infinite(lable.matrix.log)] = 0
+  lable.matrix.log<-as.data.frame(lable.matrix.log)
+  return(lable.matrix.log)
+  }
+freq.matrix<-frequencies(empty.matrix)                    
+#transpose
+freq.matrix.t<-as.data.frame(t(freq.matrix))
+plot(freq.matrix.t$"1",type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="Global neighbourhood", xlim=c(0,ncol(freq.matrix)))
+lines(freq.matrix.t$"2", type="l", col="red")
+lines(freq.matrix.t$"3", type="l", col="blue")
 
 #############
 #loop for experimental
-abundance.expt<-1
-for(i in 1:1000){
-  replicate(2500, experimental.comp(initial.matrix))
-  #C,S,R
-  column<-rbind(1, sum(initial.matrix=="1"), sum(initial.matrix=="2"), sum(initial.matrix=="3"))
-  abundance.expt<-cbind(abundance.expt,column)
-}
-
-#commented out for knitter doc because this runs for ever and does not work
-abundance.global<-1
-for(i in 1:500){
-  replicate(2500, global.comp(initial.matrix))
-  #C,S,R
-column<-rbind(1, sum(initial.matrix=="1"), sum(initial.matrix=="2"), sum(initial.matrix=="3"))
-  abundance.global<-cbind(abundance.global, column)
-}
-
-#log transform the data for global
-abundance.global.1<-abundance.global[,-1]
-abundance.1.global[1,1:1000]<-1:1000
-abundance.1.global[2,]<-sapply(abundance.1.global[2,],log10)
-abundance.1.global[3,]<-sapply(abundance.1.global[3,],log10)
-abundance.1.global[4,]<-sapply(abundance.1.global[4,],log10)
-#plot the abundances for global
-plot(abundance.1.global[1,],abundance.1.global[2,], type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="Global neighbourhood",)
-lines(abundance.1.global[1,],abundance.1.global[3,], type="l",col="red")
-lines(abundance.1.global[1,],abundance.1.global[4,],type="l",col="blue")
-
-#log transform the data for experiment
-abundance.expt<-abundance[,-1]
-abundance.expt[1,1:1000]<-1:1000
-abundance.expt[2,]<-sapply(abundance.expt[2,],log10)
-abundance.expt[3,]<-sapply(abundance.expt[3,],log10)
-abundance.expt[4,]<-sapply(abundance.expt[4,],log10)
 
 
 ```
