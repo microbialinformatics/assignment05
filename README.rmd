@@ -60,8 +60,6 @@ C-->C : 1 - delta_C
 5. Under these probabilities a rock-paper-scissors dynamic occurs where: S displaces R because S grows better, R displaces C because R grows better, and C can displace S because C kills S. 
 6. neighborhoods include 8 cells surrounding a point, and neighborhoods of cells on the edge include distant cells (furthest away from index cell in the same plane)
 
-**line graphs
-
 **Experiment
 The authors initially have empty cells in their matrix. Some communities are saturated. I wanted to know how the population dynamics would change if the starting community were fully saturated with S, C or R cells. I hypothesize that the S cells would die out faster in this scenario because there are no empty cells to be randomly changed to occupied by other cell types, so the overall displacement would play out faster. 
 Results line graph below.
@@ -322,6 +320,8 @@ initial.matrix[r,c]<<-newcell
 #reassign initial.matrix for next round
 #return matrix
    }
+```{r}
+
 
 abundance<-1
 #forloop for local.comp
@@ -343,7 +343,6 @@ lines(abundance.1[1,],abundance.1[3,], type="l",col="red")
 lines(abundance.1[1,],abundance.1[4,],type="l",col="blue")
 ############################################
 ####deleted global sampling because it is not letting me run my knit doc
-
 
 #############
 #loop for experimental
