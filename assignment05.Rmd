@@ -290,6 +290,7 @@ plotLogTime <- function(time_step, title){
 
 ########  RUN LOCAL SIMULATIONS 
 conditions <- c("S", "R", "C", "E")
+set.seed(1)
 max <- createMatrix(conditions, nrows = 50, ncols = 50)
 bigmax <- runLocalSims2(max)
 ###### MAKE LINE PLOT FOR LOCAL
