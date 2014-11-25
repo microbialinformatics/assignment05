@@ -63,8 +63,9 @@ C-->C : 1 - delta_C
 **line graphs
 
 **Experiment
-The authors initially have empty cells in their matrix. Some communities are saturated. I wanted to know how the population dynamics would change if the starting community were fully saturated with S, C or R cells. I hypothesize that the S cells would die out faster in this scenario because there are no empty cells to be randomly changed to occupied by other cell types, so the overall displacement would play out faster. Results below.
-
+The authors initially have empty cells in their matrix. Some communities are saturated. I wanted to know how the population dynamics would change if the starting community were fully saturated with S, C or R cells. I hypothesize that the S cells would die out faster in this scenario because there are no empty cells to be randomly changed to occupied by other cell types, so the overall displacement would play out faster. 
+Results line graph below.
+interpretation: the abundences are lower and the cells do not appear to change. Perhaps with no empty cells the cell types cannot change from their initial seeding density/locations because there is no room to increase or decrease the abundance of any of the three cell types. An alternative interpretation is that I have an error in my coding and the experimental competion matrix does not update for each round in the forloop.
 
 
 
