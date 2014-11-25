@@ -343,26 +343,20 @@ return(empty.matrix)
 #C,S,R
 frequencies<-function(empty.matrix){
   empty.matrix.df<-as.data.frame(empty.matrix)
-  label.matrix<-sapply(empty.matrix.df, function(x) table(factor(x, levels=(c("C","S","R","E")))))
+  label.matrix<-sapply(empty.matrix.df, function(x) table(factor(x, levels=(c("1","2","3","4")))))
   lable.matrix.log<-log10(label.matrix)
   lable.matrix.log[is.infinite(lable.matrix.log)] = 0
   lable.matrix.log<-as.data.frame(lable.matrix.log)
   return(lable.matrix.log)
   }
-frequencies(empty.matrix)                    
-  
-}
-  column<-rbind(1, sum(initial.matrix=="1"), sum(initial.matrix=="2"), sum(initial.matrix=="3"))
-  abundance<-cbind(abundance,column)
-}
-#log transform the data
-abundance.1<-abundance[,-1]
-abundance.1[1,1:1000]<-1:1000
-abundance.1[2,]<-sapply(abundance.1[2,],log10)
-abundance.1[3,]<-sapply(abundance.1[3,],log10)
-abundance.1[4,]<-sapply(abundance.1[4,],log10)
+freq.matrix<-frequencies(empty.matrix)                    
+#transpose
+freq.matrix.t<-as.data.frame(t(freq.matrix))
+plot(freq.matrix.t$"1",type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="Local neighbourhood", xlim=c(0,ncol(freq.matrix.t)))
+lines(freq.matrix.t$"2", type="l", col="red")
+lines(freq.matrix.t$"3", type="l", col="blue")
 #plot the abundances
-plot(abundance.1[1,],abundance.1[2,], type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="Local neighbourhood",)
+plot(abundance.1[1,],abundance.1[2,], type="l", 
 lines(abundance.1[1,],abundance.1[3,], type="l",col="red")
 lines(abundance.1[1,],abundance.1[4,],type="l",col="blue")
 ############################################
