@@ -380,10 +380,7 @@ abundance.expt[1,1:1000]<-1:1000
 abundance.expt[2,]<-sapply(abundance.expt[2,],log10)
 abundance.expt[3,]<-sapply(abundance.expt[3,],log10)
 abundance.expt[4,]<-sapply(abundance.expt[4,],log10)
-#plot the abundances for experiment
-plot(abundance.expt[1,],abundance.expt[2,], type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="no Empty cells Local neighbourhood",)
-lines(abundance.expt[1,],abundance.expt[3,], type="l",col="red")
-lines(abundance.expt[1,],abundance.expt[4,],type="l",col="blue")
+
 
 ```
 
