@@ -46,16 +46,24 @@ Assumptions used in this paper
 1. initially community structure is random (empty, or C,S,R types are equally likely to initially occupy a niche (cell) in the community)
 2. Any point occupied by empty, C,S,or R can be changed
 3. Changes in given locations are dependent on the current occupancy as well as local occupancy (neighbors or global community) with discinct probabilities relating to cell types.
-4. 
-5. neighborhoods include 8 cells surrounding a point, and neighborhoods of cells on the edge include distant cells (furthest away from index cell in the same plane)
-
+4. These probabilities are:
+S-->0  :  delta_S = delta_S,0 + tau * f_C
+S-->S :  1 - delta_S
+R-->0 :  delta_R
+R-->R :  1 - delta_R
+C-->0 :  delta_C
+C-->C : 1 - delta_C
+0-->S : f_S
+0-->R : f_R
+0-->C : f_C
+0-->0 : 1 - f_S - f_R - f_C
+5. Under these probabilities a rock-paper-scissors dynamic occurs where: S displaces R because S grows better, R displaces C because R grows better, and C can displace S because C kills S. 
+6. neighborhoods include 8 cells surrounding a point, and neighborhoods of cells on the edge include distant cells (furthest away from index cell in the same plane)
 
 **line graphs
 
 **Experiment
-The authors use a wrap around matrix but do not explain why they do this.  It is not intuitive that bacterial "neighbors"" in a flask environment would include a bacterium that is in the farthest possible location from a given bacterium (i.e. on the other side of the flask.) I propose that the authors used this strategy to account for edge effects, such that the cells on the edge of the matrix did not have fewer neighbors than cells on the interior. I hypothesize that simulations with a matrix that does not include the wrap around feature will result in very different results after simulated competitions.  
-
-To test this, we have removed the code for wrapping the matrix, and have run the simulation X times.  These are our results: 
+The authors initially have empty cells in their matrix. Some communities are saturated. I wanted to know how the population dynamics would change if the starting community were fully saturated with S, C or R cells. I hypothesize that the S cells would die out faster in this scenario because there are no empty cells to be randomly changed to occupied by other cell types, so the overall displacement would play out faster. Results below.
 
 
 
@@ -210,51 +218,91 @@ c<-initial.matrix[(sample(1:50,1, replace=T))]
 }
 
 #EXPERIMENTAL: non-wrapping matrix for local competition
+#make matrix for no empties experiment 
+
+ex.seeds<-sample(1:3,2500, replace=T) #pick the random numbers to fill matrix
+initial.matrix<-matrix(ex.seeds,nrow=50, ncol=50) #create matrix with random numbers
+
 experimental.comp<-function(initial.matrix) {
-r<<-initial.matrix[(sample(1:50,1, replace=T))]
-c<<-initial.matrix[(sample(1:50,1, replace=T))]
-  #a center upper
+r<-initial.matrix[(sample(1:50,1, replace=T))]
+c<-initial.matrix[(sample(1:50,1, replace=T))]
+#select local neighborhood based on index
+#local neighborhood is 3 above, 2 each side, 3 on bottom of index
+ #rows:
+#a center upper
   up.row<-r+1
+  if(up.row>50){up.row<-1}
+  else if(up.row<1){up.row<-50}
   # b center lower
   down.row<-r-1
+  if(down.row>50){down.row<-1}
+  else if(down.row<1){down.row<-50}
   #c right upper corner
   r.up.corner<-r+1
+  if(r.up.corner>50){r.up.corner<-1}
+  else if(r.up.corner<1){r.up.corner<-50}
   #d left upper corner
   l.up.corner<-r+1
+ if(l.up.corner>50){l.up.corner<-1}
+  else if(l.up.corner<1){l.up.corner<-50}
   #e center right
   center.r<-r
+ if(center.r>50){center.r<-1}
+  else if(center.r<1){center.r<-50}
   # f center left
   center.l<-r
+ if(center.l>50){center.l<-1}
+  else if(center.l<1){center.l<-50}
   #g right lower corner
   r.low.corner<-r-1
+if(r.low.corner>50){r.low.corner<-1}
+  else if(r.low.corner<1){r.low.corner<-50}
   #h left lower corner 
   l.low.corner<-r-1
+if(l.low.corner>50){l.low.corner<-1}
+  else if(l.low.corner<1){l.low.corner<-50}
    #Columns:
   #a upper
   up.col<-c
+if( up.col>50){up.col<-1}
+  else if( up.col<1){up.col<-50}
   # b lower
   low.col<-c
-   # c right upper corner
+if( low.col>50){low.col<-1}
+  else if( low.col<1){low.col<-50}
+  # c right upper corner
   r.up.cor.col<-c+1
+if( r.up.cor.col>50){r.up.cor.col<-1}
+  else if( r.up.cor.col<1){r.up.cor.col<-50}
   # d left upper corner
   l.up.cor.col<-c-1
+if( l.up.cor.col>50){l.up.cor.col<-1}
+  else if( l.up.cor.col<1){l.up.cor.col<-50}
   # e center right
   center.r.col<-c+1
+if( center.r.col>50){center.r.col<-1}
+  else if( center.r.col<1){center.r.col<-50}
   # f center left
   center.l.col<-c-1
+if( center.l.col>50){center.l.col<-1}
+  else if( center.l.col<1){center.l.col<-50}
   # g right lower corner
   r.lower.cor.col<-c+1
+if( r.lower.cor.col>50){r.lower.cor.col<-1}
+  else if( r.lower.cor.col<1){r.lower.cor.col<-50}
   # h left lower corner 
   l.lower.cor.col<-c-1
+if( l.lower.cor.col>50){l.lower.cor.col<-1}
+  else if( l.lower.cor.col<1){l.lower.cor.col<-50}
   # put together neighbor indices
-  A<<-initial.matrix[up.row,up.col]
-  B<<-initial.matrix[down.row,low.col]
-  C<<-initial.matrix[r.up.corner, r.up.cor.col]
-  D<<-initial.matrix[l.up.corner, l.up.cor.col]
-  E<<-initial.matrix[center.r, center.r.col]
-  G<<-initial.matrix[center.l, center.l.col]
-  H<<-initial.matrix[ r.low.corner,r.lower.cor.col]
-  I<<-initial.matrix[l.low.corner, l.lower.cor.col]
+  A<-initial.matrix[up.row,up.col]
+  B<-initial.matrix[down.row,low.col]
+  C<-initial.matrix[r.up.corner, r.up.cor.col]
+  D<-initial.matrix[l.up.corner, l.up.cor.col]
+  E<-initial.matrix[center.r, center.r.col]
+  G<-initial.matrix[center.l, center.l.col]
+  H<-initial.matrix[ r.low.corner,r.lower.cor.col]
+  I<-initial.matrix[l.low.corner, l.lower.cor.col]
 #if the cell is not empty
   #change based on given probabilities:#C=1/3 C is 1
   #S0=1/4+(3/4*fractionC) s is 2
@@ -272,26 +320,11 @@ c<<-initial.matrix[(sample(1:50,1, replace=T))]
   #S=2
   else if(initial.matrix[r,c]==2) {newcell<-sample((c(4,2)),1,prob=(c(((.25+.75*fract.ones)),(1-(.25+(.75*fract.ones))))))}
   #R=3
-  else if(initial.matrix[r,c]==3) {newcell<-sample((c(3,4)),1,prob=(c((1-10/32),(10/32))))}
-#change the type based on what is in neighborhood if cell is empty
-  #probability of it becoming 1,2,3,0 is based on probability 
-  else if(initial.matrix[r,c]==4){newcell<-sample(1:8,1)} 
-        if(newcell<-1){newcell<-A}
-        else if(newcell<-2){newcell<-B}
-        else if(newcell<-3){newcell<-C}
-        else if(newcell<-4){newcell<-D}
-        else if(newcell<-5){newcell<-E}
-        else if(newcell<-6){newcell<-G}
-        else if(newcell<-7){newcell<-H}
-        else if(newcell<-8){newcell<-I}
+  else if(initial.matrix[r,c]==3){newcell<-sample((c(3,4)),1,prob=(c((1-10/32),(10/32))))}
 initial.matrix[r,c]<<-newcell
-results.c<<-length(grep(1,initial.matrix))
-results.s<<-length(grep(2,initial.matrix))
-results.r<<-length(grep(3,initial.matrix))
-results.e<<-length(grep(4,initial.matrix))
-results<<-((c(results.c,results.s, results.r, results.e)))
-return(results)
-}
+#reassign initial.matrix for next round
+#return matrix
+   }
 
 #######################################################
 ##for loop to replicate local sampling
@@ -334,8 +367,26 @@ plot(abundance.1.global[1,],abundance.1.global[2,], type="l", col="green",ylim=(
 lines(abundance.1.global[1,],abundance.1.global[3,], type="l",col="red")
 lines(abundance.1.global[1,],abundance.1.global[4,],type="l",col="blue")
 
+#############
+#loop for experimental
+abundance.expt<-1
+for(i in 1:1000){
+  replicate(2500, experimental.comp(initial.matrix))
+  #C,S,R
+  column<-rbind(1, sum(initial.matrix=="1"), sum(initial.matrix=="2"), sum(initial.matrix=="3"))
+  abundance.expt<-cbind(abundance.expt,column)
+}
 
-
+#log transform the data for experiment
+abundance.expt<-abundance[,-1]
+abundance.expt[1,1:1000]<-1:1000
+abundance.expt[2,]<-sapply(abundance.expt[2,],log10)
+abundance.expt[3,]<-sapply(abundance.expt[3,],log10)
+abundance.expt[4,]<-sapply(abundance.expt[4,],log10)
+#plot the abundances for experiment
+plot(abundance.expt[1,],abundance.expt[2,], type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="no Empty cells Local neighbourhood",)
+lines(abundance.expt[1,],abundance.expt[3,], type="l",col="red")
+lines(abundance.expt[1,],abundance.expt[4,],type="l",col="blue")
 
 #extra code to transpose matrix etc. that ended up not using because needed forloop
 #####################################################################
