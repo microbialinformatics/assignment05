@@ -13,8 +13,8 @@ The paper discusses a system involving a community of three competing species: c
 ### Assumptions
 Several assumptions are made in order to write the code:
 
- * a 50*50 lattice represents the community, 
- * R, C, S and E (empty state) are randomly assigned to the lattice points, 
+ * a 50*50 lattice represents the community with periodic boundaries, 
+ * R, C, S and E (empty state) are randomly assigned to the lattice points,
  * the neighbourhood for the small spatial scale ecological processes corresponds to the eight lattice points around the specific focal point, 
  * the neighbourhood for the large spatial scale ecological processes corresponds to all lattice points around the specific focal point, and
  * updating a focal point depends on its current state and its neighbourhood state. Rules are the same for both small scale and large scale ecological processes and are shown in the following table. 
@@ -241,94 +241,20 @@ plot_abundance <- function(output_update, updates){
 
 
 ### Experiment
-(an experiment where you outline your hypothesis and what you learned from the experiment.)
 
   * Hypothesis    
-Same community as before: a randomly assigned 50*50 lattice. All the parameters and assumptions are same as before, except the probability of R cells to be killed, delta_R, is changed to 1/2 and 1/3, which means R cell is easilier to displaced by empty-state. Then in a well-mixed system (global neighborhood), R cell don't have growth-rate advantage over C cell. C cell might be able to survive. Since C is toxic to R,S cell might also die out.
- 
- 
-  * Global neighborhood plot
- 
-```{r,echo=FALSE}
-#Creation of grid
-create_grid <- function(size){
-  types <- c("E", "R", "C", "S")
-  data <- sample(types, size*size, replace = T)
-  grid <- matrix(data, size, size)
-
-return(grid)
-}
-
-
-find_global <- function (focalpoint_row, focalpoint_column, grid, size){
-  grid[focalpoint_row, focalpoint_column] <- NA
-  f_r <- length(grep("R", grid))/(size*size-1)
-  f_c <- length(grep("C", grid))/(size*size-1)
-  f_s <- length(grep("S", grid))/(size*size-1)
-  f_e <- 1-f_r-f_c-f_s
-  R_ab <- length(grep("R", grid))
-  C_ab <- length(grep("C", grid))
-  S_ab <- length(grep("S", grid))
+       + same community as before: a randomly assigned 50*50 lattice with periodic boundaries. 
+       + all the parameters and assumptions are same as before, except the probability of R cells to be killed, i.e. delta_R, is changed to 1/2 and 1/3.
+       + under these new conditions, R cell is easilier to displaced by empty-state. Then in a well-mixed system (global neighborhood), R cell no longer has growth-rate advantage over C cell. C cell might be able to survive.  
+       + C is still toxic to R, S cell might also die out.
   
-  info <- list(f_e, f_r, f_c, f_s, R_ab, C_ab, S_ab)
-  return(info)
-}
+  * Results and Discussion        
+When delta_R is changed to 1/2, which is greater than delta_C, the result is:
+<img src="global_delta_R_0.5.png", style="margin:0px auto;display:block" width="500">
 
 
-update_grid <- function(grid, size, updates){
+When delta_R is changed to 1/3, which is the same as delta_C, the result is:
+<img src="global_delta_R_0.33.png", style="margin:0px auto;display:block" width="500">
 
-  #Initializing
-  epoch <- size*size
-  counter <- 0
-  epochcounter <- 0
-  R_abundance <- 0
-  C_abundance <- 0
-  S_abundance <- 0
+Since C is not toxic to S, so the competetition result of C and R depends on their grow-rate. When C has advantage over R, i.e. delta_C is smaller than delta_R, C wins in the large spatial scale environment. When delta_C is the same as delta_R, R and C could coexist in the system When delta_C is larger than delta_R, only R survives in the system after 1000 epoch times.S cells will be killed by collicin produced by C. Since growth-rate of C doesn't change, the performance of R doesn't change much during these experiments.
   
-    
-  #Updating the grid using two approachinges: local interactions, or global interactions. 
-  for (i in 1:(epoch*updates)){
-    counter <- counter + 1
-  #Randomly select a location and obtain its value in both grids. 
-  focalpoint_row = sample(1:nrow(grid), 1)
-  focalpoint_column = sample(1:ncol(grid), 1)
-  focalpoint <- grid[focalpoint_row, focalpoint_column]
-  
-  grid[focalpoint_row, focalpoint_column] <- replace_focal(focalpoint, info)}     
-
-  #For each epoch, save the abundance information to generate the plots later on. This abundance information is already present in both info_local and info_global, so we only have to save this information in new vectors.
-  if (counter == epoch) {
-    epochcounter <- epochcounter + 1
-    counter <- 0
-        
-    R_abundance[epochcounter] <- info[[5]]
-    C_abundance[epochcounter] <- info[[6]]
-    S_abundance[epochcounter] <- info[[7]]}
-
-  output_update <- list(grid, R_abundance, C_abundance, S_abundance)
-  return(output_update)
- }
-
-
-
-#plot the abundances of the local neighbourhoods. 
-plot_abundance <- function(output_update, updates){
-  x <- c(1:updates)
-  plot <- plot(x, log10(output_update[[2]]), ylim = c(0,10), type = "l", col = "green",xlab="Time",ylab="Log(abundance)", main="Global Neighborhood")
-  points(x, log10(output_update[[3]]), type = "l", col = "red")
-  points(x, log10(output_update[[4]]), type = "l", col = "blue")
-  #   return(localplot)
-}
-```
- 
-
- * Discussion       
- 
-
-
-
-
-### Heatmap 
-(if you can figure out how to create time-lapsed heatmaps of the state of the
-population (also shown in Fig. 1) as a GIF, I will give you a considerable
-amount of extra credit)
