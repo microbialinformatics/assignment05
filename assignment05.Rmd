@@ -2,7 +2,9 @@
 title: "The Maintenance of Biodiversity in a Dispersal-Limited Strains of E. coli"
 author: "Edna Chiang and Marian Schmidt"
 date: "November 24, 2014"
-output: html_document
+output:
+  html_document:
+    keep_md: yes
 ---
 
 
