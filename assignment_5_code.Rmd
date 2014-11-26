@@ -1,0 +1,225 @@
+---
+title: "assignment_5"
+author: "Iris"
+date: "November 7, 2014"
+output: html_document
+---
+death probabilities
+
+```{r, eval=TRUE}
+delta.c <- 1/3
+delta.r <- 10/32
+tau <- 3/4
+delta.s0 <- 1/4
+delta.s <- delta.s0 + tau*fc
+```
+
+ put out initial outlay - start at equal abundances (from Fig.1 line graphs)
+ 
+ 0 = empty
+ 1=C
+ 2=R
+ 3=S
+ 
+```{r}
+possible.states <- c(0, 1, 2, 3)
+
+states <- sample(possible.states, 252*252, replace=TRUE)
+
+rpsmat <- matrix(states, nrow=252, ncol=252)
+
+colnames(rpsmat) <- paste("c", 1:252, sep="")
+rownames(rpsmat) <- paste("r", 1:252, sep="")
+```
+
+do one generation of updates - update matrix and frequencies of each cell type
+global
+
+```{r, eval=TRUE}
+fc <- sum(rpsmat==1)/(nrow(rpsmat)*ncol(rpsmat))
+fr <- sum(rpsmat==2)/(nrow(rpsmat)*ncol(rpsmat))
+fs <- sum(rpsmat==3)/(nrow(rpsmat)*ncol(rpsmat))
+
+```
+
+local - ID point, then get the frequencies
+assume that the updating for an empty cell depends on the absolute frequency of the other cells - not their relative frequencies
+```{r}
+column <- sample(2:251, 1)
+row <- sample(2:251, 1)
+
+focal <- rpsmat[row, column]
+
+rpsmat[(row-1):(row+1), (column-1): (column+1)]
+
+# frequency of C in local environment
+
+c.local <- function(X, i, j) {sum(X[(i-1):(i+1),(j-1):(j+1)]==1)}/9
+r.local <- function(X, i, j) {sum(X[(i-1):(i+1),(j-1):(j+1)]==2)}/9
+s.local <- function(X, i, j) {sum(X[(i-1):(i+1),(j-1):(j+1)]==3)}/9
+
+fc.loc <- c.local(rpsmat, row, column)
+
+fr.loc <- r.local(rpsmat, row, column)
+
+fs.loc <- s.local(rpsmat, row, column)
+
+update <- function(matrix, row, column, prob.e, prob.s){
+if(focal==0){
+  matrix[row,column] = sample(c(1,2,3), 1, prob=prob.e, replace=TRUE)
+  } else if(focal==1) {
+    matrix[row, column] = sample(c(0,1), 1, prob=c(delta.c, 1-delta.c), replace=TRUE)
+     } else if(focal==2){
+       matrix[row, column] = sample(c(0,2), 1, prob=prob.s, replace=TRUE)
+       } else if (focal==3) matrix[row, column] = sample(c(0,3), 1, prob=c(delta.r, 1-delta.r), replace=TRUE)
+return(matrix[row, column])
+}  
+
+rpsmat[row, column] <- update(rpsmat, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
+
+# for loop
+
+ngen=100000
+
+abundance.c <- c()
+abundance.s <- c()
+abundance.r <- c()
+
+
+
+for(k in 1:ngen){
+  
+  column <- sample(2:251, 1)
+row <- sample(2:251, 1)
+
+#frequency of each cell type in global environment
+fc <- sum(rpsmat==1)/(nrow(rpsmat)*ncol(rpsmat))
+fr <- sum(rpsmat==2)/(nrow(rpsmat)*ncol(rpsmat))
+fs <- sum(rpsmat==3)/(nrow(rpsmat)*ncol(rpsmat))
+
+  # death probability of susceptibles
+  delta.s <- delta.s0 + tau*fc
+
+# frequencies for local neighborhood
+fc.loc <- sum(rpsmat[(row-1):(row+1), (column-1):(column+1)]==1)/9
+
+fr.loc <- sum(rpsmat[(row-1):(row+1), (column-1):(column+1)]==2)/9
+
+fs.loc <- sum(rpsmat[(row-1):(row+1), (column-1):(column+1)]==3)/9
+
+focal <- rpsmat[row, column]
+
+rpsmat[row, column] <- update(rpsmat, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
+
+c1 <- rpsmat[,1]
+c252 <- rpsmat[,252]
+r1<- rpsmat[1,]
+r252 <- rpsmat[252,]
+corner1.1 <- rpsmat[1,1]
+corner1.2 <- rpsmat[1,252]
+corner2.1 <- rpsmat[252,1]
+corner2.2 <- rpsmat[252,252]
+
+rpsmat[,1] <- c252
+rpsmat[,252] <- c1
+rpsmat[1,] <- r252
+rpsmat[252,] <- r1
+rpsmat[1,1] <- corner2.2
+rpsmat[1,252] <- corner2.1
+rpsmat[252,1] <- corner1.2
+rpsmat[252,252] <- corner1.1
+
+abundance.c[k] <- sum(rpsmat==1)
+abundance.r[k] <- sum(rpsmat==2)
+abundance.s[k] <-  sum(rpsmat==3)
+
+}
+
+plot(x=1:100000, y=seq(from=9.5, to=10, by=0.5/99999), type="n")
+  
+lines(log(abundance.r), col="green")
+lines(log(abundance.s), col="blue")
+lines(log(abundance.c), col="red")
+
+test <- rpsmat[1:10,1:10]
+```
+
+
+test <- rpsmat[1:10,1]
+
+
+for loop for updating
+
+save frequencies at each generation
+
+ figure out how to save matricies every N generations (in a list?)
+
+ work with neighborhood sizes 
+
+```{r}
+ngen=1000
+
+abundance.c <- c()
+abundance.s <- c()
+abundance.r <- c()
+
+test <- rpsmat[1:10,1:10]
+
+for(k in 1:ngen){
+  
+  column <- sample(2:9, 1)
+row <- sample(2:9, 1)
+
+  #frequency of each cell type in global environment
+  fc <- sum(test==1)/(nrow(test)*ncol(test))
+fr <- sum(test==2)/(nrow(test)*ncol(test))
+fs <- sum(test==3)/(nrow(test)*ncol(test))
+
+  # death probability of susceptibles
+  delta.s <- delta.s0 + tau*fc
+
+
+fc.loc <- sum(test[(row-1):(row+1), (column-1):(column+1)]==1)/9
+
+fr.loc <- sum(test[(row-1):(row+1), (column-1):(column+1)]==2)/9
+
+fs.loc <- sum(test[(row-1):(row+1), (column-1):(column+1)]==3)/9
+
+
+
+focal <- test[row, column]
+
+test[row, column] <- update(test, row, column, c(fc, fr, fs), c(delta.s, 1-delta.s))
+
+abundance.c[k] <- sum(test==1)
+abundance.r[k] <- sum(test==2)
+abundance.s[k] <-  sum(test==3)
+}
+
+plot(x=1:1000, y=seq(from=1, to=5, by=4/999), type="n")
+  
+lines(log(abundance.r), col="green")
+lines(log(abundance.s), col="blue")
+lines(log(abundance.c), col="red")
+
+
+test
+
+
+update <- function(matrix, row, column, size){
+if(size == "local"){prob.e <- c(fc, fr, fs)} else prob.e <- c(fc.loc, fr.loc, fs.loc)
+if(focal==0){
+  matrix[row,column] = sample(c(1,2,3), 1, prob=prob.e, replace=TRUE)
+  } else if(focal==1) {
+    matrix[row, column] = sample(c(0,1), 1, prob=c(delta.c, 1-delta.c), replace=TRUE)
+     } else if(focal==2){
+       matrix[row, column] = sample(c(0,2), 1, prob=prob.s, replace=TRUE)
+       } else if (focal==3) matrix[row, column] = sample(c(0,3), 1, prob=c(delta.r, 1-delta.r), replace=TRUE)
+return(matrix[row, column])
+}  
+
+update(test, 7, 7, "local")
+
+
+
+```

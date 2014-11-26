@@ -1,0 +1,108 @@
+---
+title: "Assignment 05"
+author: "Iris Holmes and Kat Wiles"
+date: "Wednesday, November 26, 2014"
+output: html_document
+---
+
+
+```{r}
+# insert source file here and remove code chunk 
+source("~/assignment05/assgn_5_code.R")
+
+```
+
+
+####Introduction
+
+[Kerr et al (2002)](http://www.nature.com/nature/journal/v418/n6894/full/nature00823.html) studied a non-transitive system of three competing species of *Escherichia coli* demonstrating a rock-paper-scissor like relationship. This relationship has been shown in many natural systems. The authors also used a synthetic community to demonstrate this phenomenon. They found diversity was rapidly lost when dispersal and interactions occurred over large spatial scales (global), but at the local scale, diversity was maintained. 
+  
+In this assignment we replicated the authors study of the three-species synthetic community and found similar results. 
+
+
+
+####Methods
+We followed the parameters laid out in the figure legend for figure 1, as well as the parameters in box 1. However, to save time, we used a 50X50 lattice, and ran the simulation for 1000 time steps. Each time step is an epoch which is the average turnover of any given lattice points of the 50X50 matrix. In the local community there were 2,500 lattice points updated per epoch. 
+
+*Assumptions*
+
+We assumed that the original lattice was filled out with a random distribution of all species types 0,1,2,3 where 0 was empty cell, 1 was C a colicin-producing strain, 2 was R a resistant strain, and 3 was S a sensitive strain. Assumed updating for an empty cell depends on the absolute frequency of the other cells, not their relative frequencies. We assumed the authors used a buffer around their matrix. We also assumed they wrapped the matrix for the 'edge' species to determine their local community for updating. 
+
+
+
+####Results
+
+IRIS: Add in pictures of our results as code chunks, I tried to write most of the figure legends however i realized this morning that most of the PDFs were blank so I just went off of what I assumed. please edit as needed. also Pat said "Results should be embedded in the text so that if I use echo=F, so I can still see what happened" not sure what to do about that. 
+
+
+For the sake of time, we included the results of our simulation as images, rather than having the knitr document run the full simulation. Please see source code if you would like to run it. 
+
+```{r, eval=TRUE, echo=FALSE}
+setwd("~/assignment05")
+results <- read.csv("~/assignment05/results.csv")
+
+
+plot(x=1:1000, y=seq(from=0, to=4, by=4/999), type="n", xlab="Time", ylab="Log (abundance)", main="Local")
+lines(log10(results$loc.epochs.r), col="green")
+lines(log10(results$loc.epochs.s), col="blue")
+lines(log10(results$loc.epochs.c), col="red")
+```
+
+
+**Figure 1 Local Community.** The prediction of the lattice based simulation of the local community. The abundances are log transformed. The strains are color-coded as
+follows: C is red, R, is green, and S is blue. The diversity for the three species remained relatively similar over time. However, the resistant strain had a consistently higher population than the C or the S strains. The difference may be due to the smaller matrix we used, which could have reduced the opportunities for the S strain to avoid the C strain, thereby lowering its population, and reduced opportunities for the C strain to avoid competition from the R strain.
+
+
+```{r, eval=TRUE, echo=FALSE}
+plot(x=1:1000, y=seq(from=0, to=4, by=4/999), type="n", xlab="Time", ylab="Log (abundance)", main="Global")
+lines(log10(results$gl.epochs.r), col="green")
+lines(log10(results$gl.epochs.s), col="blue")
+lines(log10(results$gl.epochs.c), col="red")
+```
+
+**Figure 2 Global Community.** The prediction of the lattice based simulation of the global community. The abundances are log transformed. The strains are color-coded as
+follows: C is red, R, is green, and S is blue. The community dynamics do not remain the same. Instead, diversity is rapidly lost as S and C go extinct and distinct time points. Our C strain goes to extinction more quickly than that in Kerr et al. 2002, perhaps due to the processes that reduced C and S abundance in the local simulation.
+
+
+
+
+####Our Experiment
+In addition to replicating the study, we did an experiment of what would happen to diversity if we started with a non-random lattice. We started with a non-random matrix consisting of 
+
+
+Instead of starting with a random distribution of numbers in our initial matrix, what will happen if we make a nonrandom matrix consisting of 12.5 rows each of 0, 1, 2, 3, where 0 was empty cell, 1 was C representing colicin-producing strain, 2 was R representing a resistant strain, and 3 was S representing a sensitive strain. Thus there were rows or stripy communities.
+
+Our hypothesis is that the stripes will "follow" or "chase" each other over time as observed by Kerr et al. 2002, and the abundances will remain the same or similar to the initial starting matrix abundances in the local case, while in the global case will be identical to the random matrix. We found this to be partially supported. 
+
+
+
+```{r, echo=FALSE}
+plot(x=1:1000, y=seq(from=0, to=4, by=4/999), type="n", xlab="Time", ylab="Log (abundance)", main="Local, nonrandom")
+lines(log10(results$ordered.loc.epochs.r), col="green")
+lines(log10(results$ordered.loc.epochs.s), col="blue")
+lines(log10(results$ordered.loc.epochs.c), col="red")
+```
+
+**Figure 3. Local community, non-random matrix.** The prediction of the lattice based simulation of the local community starting with a non-random matrix of equal abundances. The abundances are log transformed. The strains are color-coded as follows: C is red, R, is green, and S is blue. The diversity for the three species remained relatively similar over time, although in this matrix the C cells outperform both the R and S cells. Based on the distribution of cell types at the start and end of the 1000 epochs, we hypothesize the following interactions:
+
+```{r, echo=FALSE, eval=TRUE}
+ordered.end <- read.csv("~/assignment05/orderedMatEnd.csv")
+par(mfrow=c(1,2))
+image(matrix(c(rep(0, 625), rep(1, 625), rep(2, 625), rep(3, 625)), nrow=50, ncol=50),col=c("white", "red", "green", "blue"), main="Start") 
+image(as.matrix(ordered.end)[,2:51], col=c("white", "red", "green", "blue"), main="End")
+par(mfrow=c(1,1))
+```
+
+S cells (blue) colonize around the "loop" created by our simulation. They invade the empty space at the bottom of the matrix, but can't move farther because they encounter C cells, which kill them. The C cells are able to invade the green R cells, which in turn outcompete the blue S cells. The C cells reach the highest densities because they can successfully outcompete the S cells for the empty space that both cell types are adjacent to.
+
+```{r, echo=FALSE, eval=TRUE}
+results2 <- read.csv("~/assignment05/results2.csv")
+
+plot(x=1:1000, y=seq(from=0, to=4, by=4/999), type="n", xlab="Time", ylab="Log (abundance)", main="Global, nonrandom")
+lines(log10(results2$ordered.gl.epochs.r), col="green")
+lines(log10(results2$ordered.gl.epochs.s), col="blue")
+lines(log10(results2$ordered.gl.epochs.c), col="red")
+```
+
+
+**Figure 4 Global Community.** The prediction of the lattice based simulation of the global community starting with a non-random matrix of equal abundances. The abundances are log transformed. The strains are color-coded as follows: C is red, R, is green, and S is blue. In this simulation, the S cells persisted better than the R cells (the first to die out) or the C cells, which died out after ~350 epochs. Based on our code, it is not clear why this result should have been different than the random global result.
