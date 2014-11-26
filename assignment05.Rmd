@@ -1,0 +1,97 @@
+---
+title: "The Maintenance of Biodiversity in a Dispersal-Limited Strains of E. coli"
+author: "Edna Chiang and Marian Schmidt"
+date: "November 24, 2014"
+output: html_document
+---
+
+
+##The Problem
+1. How do local dispersal and species interactions influence biodiversity? 
+2. How do global dispersal and species interactions influence biodiversity?
+
+
+##Our Assumptions
+* Simple community that perfectly follows Rock-Paper-Scissors model:
+      + Resistant *E.coli* (R) beats colicin-producing *E.coli* (C)
+      + Sensitive *E.coli* (S) beats R 
+      + C beats S 
+* No top-down or bottom up controls on community.
+      + No outside disturbance.
+      + No spatial or temporal environmental heterogeneity.
+* Assume 2 extremes:
+      + Local includes only adjacent cells.  Location is everything.
+      + Global includes entire community.  All interactions created equally, location doesn't matter.
+* Assumes background death rates are constant for each strain.
+* Assumes no evolution of each strain (e.g. no evolution of S to R).
+
+
+##Reproduction of Figure 1a-d
+```{r, echo=FALSE, fig.height = 5, fig.width = 10}
+source('Functions05.R')
+
+########  RUN LOCAL SIMULATIONS 
+conditions <- c("S", "R", "C", "E")
+set.seed(1)
+max <- createMatrix(conditions, nrows = 50, ncols = 50)
+bigmax <- runLocalSims2(max)
+
+########  RUN GLOBAL SIMULATIONS 
+cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global
+
+#### MAKE PLOT
+par(mfrow=c(1,2))
+plotLogTime(bigmax, "Local")
+plotLogTime(cultbigmax, "Global")
+```
+
+
+
+
+
+##Experiment with R Death Rate 
+As you can see above, the R wins the global scenario.  This is because R has a slighly lower death rate of 10/32 than the colicin-producing C, which has a death rate of 1/3.  We were wondering what would happen if we set the death rate of R to equal the death rate of C.
+
+**Research questions:**  
+1.  If R and C have the same death rate, do R, C, & S coexist in the **local** simulations?  
+2.  If R and C have the same death rate, do R, C & S coexist in the **global** simulations?  
+
+**Hypotheses:**   
+1.  If R & C have the same death rate in **local** simulations, R, C, and S will coexist.  
+2.  If R & C have the same death rate in **global** simulations, R and C will coexist and cause S to go extinct.   
+
+
+```{r, echo = FALSE, fig.height = 5, fig.width = 10}
+########  RUN LOCAL SIMULATIONS 
+expmax <- runLocalSims2(max, Rdeath3 = 1/3)
+
+########  RUN GLOBAL SIMULATIONS 
+expbigmax <- runGlobalSims2(max, Rdeath = 1/3) # cult = culture, we're going global
+
+#### MAKE PLOT
+par(mfrow=c(1,2))
+plotLogTime(expmax, "Local")
+plotLogTime(expbigmax, "Global")
+```
+
+
+#Discussion of Our Experiment
+1. In the local simulation, R and C have stable coexistence while S goes extinct.  In the original simulations, R helped S by keeping C's abundance low enough to allow stable coexistence of S, R, and C.  In this experiment, R's abundance is initially brought down by S because S beats R.  Once S goes extinct, R's abundance remains the same.  However, due to the inital influence of S, R has a lower abundance than C.  C's abundance stays the same because it is no longer out competed by R since we changed their death rate to equal.  Therefore, there should be very stable coexistence of R and C with time. 
+
+2. In the global simulation, R and C have stable coexistence.  We think this is because in the original simulation, R beats C and therefore, causes complete extinction of C.  Since we have set the death rate of R and C to be equal, consequently, we have also set the survival rate of R and C to be equal.  As a result, R and C coexist.  S, on the other hand, still goes extinct because C is highly abundant. 
+
+
+
+## GIF
+We could not find a way to embed our GIF in knitr or to create it without outside programs (e.g. SciAnimator or ImageMagick).  Instead we embedded it into an interactive html webpage which you can access them (here).
+
+
+```{r, echo = FALSE, fig.height = 10, fig.width = 10, fig.show = 'animate'}
+#http://stackoverflow.com/questions/12983930/mp4-file-not-generated-in-r-markdown
+#gif(bigmax)
+```
+
+```{r, echo = FALSE, fig.height = 5, fig.width = 5, fig.show = 'animate'}
+#gif(cultbigmax)
+```
+
