@@ -85,7 +85,7 @@ plotLogTime(expbigmax, "Global")
 
 
 ## GIF
-We could not find a way to embed our GIF in knitr or to create it without outside programs (e.g. SciAnimator or ImageMagick).  Instead we embedded it into an interactive html webpage which you can access them (here).
+We could not find a way to embed our GIF in knitr or to create it without outside programs (e.g. SciAnimator or ImageMagick).  Instead we embedded it into an interactive html webpage which you can access them [here](https://cdn.rawgit.com/chianged/assignment05/master/GIFwebpage.html).
 
 
 ```{r, echo=FALSE}
