@@ -148,7 +148,8 @@ findWinnerLoc <- function (matrix, local, R_death_rate = 10/32){
 ##########################  Combine the local and calculate the winner #####################################
 findLocalWinner <- function(matrix, Rdeath2 = 10/32){
   loca <- findLocal(matrix)
-  wins <- findWinnerLoc(matrix, loca, R_death_rate = Rdeath2)
+  R_death_rate <- Rdeath2
+  wins <- findWinnerLoc(matrix, loca, R_death_rate)
   return(wins)
 }
 
@@ -165,7 +166,8 @@ runLocalSims2 <- function(matrix, Rdeath3 = 10/32){ #This one goes faster!
       time_step[,j] <- work  # append to new matrix called time_step
       j <- j + 1 # for next iteration
     }
-    work <- findLocalWinner(work, Rdeath2 = Rdeath3)  #run findlocalwinner
+    Rdeath2 <- Rdeath3
+    work <- findLocalWinner(work, Rdeath2)  #run findlocalwinner
   } 
   colnames(time_step) <- 1:1001 # name all columns by numer of col
   return(time_step)
@@ -224,7 +226,8 @@ runGlobalSims2  <- function(matrix, Rdeath = 10/32) {  #Runs global simulations
       time_step[,j] <- work  # append to new matrix called time_step
       j <- j + 1 #next for loop, fill in the next column
     }
-    work <- findWinnerGlobal(work, R_death_rate = Rdeath)  #run findlocalwinner
+    R_death_rate <- Rdeath
+    work <- findWinnerGlobal(work, R_death_rate)  #run findlocalwinner
   } 
   colnames(time_step) <- 1:501
   return(time_step)
