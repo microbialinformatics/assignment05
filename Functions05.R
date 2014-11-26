@@ -1,45 +1,4 @@
-### Uncomment line 11 and line 18 to see the local and global GIFs
-
-
-########  RUN LOCAL SIMULATIONS 
-set.seed(1)
-conditions <- c("S", "R", "C", "E")
-max4 <- createMatrix(conditions, nrows = 50, ncols = 50)
-bigmax <- runLocalSims2(max)
-###### MAKE LINE PLOT FOR LOCAL
-plotLogTime(bigmax, "Local")
-### TIME TO GIF IT OUT  
-#gif(bigmax)
-
-########  RUN GLOBAL SIMULATIONS 
-cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global
-###### MAKE LINE PLOT FOR GLOBAL
-plotLogTime(cultbigmax, "Global")
-### TIME TO GIF IT OUT
-#gif(cultbigmax)
-
-
-
-loc <- chartoNumNum(bigmax)
-loc1 <- colMatrix(loc[,300])
-glob <- chartoNumNum(cultbigmax)
-glob1 <- colMatrix(glob[,300])
-
-colors <- c("forestgreen", "red", "blue","white")
-par(mfrow=c(2,2))
-image(z=loc1, axes = FALSE, col = colors)
-plotLogTime(bigmax, "Local")
-image(z=glob1, axes = FALSE, col = colors)
-plotLogTime(cultbigmax, "Global")
-
-
-par(mfrow=c(2,1))
-plotLogTime(bigmax, "Local")
-plotLogTime(cultbigmax, "Global")
-
-
-
-
+#This file has all of our functions used for local and global matrices.
 
 ###########################################################################################
 createMatrix <- function(variable, nrows=50, ncols=50){
@@ -76,83 +35,83 @@ findLocal <- function(matrix){ #, nsim=3000
     cell7 <- matrix[nrow+1,ncol]
     cell8 <- matrix[nrow+1,ncol+1]  
   } else if(nrow == 1 & ncol != 1 & ncol != ncol(matrix)){ #only for those in row 1 and NO CORNERS!
-      cell1 <- matrix[nrow(matrix),ncol-1]
-      cell2 <- matrix[nrow(matrix),ncol]
-      cell3 <- matrix[nrow(matrix),ncol+1]
-      cell4 <- matrix[nrow,ncol-1]
-      cell5 <- matrix[nrow,ncol+1]
-      cell6 <- matrix[nrow+1,ncol-1]
-      cell7 <- matrix[nrow+1,ncol]
-      cell8 <- matrix[nrow+1,ncol+1]  
+    cell1 <- matrix[nrow(matrix),ncol-1]
+    cell2 <- matrix[nrow(matrix),ncol]
+    cell3 <- matrix[nrow(matrix),ncol+1]
+    cell4 <- matrix[nrow,ncol-1]
+    cell5 <- matrix[nrow,ncol+1]
+    cell6 <- matrix[nrow+1,ncol-1]
+    cell7 <- matrix[nrow+1,ncol]
+    cell8 <- matrix[nrow+1,ncol+1]  
   } else if(nrow == 1 & ncol == 1){ #only for those in row 1 and column 1!!! MUST BE TOP LEFT CORNER!
-      cell1 <- matrix[nrow(matrix),ncol(matrix)] #bottom right corner
-      cell2 <- matrix[nrow(matrix),ncol]
-      cell3 <- matrix[nrow(matrix),ncol+1]
-      cell4 <- matrix[nrow,ncol(matrix)] #wrap!
-      cell5 <- matrix[nrow,ncol+1]
-      cell6 <- matrix[nrow+1,ncol(matrix)] #wrap!
-      cell7 <- matrix[nrow+1,ncol]
-      cell8 <- matrix[nrow+1,ncol+1]  
+    cell1 <- matrix[nrow(matrix),ncol(matrix)] #bottom right corner
+    cell2 <- matrix[nrow(matrix),ncol]
+    cell3 <- matrix[nrow(matrix),ncol+1]
+    cell4 <- matrix[nrow,ncol(matrix)] #wrap!
+    cell5 <- matrix[nrow,ncol+1]
+    cell6 <- matrix[nrow+1,ncol(matrix)] #wrap!
+    cell7 <- matrix[nrow+1,ncol]
+    cell8 <- matrix[nrow+1,ncol+1]  
   } else if(nrow == 1 & ncol == ncol(matrix)){ #only for those in row 1 and column 250!  TOP RIGHT CORNER
-      cell1 <- matrix[nrow(matrix),ncol-1]
-      cell2 <- matrix[nrow(matrix),ncol]
-      cell3 <- matrix[nrow(matrix),1] #WRAP!
-      cell4 <- matrix[nrow,ncol-1]
-      cell5 <- matrix[nrow,1]#WRAP!
-      cell6 <- matrix[nrow+1,ncol-1]
-      cell7 <- matrix[nrow+1,ncol]
-      cell8 <- matrix[nrow+1,1]  
+    cell1 <- matrix[nrow(matrix),ncol-1]
+    cell2 <- matrix[nrow(matrix),ncol]
+    cell3 <- matrix[nrow(matrix),1] #WRAP!
+    cell4 <- matrix[nrow,ncol-1]
+    cell5 <- matrix[nrow,1]#WRAP!
+    cell6 <- matrix[nrow+1,ncol-1]
+    cell7 <- matrix[nrow+1,ncol]
+    cell8 <- matrix[nrow+1,1]  
   } else if(nrow == nrow(matrix) & ncol != 1 & ncol != ncol(matrix)){ # NO CORNERS LAST ROW
-      cell1 <- matrix[nrow-1,ncol-1]
-      cell2 <- matrix[nrow-1,ncol]
-      cell3 <- matrix[nrow-1,ncol+1]
-      cell4 <- matrix[nrow,ncol-1]
-      cell5 <- matrix[nrow,ncol+1]
-      cell6 <- matrix[1,ncol-1]
-      cell7 <- matrix[1,ncol]
-      cell8 <- matrix[1,ncol+1] 
+    cell1 <- matrix[nrow-1,ncol-1]
+    cell2 <- matrix[nrow-1,ncol]
+    cell3 <- matrix[nrow-1,ncol+1]
+    cell4 <- matrix[nrow,ncol-1]
+    cell5 <- matrix[nrow,ncol+1]
+    cell6 <- matrix[1,ncol-1]
+    cell7 <- matrix[1,ncol]
+    cell8 <- matrix[1,ncol+1] 
   } else if(nrow == nrow(matrix) & ncol == 1){ # BOTTOM LEFT CORNER
-      cell1 <- matrix[nrow-1,ncol(matrix)] #matrix!
-      cell2 <- matrix[nrow-1,ncol] 
-      cell3 <- matrix[nrow-1,ncol+1]
-      cell4 <- matrix[nrow,ncol(matrix)] #wrap
-      cell5 <- matrix[nrow,ncol+1]
-      cell6 <- matrix[1,ncol(matrix)] #kiddy corner !
-      cell7 <- matrix[1,ncol] #wrap
-      cell8 <- matrix[1,ncol+1] #wrap  
+    cell1 <- matrix[nrow-1,ncol(matrix)] #matrix!
+    cell2 <- matrix[nrow-1,ncol] 
+    cell3 <- matrix[nrow-1,ncol+1]
+    cell4 <- matrix[nrow,ncol(matrix)] #wrap
+    cell5 <- matrix[nrow,ncol+1]
+    cell6 <- matrix[1,ncol(matrix)] #kiddy corner !
+    cell7 <- matrix[1,ncol] #wrap
+    cell8 <- matrix[1,ncol+1] #wrap  
   } else if(nrow == nrow(matrix) & ncol == ncol(matrix)){ # BOTTOM RIGHT CORNER!
-      cell1 <- matrix[nrow-1,ncol-1]
-      cell2 <- matrix[nrow-1,ncol]
-      cell3 <- matrix[nrow-1,1] #WRAP
-      cell4 <- matrix[nrow,ncol-1]
-      cell5 <- matrix[nrow,1] #WRAP
-      cell6 <- matrix[1,ncol-1]
-      cell7 <- matrix[1,ncol]
-      cell8 <- matrix[1,1]  #WRAP!
- } else if(nrow != 1 & nrow != nrow(matrix) & ncol == 1){ #middle column 1
-      cell1 <- matrix[nrow-1,ncol(matrix)]
-      cell2 <- matrix[nrow-1,ncol]
-      cell3 <- matrix[nrow-1,ncol+1]
-      cell4 <- matrix[nrow,ncol(matrix)]
-      cell5 <- matrix[nrow,ncol+1]
-      cell6 <- matrix[nrow+1,ncol(matrix)]
-      cell7 <- matrix[nrow+1,ncol]
-      cell8 <- matrix[nrow+1,ncol+1]  
- } else { #middle last column!          (ncol == ncol(matrix) & nrow != 1 & nrow != nrow(matrix)) 
-      cell1 <- matrix[nrow-1,ncol-1]
-      cell2 <- matrix[nrow-1,ncol]
-      cell3 <- matrix[nrow-1,1]
-      cell4 <- matrix[nrow,ncol-1]
-      cell5 <- matrix[nrow,1]
-      cell6 <- matrix[nrow+1,ncol-1]
-      cell7 <- matrix[nrow+1,ncol]
-      cell8 <- matrix[nrow+1,1] }
- local <- c(cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, nrow, ncol, index_value) 
- return(local)
+    cell1 <- matrix[nrow-1,ncol-1]
+    cell2 <- matrix[nrow-1,ncol]
+    cell3 <- matrix[nrow-1,1] #WRAP
+    cell4 <- matrix[nrow,ncol-1]
+    cell5 <- matrix[nrow,1] #WRAP
+    cell6 <- matrix[1,ncol-1]
+    cell7 <- matrix[1,ncol]
+    cell8 <- matrix[1,1]  #WRAP!
+  } else if(nrow != 1 & nrow != nrow(matrix) & ncol == 1){ #middle column 1
+    cell1 <- matrix[nrow-1,ncol(matrix)]
+    cell2 <- matrix[nrow-1,ncol]
+    cell3 <- matrix[nrow-1,ncol+1]
+    cell4 <- matrix[nrow,ncol(matrix)]
+    cell5 <- matrix[nrow,ncol+1]
+    cell6 <- matrix[nrow+1,ncol(matrix)]
+    cell7 <- matrix[nrow+1,ncol]
+    cell8 <- matrix[nrow+1,ncol+1]  
+  } else { #middle last column!          (ncol == ncol(matrix) & nrow != 1 & nrow != nrow(matrix)) 
+    cell1 <- matrix[nrow-1,ncol-1]
+    cell2 <- matrix[nrow-1,ncol]
+    cell3 <- matrix[nrow-1,1]
+    cell4 <- matrix[nrow,ncol-1]
+    cell5 <- matrix[nrow,1]
+    cell6 <- matrix[nrow+1,ncol-1]
+    cell7 <- matrix[nrow+1,ncol]
+    cell8 <- matrix[nrow+1,1] }
+  local <- c(cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, nrow, ncol, index_value) 
+  return(local)
 }
 
 #######################  FIND THE LOCAL WINNER ######################################
-findWinnerLoc <- function (matrix, local){
+findWinnerLoc <- function (matrix, local, R_death_rate = 10/32){
   nrow1 <- as.numeric(local[9])  #get row index
   ncol1 <- as.numeric(local[10])  #get column index
   index_value <- local[11]  #get index value
@@ -167,7 +126,7 @@ findWinnerLoc <- function (matrix, local){
     s_winner <- sample(c("S", "E"), 1, prob = c(s_survive, s_death)) #survival vs. death
     matrix[nrow1, ncol1] <- s_winner #replace with new outcome
   } else if(index_value == "R") {
-    r_death <- 10/32  #death
+    r_death <- R_death_rate  #death
     r_survive <- 1- r_death   #survival
     r_winner <- sample(c("R", "E"), 1, prob = c(r_survive, r_death)) #survival  
     matrix[nrow1, ncol1] <- r_winner #replace with new outcome
@@ -182,20 +141,20 @@ findWinnerLoc <- function (matrix, local){
     fE <- sum(local == "E")/8
     e_winner <- sample(c("S", "R", "C", "E"), 1, prob = c(fS, fR, fC, fE))   #dispersal
     matrix[nrow1, ncol1] <- e_winner }   #replace with new outcome
- return(matrix)
+  return(matrix)
 }
 
 
 ##########################  Combine the local and calculate the winner #####################################
-findLocalWinner <- function(matrix){
-    loca <- findLocal(matrix)
-    wins <- findWinnerLoc(matrix, loca)
-    return(wins)
+findLocalWinner <- function(matrix, Rdeath2 = 10/32){
+  loca <- findLocal(matrix)
+  wins <- findWinnerLoc(matrix, loca, R_death_rate = Rdeath2)
+  return(wins)
 }
-  
+
 
 ##########################  LOCAL SIMULATIONS #####################################
-runLocalSims2 <- function(matrix){ #This one goes faster!
+runLocalSims2 <- function(matrix, Rdeath3 = 10/32){ #This one goes faster!
   colDim <- nrow(matrix)*ncol(matrix) # column dimensions
   conds <- c("NA")  #fill matrix on next line with NAs
   time_step <- createMatrix(conds, nrows = colDim, ncols = 1001) #Make a matrix of NAs 
@@ -206,7 +165,7 @@ runLocalSims2 <- function(matrix){ #This one goes faster!
       time_step[,j] <- work  # append to new matrix called time_step
       j <- j + 1 # for next iteration
     }
-    work <- findLocalWinner(work)  #run findlocalwinner
+    work <- findLocalWinner(work, Rdeath2 = Rdeath3)  #run findlocalwinner
   } 
   colnames(time_step) <- 1:1001 # name all columns by numer of col
   return(time_step)
@@ -217,7 +176,7 @@ runLocalSims2 <- function(matrix){ #This one goes faster!
 
 
 ##############################   Global Calculations and Simulations   ########################
-findWinnerGlobal <- function(matrix) {  #This finds the global winner
+findWinnerGlobal <- function(matrix, R_death_rate = 10/32) {  #This finds the global winner
   index_info <- findIndex(matrix) #nrow, ncol, 
   nrow1 <- as.numeric(index_info[1])  #get row index
   ncol1 <- as.numeric(index_info[2])  #get column index
@@ -234,7 +193,7 @@ findWinnerGlobal <- function(matrix) {  #This finds the global winner
     s_winner <- sample(c("S", "E"), 1, prob = c(s_survive, s_death)) #survival vs. death
     matrix[nrow1, ncol1] <- s_winner #replace with new outcome
   } else if(index_value == "R") {
-    r_death <- 10/32  #death
+    r_death <- R_death_rate  #death
     r_survive <- 1- r_death   #survival
     r_winner <- sample(c("R", "E"), 1, prob = c(r_survive, r_death)) #survival  
     matrix[nrow1, ncol1] <- r_winner #replace with new outcome
@@ -254,22 +213,22 @@ findWinnerGlobal <- function(matrix) {  #This finds the global winner
 }
 
 
-runGlobalSims2  <- function(matrix) {  #Runs global simulations
-    colDim <- nrow(matrix)*ncol(matrix) # column dimensions
-    conds <- c("NA") #fill matrix on next line with NAs
-    time_step <- createMatrix(conds, nrows = colDim, ncols = 501) #Make a matrix of NAs 
-    j <- 1 # column to be filled in time_step matrix
-    work <- matrix # will be updated with each for loop, this initiates the process.
-    for (i in 1:(colDim*500)){
-      if (i == 1 | i %% colDim == 0){ # ORDER IMPORTANT: if divisible by 2500 do ...
-        time_step[,j] <- work  # append to new matrix called time_step
-        j <- j + 1 #next for loop, fill in the next column
-      }
-      work <- findWinnerGlobal(work)  #run findlocalwinner
-    } 
-    colnames(time_step) <- 1:501
-    return(time_step)
-  }  
+runGlobalSims2  <- function(matrix, Rdeath = 10/32) {  #Runs global simulations
+  colDim <- nrow(matrix)*ncol(matrix) # column dimensions
+  conds <- c("NA") #fill matrix on next line with NAs
+  time_step <- createMatrix(conds, nrows = colDim, ncols = 501) #Make a matrix of NAs 
+  j <- 1 # column to be filled in time_step matrix
+  work <- matrix # will be updated with each for loop, this initiates the process.
+  for (i in 1:(colDim*500)){
+    if (i == 1 | i %% colDim == 0){ # ORDER IMPORTANT: if divisible by 2500 do ...
+      time_step[,j] <- work  # append to new matrix called time_step
+      j <- j + 1 #next for loop, fill in the next column
+    }
+    work <- findWinnerGlobal(work, R_death_rate = Rdeath)  #run findlocalwinner
+  } 
+  colnames(time_step) <- 1:501
+  return(time_step)
+}  
 ###########################################################################################
 
 
@@ -297,7 +256,7 @@ plotHeat <- function(newmat){
 
 ##########################  MAKE A GIF WITH MANY PLOTS ##########################
 #http://stackoverflow.com/questions/9973610/using-the-animation-package
-install.packages("animation")
+#http://stackoverflow.com/questions/12038893/combining-r-markdown-and-animation-package
 library(animation)
 gif <- function(bigmatrix) {
   namat <- chartoNumNum(bigmatrix)
@@ -333,13 +292,12 @@ plotLogTime <- function(time_step, title){
   #lines(ff$E, type = "l", col = "black", lwd = 2)  
   lines(ff$C, type = "l", col = "red", lwd = 2)
   lines(ff$R, type = "l", col = "forestgreen", lwd = 2) 
-  legend("bottomright",c("S","R","C"),col=c("blue","forestgreen","red"),lty = 1, lwd = 3)
+  legend("topright",c("S","R","C"),col=c("blue","forestgreen","red"),lty = 1, lwd = 3)
 }
 ##############################################################################
 
 
-  
 
 
-  
-  
+
+
