@@ -29,7 +29,7 @@ output:
 
 
 ##Reproduction of Figure 1a-d
-```{r, echo=FALSE, fig.height = 5, fig.width = 10}
+```{r, echo=FALSE, fig.height = 5, fig.width = 10, warning=FALSE}
 source('Functions.R')
 
 ########  RUN LOCAL SIMULATIONS 
@@ -63,7 +63,7 @@ As you can see above, the R wins the global scenario.  This is because R has a s
 2.  If R & C have the same death rate in **global** simulations, R and C will coexist and cause S to go extinct.   
 
 
-```{r, echo = FALSE, fig.height = 5, fig.width = 10}
+```{r, echo = FALSE, fig.height = 5, fig.width = 10, warning=FALSE}
 ########  RUN LOCAL SIMULATIONS 
 expmax <- runLocalSims2(max, Rdeath3 = 1/3)
 
@@ -85,7 +85,7 @@ plotLogTime(expbigmax, "Global")
 
 
 ## GIF
-We could not find a way to embed our GIFs in knitr or to create it without outside programs (e.g. ImageMagick).  Instead, we embedded it into an [interactive html webpage](https://cdn.rawgit.com/chianged/assignment05/master/GIFwebpage.html).
+We could not find a way to embed our GIFs in knitr or to create it without outside programs (e.g. ImageMagick).  Instead, we embedded it into an [interactive html webpage](https://cdn.rawgit.com/chianged/assignment05/master/GIF_related_files/GIFwebpage.html).
 
 
 ```{r, echo=FALSE}
