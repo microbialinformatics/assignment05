@@ -4,8 +4,8 @@ November 24, 2014
 
 
 ##The Problem
-1. How do local dispersal and species interactions influence biodiversity? 
-2. How do global dispersal and species interactions influence biodiversity?
+1. How do **local** dispersal and species interactions influence biodiversity? 
+2. How do **global** dispersal and species interactions influence biodiversity?
 
 
 ##Our Assumptions
@@ -51,14 +51,14 @@ As you can see above, the R wins the global scenario.  This is because R has a s
 
 
 #Discussion of Our Experiment
-1. In the local simulation, R and C have stable coexistence while S goes extinct.  In the original simulations, R helped S by keeping C's abundance low enough to allow stable coexistence of S, R, and C.  In this experiment, R's abundance is initially brought down by S because S beats R.  Once S goes extinct, R's abundance remains the same.  However, due to the inital influence of S, R has a lower abundance than C.  C's abundance stays the same because it is no longer out competed by R since we changed their death rate to equal.  Therefore, there should be very stable coexistence of R and C with time. 
+1. Our **local** hypothesis is incorrect. In the local simulation, S and R become extinct while C persists. In the original simulation, R helped S by keeping C's abundance low enough to allow for stable coexistence of S, R, and C. In this experiment, R's abundance is initially brought down by S because S beats R. Once S becomes extinct, R's abundance continues to decrease due to local interactions. Both R and C have an equal chance of death. However, because C is much more abundant than R, is it likely that empty niches are in contact with more C than R. As a result, C has more disperal than R, and eventually drives R to extinction.
 
-2. In the global simulation, R and C have stable coexistence.  We think this is because in the original simulation, R beats C and therefore, causes complete extinction of C.  Since we have set the death rate of R and C to be equal, consequently, we have also set the survival rate of R and C to be equal.  As a result, R and C coexist.  S, on the other hand, still goes extinct because C is highly abundant. 
+2. Our **global** hypothesis is correct. In the global simulation, R and C have stable coexistence.  We think this is because in the original simulation, R beats C and therefore, causes complete extinction of C.  Since we have set the death rate of R and C to be equal, consequently, we have also set the survival rate of R and C to be equal.  As a result, R and C coexist.  S, on the other hand, still goes extinct because C is highly abundant. 
 
 
 
 ## GIF
-We could not find a way to embed our GIF in knitr or to create it without outside programs (e.g. SciAnimator or ImageMagick).  Instead we embedded it into an interactive html webpage which you can access them [here](https://cdn.rawgit.com/chianged/assignment05/master/GIFwebpage.html).
+We could not find a way to embed our GIFs in knitr or to create it without outside programs (e.g. ImageMagick).  Instead, we embedded it into an [interactive html webpage](https://cdn.rawgit.com/chianged/assignment05/master/GIFwebpage.html).
 
 
 
