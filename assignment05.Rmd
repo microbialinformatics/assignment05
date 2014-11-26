@@ -76,22 +76,22 @@ plotLogTime(expbigmax, "Global")
 
 
 #Discussion of Our Experiment
-1. In the local simulation, R and C have stable coexistence while S goes extinct.  In the original simulations, R helped S by keeping C's abundance low enough to allow stable coexistence of S, R, and C.  In this experiment, R's abundance is initially brought down by S because S beats R.  Once S goes extinct, R's abundance remains the same.  However, due to the inital influence of S, R's continues to have a lower abudance than C. 
+1. In the local simulation, R and C have stable coexistence while S goes extinct.  In the original simulations, R helped S by keeping C's abundance low enough to allow stable coexistence of S, R, and C.  In this experiment, R's abundance is initially brought down by S because S beats R.  Once S goes extinct, R's abundance remains the same.  However, due to the inital influence of S, R has a lower abundance than C.  C's abundance stays the same because it is no longer out competed by R since we changed their death rate to equal.  Therefore, there should be very stable coexistence of R and C with time. 
 
 2. In the global simulation, R and C have stable coexistence.  We think this is because in the original simulation, R beats C and therefore, causes complete extinction of C.  Since we have set the death rate of R and C to be equal, consequently, we have also set the survival rate of R and C to be equal.  As a result, R and C coexist.  S, on the other hand, still goes extinct because C is highly abundant. 
 
 
 
-## TIME TO GIF IT OUT  
+## GIF
+We could not find a way to embed our GIF in knitr or to create it without outside programs (e.g. SciAnimator or ImageMagick).  Instead we embedded it into an interactive html webpage which you can access them (here).
+
 
 ```{r, echo = FALSE, fig.height = 10, fig.width = 10, fig.show = 'animate'}
 #http://stackoverflow.com/questions/12983930/mp4-file-not-generated-in-r-markdown
-gif(bigmax)
+#gif(bigmax)
 ```
 
 ```{r, echo = FALSE, fig.height = 5, fig.width = 5, fig.show = 'animate'}
 #gif(cultbigmax)
 ```
-
-##GIF
 

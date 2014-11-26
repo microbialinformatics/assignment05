@@ -4,17 +4,17 @@
 ########  RUN LOCAL SIMULATIONS 
 set.seed(1)
 conditions <- c("S", "R", "C", "E")
-max4 <- createMatrix(conditions, nrows = 50, ncols = 50)
-bigmax <- runLocalSims2(max)
+max <- createMatrix(conditions, nrows = 50, ncols = 50)
+bigmax3 <- runLocalSims2(max)
 ###### MAKE LINE PLOT FOR LOCAL
-plotLogTime(bigmax, "Local")
+plotLogTime(bigmax3, "Local")
 ### TIME TO GIF IT OUT  
 #gif(bigmax)
 
 ########  RUN GLOBAL SIMULATIONS 
-cultbigmax <- runGlobalSims2(max) # cult = culture, we're going global
+cultbigmax3 <- runGlobalSims2(max) # cult = culture, we're going global
 ###### MAKE LINE PLOT FOR GLOBAL
-plotLogTime(cultbigmax, "Global")
+plotLogTime(cultbigmax3, "Global")
 ### TIME TO GIF IT OUT
 #gif(cultbigmax)
 
@@ -34,9 +34,18 @@ plotLogTime(cultbigmax, "Global")
 
 
 par(mfrow=c(2,1))
-plotLogTime(bigmax, "Local")
-plotLogTime(cultbigmax, "Global")
+plotLogTime(bigmax3, "Local")
+plotLogTime(cultbigmax3, "Global")
 
+
+
+expmax2 <- runLocalSims2(max, Rdeath3 = 1/3)
+plotLogTime(expmax2, "Local")
+
+########  RUN GLOBAL SIMULATIONS 
+expbigmax2 <- runGlobalSims2(max, Rdeath = 1/3) # cult = culture, we're going global
+###### MAKE LINE PLOT FOR GLOBAL
+plotLogTime(expbigmax2, "Global")
 
 
 

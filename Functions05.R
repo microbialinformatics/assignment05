@@ -263,7 +263,7 @@ plotHeat <- function(newmat){
 library(animation)
 gif <- function(bigmatrix) {
   namat <- chartoNumNum(bigmatrix)
-  oopt <- ani.options(interval = 0., nmax = ncol(namat))
+  oopt <- ani.options(interval = 0.1, nmax = ncol(namat))
   for(i in 1:ani.options("nmax")){
     mat <- colMatrix(namat[,i])
     plotHeat(mat)
