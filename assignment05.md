@@ -58,7 +58,7 @@ As you can see above, the R wins the global scenario.  This is because R has a s
 
 
 ## GIF
-We could not find a way to embed our GIFs in knitr or to create it without outside programs (e.g. ImageMagick).  Instead, we embedded it into an [interactive html webpage](https://cdn.rawgit.com/chianged/assignment05/master/GIFwebpage.html).
+We could not find a way to embed our GIFs in knitr or to create it without outside programs (e.g. ImageMagick).  Instead, we embedded it into an [interactive html webpage](https://cdn.rawgit.com/chianged/assignment05/master/GIF_related_files/GIFwebpage.html).
 
 
 
