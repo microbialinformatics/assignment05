@@ -245,7 +245,7 @@ plot_abundance <- function(output_update, updates){
 (an experiment where you outline your hypothesis and what you learned from the experiment.)
 
   * Hypothesis    
-Same community as before: a randomly assigned 50*50 lattice. All the parameters and assumptions are same as before, except the probability of R cells to be killed, delta_R, is changed to 3/4, which means R cell is much more easily to displaced by empty-state. Then in a well-mixed system (global neighborhood), R cell has less effect on C cell. C cell might be able to survive. Since there might be more empty-state lattice point, the probability of S cell to fill this point increase. So S cell might also be able to survive. We assume R, S and C cells could co-exist under this new conditions.
+Same community as before: a randomly assigned 50*50 lattice. All the parameters and assumptions are same as before, except the probability of R cells to be killed, delta_R, is changed to 1/2 and 1/3, which means R cell is easilier to displaced by empty-state. Then in a well-mixed system (global neighborhood), R cell don't have growth-rate advantage over C cell. C cell might be able to survive. Since C is toxic to R,S cell might also die out.
  
  
   * Global neighborhood plot
