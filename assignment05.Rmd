@@ -86,12 +86,20 @@ plotLogTime(expbigmax, "Global")
 We could not find a way to embed our GIF in knitr or to create it without outside programs (e.g. SciAnimator or ImageMagick).  Instead we embedded it into an interactive html webpage which you can access them (here).
 
 
-```{r, echo = FALSE, fig.height = 10, fig.width = 10, fig.show = 'animate'}
-#http://stackoverflow.com/questions/12983930/mp4-file-not-generated-in-r-markdown
-#gif(bigmax)
-```
+```{r, echo=FALSE}
+###Reference: http://www.inside-r.org/packages/cran/animation/docs/saveHTML
 
-```{r, echo = FALSE, fig.height = 5, fig.width = 5, fig.show = 'animate'}
-#gif(cultbigmax)
+###Here's the commented code:
+
+# saveHTML({
+#  gif(bigmax3)
+# }, img.name = "local_plot", imgdir = "local_dir", htmlfile = "local.html", autobrowse = FALSE, 
+# title = "Local GIF", description = "Original Local Simulation GIF")
+# 
+# saveHTML({
+#   gif(cultbigmax3)
+# }, img.name = "global_plot", imgdir = "global_dir", htmlfile = "global.html", autobrowse = FALSE, 
+# title = "Global GIF", description = "Original Global Simulation GIF")
+
 ```
 
