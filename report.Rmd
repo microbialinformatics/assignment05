@@ -8,17 +8,17 @@ output: html_document
 *** 
 
 ### Problem
-The paper discusses a system involving a community of three competing species: colicinogenic E.coli (C), colicin-sensitive bacteria (S) and colicin-resistant bacteria (R). This C-S-R community satisfies a relationship similar to rock-paper-scissors game: S can displace R, R can displace C and C can displace S. The main question the paper is discussing is: How would this relationship affect the biodiversity in a small spatial scale and in a large spatial scale ecological processes. A code is written to simulate both ecological processes and the results of this code are discussed in this report.
+The paper discusses a system involving a community of three competing species: colicinogenic E.coli (C), colicin-sensitive E.coli (S) and colicin-resistant E.coli (R). This C-S-R community satisfies a relationship similar to rock-paper-scissors game: S can displace R, R can displace C, and C can displace S. The main question the paper is discussing is the following: How does the relationship between the different strains affect the biodiversity in two ecological processes, i.e. (1) on a small spatial scale (called *local neighbourhood*)and (2) on a large spatial scale (called *global neighbourhood*). A code is written to simulate both ecological processes and the results of the code are discussed in this report.
 
 ### Assumptions
-Several assumptions are made in order to write the code:
+Several assumptions are made while writing the code:
 
- * a 50*50 lattice represents the community with periodic boundaries, 
+ * a 50*50 lattice with periodic boundaries represents the community , 
  * R, C, S and E (empty state) are randomly assigned to the lattice points,
- * the neighbourhood for the small spatial scale ecological processes corresponds to the eight lattice points around the specific focal point, 
- * the neighbourhood for the large spatial scale ecological processes corresponds to all lattice points around the specific focal point, and
- * updating a focal point depends on its current state and its neighbourhood state. Rules are the same for both small scale and large scale ecological processes and are shown in the following table. 
-  
+ * the points to be updated are randomly selected (and are called *focal points*) and it is assumed that all points in the lattice are updated after updating 50*50 focal points (which is called an *epoch*),
+ * the local neighbourhood corresponds to the eight lattice points around the focal point (keeping in mind that there are periodic boundaries), 
+ * the global neighbourhood corresponds to all lattice points around the focal point, and finally, 
+ * updating a focal point depends on its current state and its neighbourhood state. The updating rules are the same for both small scale and large scale ecological processes and are shown in the following table.
 
 State before update | State after update | Probability
 ----------- | ------------ | ----------- 
@@ -33,17 +33,21 @@ R | R | 1-delta_R
 C | E | delta_C
 C | C | 1-delta_C
 
-In the table, f_S, f_R, f_C, and f_E are the fractions of S, R, C and E in the neighbourhood of the focal point. Delta_S, delta_R, and delta_C are the probability that the S, R, and C cells are killed. The former is depended on the toxicity (represented by tau) of the colicin producing strain, i.e., delta_S = delta_S0 + tau*f_C. Delta_S0 is the probability that S dies without being influenced by C, and this value is assumed to be 1/4. The latter two are constant and are assumed to be 10/32 and 1/3, respectively. 
-
+In the table, f_S, f_R, f_C, and f_E are the fractions of S, R, C and E in the neighbourhood of the focal point. Delta_S, delta_R, and delta_C are the probability that the S, R, and C cells die or are killed. The former probability is dependend on the toxicity (represented by tau) of the colicin producing strain, i.e., delta_S = delta_S0 + tau*f_C. Delta_S0 is the probability that S dies without being influenced by the toxicity of C, and this value is assumed to be 1/4. The latter two probabilities are constant and are assumed to be 10/32 and 1/3, respectively. 
 
 ### Reproduction of line graphs and heatmap
+A random lattice is updated corresponding to both ecological processes, and this section shows some graphs that keep track of all updates. For instance, a line graph representing the logaritm of the absolute abundances of all strains in the lattice is plotted in function of time (with one time unit corresponding to an epoch). The colicinogenic E.coli strain is denoted in red, the colicin-sensitive E.coli strain is denoted in blue, and the colicin-resistant E.coli strain is shown in green. A time-lapsed heatmap is additionally generated that shows, in the same color-coded manner, the location and the abundance of each strain in a lattice at each epoch. 
 
+**Local Neighbourhood**  
+The two images shown below illustrate the output of the code for local neighbourhood interactions. It is clear that the abundances of each strain remain rather constant. Furthermore, when looking at the heatmap, a distinct movement of the strains is discernible: they are chasing each other. 
 
 <img src="mon24_local1000_Page_1.png", style="margin:0px auto;display:block" width="500">
+
+**Global Neighbourhood**  
+The two images shown below illustrate the output of the code for global neighbourhood interactions. This time, the abundances do not stay constant and the colicin-sensitive E.coli strain dies rather fast (points of death are shown with an asterix). The colicinogenic E.coli strain is then outcompeted by the colicin-resistant E.coli strain. In the end, only the resistant strain remains.
+
 <img src="try24.2_global1000.png", style="margin:0px auto;display:block" width="500">
 <img src="global25.2.gif", style="margin:0px auto;display:block" width="500">
-
-
 
 ```{r, echo=FALSE}
 rm(list=ls())
@@ -237,24 +241,17 @@ plot_abundance <- function(output_update, updates){
 
 ```
 
-
-
-
 ### Experiment
-
-  * Hypothesis    
-       + same community as before: a randomly assigned 50*50 lattice with periodic boundaries. 
-       + all the parameters and assumptions are same as before, except the probability of R cells to be killed, i.e. delta_R, is changed to 1/2 and 1/3.
-       + under these new conditions, R cell is easilier to displaced by empty-state. Then in a well-mixed system (global neighborhood), R cell no longer has growth-rate advantage over C cell. C cell might be able to survive.  
-       + C is still toxic to R, S cell might also die out.
+**Hypothesis**    
+The same community as before is experimented with, while all parameters and assumptions remain the same expect for the probabilites. I.e., the probability of the R cells to die or be killed is changed to 1/2 first and then to 1/3. Both  new probabilities are bigger than before and as such, R will be displaced by the empty state more easily. In other words this means that for a well-mixed system (based on the global neighbourhood interactions), the R cells no longer have the growth-rate advantage over the C cells. The general expectation is that the chance of the C cells surviving under these conditions is bigger, however, this will depend on the exact value of *all* the probabilites. More specifically, when the probability is changed to 1/2, the expectation is that the C cells survive. The C strain is not toxic to R and the only competition  between C and R thus depends on their separate growth-rates. When the R-probability of death is changed to 1/3, in contrast, the difference between the R-probability and the C-probability of death are equal and as such it is expected that both C and R strains will survive, i.e., none is able to outcompete the other. Since nothing is changed to the S-probability of death and since C is still toxic to it, the S strain is expected to die in both situations.
   
-  * Results and Discussion        
+**Results and Discussion**        
+Below, two images are shown that illustrate the abundances of each strain as a function of time, while the probabilities are experimented with. It can be seen that all expectations are met: when the C-probability of death is smaller than the R-probability of death, the C strain will outcompete the R strain when applying global neighbourhood interactions. When delta_C is the same as delta_R, R and C can coexist in the system. When delta_C is larger than delta_R, only R will survive after 1000 epochs. The S strain will be killed by the toxic collicin produced by the C strain. Since both the growth-rate of the C strain and the S-probability of death do not change, the performance of S remains rather invariable during these experiments.
+
 When delta_R is changed to 1/2, which is greater than delta_C, the result is:
 <img src="global_delta_R_0.5.png", style="margin:0px auto;display:block" width="500">
-
 
 When delta_R is changed to 1/3, which is the same as delta_C, the result is:
 <img src="global_delta_R_0.33.png", style="margin:0px auto;display:block" width="500">
 
-Since C is not toxic to S, so the competetition result of C and R depends on their grow-rate. When C has advantage over R, i.e. delta_C is smaller than delta_R, C wins in the large spatial scale environment. When delta_C is the same as delta_R, R and C could coexist in the system When delta_C is larger than delta_R, only R survives in the system after 1000 epoch times.S cells will be killed by collicin produced by C. Since growth-rate of C doesn't change, the performance of R doesn't change much during these experiments.
-  
+
