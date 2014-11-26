@@ -1,0 +1,426 @@
+Assignment 5
+============
+
+### The problem...
+One problem that confounds biologists is how best to explain the
+biodiversity that surrounds us.  For example, there are antibiotic producing
+and sensitive strains of the same species that reside in the same
+populations.  Also, there are phage that stably co-exist with their
+bacterial prey.  These types of relationships were studied in a [paper published
+in the journal Nature](http://www.nature.com/nature/journal/v418/n6894/full/nature00823.html) using the model of [Rock-Paper-Scissors](http://en.wikipedia.org/wiki/Rock-paper-scissors).
+
+### The assignment...
+You will quickly notice that the authors did not make their code publicly
+available and do not detail all of their assumptions. Your job for this
+assignment is to attempt to recreate the line graphs shown in Figure 1 from
+either of these two papers.  
+At a minimum, you need to create functions that
+generate the starting matrix and a 
+function that uses the starting matrix to
+runs the simulation for a specified number of generations.  
+You also need to
+make the functions flexible enough to allow the user to alter one or more set of
+variables. As output, you need to generate a knitr document that describes...
+
+* the problem
+* your assumptions
+* a reproduction of their line graphs
+* an experiment where you outline your hypothesis and what you learned from the experiment.
+* if you can figure out how to create time-lapsed heatmaps of the state of the
+population (also shown in Fig. 1) as a GIF, I will give you a considerable
+amount of extra credit
+* you may no more than one for/repeat/while loop (although none would be even better)
+
+### Game plan...
+Complete the exercise and submit it as a pull request to the [Assignment 5 repository](https://github.com/microbialinformatics/assignment05). You should not use any packages beyond the base R system. This assignment is due on Wednesday, November 26th. Be sure to include all R, Rmd, and md files in your commits. There are two approaches you and your partner can take to work on this project:
+
+* Sit at the same computer and work together and have one person make all of the commits and pushes to GitHub.
+* Divide and conquer the functions with one person creating the repository and make the other person a collaborator. Synthesize your code using pull requests
+*try options 1 and 2 and if that fails, do project yourself.
+
+**Problem
+The authors wanted to model how competing species can exist together in a non-transitive community. They assessed the how local and global community dynamics influences population structure by competing three types of E. coli and measuring abundances of each type.  They tested the prediction that local interaction and dispersal are sufficient for all types in a community to exist, but when dispersal, movement, and interaction occur over a larger scale, diversity is lost.
+
+**Assumptions
+Assumptions used in this paper 
+1. initially community structure is random (empty, or C,S,R types are equally likely to initially occupy a niche (cell) in the community)
+2. Any point occupied by empty, C,S,or R can be changed
+3. Changes in given locations are dependent on the current occupancy as well as local occupancy (neighbors or global community) with discinct probabilities relating to cell types.
+4. These probabilities are:
+S-->0  :  delta_S = delta_S,0 + tau * f_C
+S-->S :  1 - delta_S
+R-->0 :  delta_R
+R-->R :  1 - delta_R
+C-->0 :  delta_C
+C-->C : 1 - delta_C
+0-->S : f_S
+0-->R : f_R
+0-->C : f_C
+0-->0 : 1 - f_S - f_R - f_C
+5. Under these probabilities a rock-paper-scissors dynamic occurs where: S displaces R because S grows better, R displaces C because R grows better, and C can displace S because C kills S. 
+6. neighborhoods include 8 cells surrounding a point, and neighborhoods of cells on the edge include distant cells (furthest away from index cell in the same plane)
+
+**Experiment
+The authors initially have empty cells in their matrix. Some communities are saturated. I wanted to know how the population dynamics would change if the starting community were fully saturated with S, C or R cells. I hypothesize that the S cells would die out faster in this scenario because there are no empty cells to be randomly changed to occupied by other cell types, so the overall displacement would play out faster. 
+Results line graph below.
+interpretation: the abundences are lower and the cells do not appear to change. Perhaps with no empty cells the cell types cannot change from their initial seeding density/locations because there is no room to increase or decrease the abundance of any of the three cell types. An alternative interpretation is that I have an error in my coding and the experimental competion matrix does not update for each round in the forloop.
+
+
+```{r}
+
+#initial set-up to start simulations
+#fill matrix with randomly selected 4 choices
+#C=1,S=2,R=3, E=4 empty (4 choices)
+seeds<-sample(1:4,2500, replace=T) #pick the random numbers to fill matrix
+initial.matrix<-matrix(seeds,nrow=50, ncol=50) #create matrix with random numbers
+#pick random cell in matrix to change
+#function takes initial random cell from matrix and changes it based on local neighborhood dynamics
+local.comp<-function(initial.matrix) { 
+r<-initial.matrix[(sample(1:50,1, replace=T))]
+c<-initial.matrix[(sample(1:50,1, replace=T))]
+#select local neighborhood based on index
+#local neighborhood is 3 above, 2 each side, 3 on bottom of index
+ #rows:
+#a center upper
+  up.row<-r+1
+  if(up.row>50){up.row<-1}
+  else if(up.row<1){up.row<-50}
+  # b center lower
+  down.row<-r-1
+  if(down.row>50){down.row<-1}
+  else if(down.row<1){down.row<-50}
+  #c right upper corner
+  r.up.corner<-r+1
+  if(r.up.corner>50){r.up.corner<-1}
+  else if(r.up.corner<1){r.up.corner<-50}
+  #d left upper corner
+  l.up.corner<-r+1
+ if(l.up.corner>50){l.up.corner<-1}
+  else if(l.up.corner<1){l.up.corner<-50}
+  #e center right
+  center.r<-r
+ if(center.r>50){center.r<-1}
+  else if(center.r<1){center.r<-50}
+  # f center left
+  center.l<-r
+ if(center.l>50){center.l<-1}
+  else if(center.l<1){center.l<-50}
+  #g right lower corner
+  r.low.corner<-r-1
+if(r.low.corner>50){r.low.corner<-1}
+  else if(r.low.corner<1){r.low.corner<-50}
+  #h left lower corner 
+  l.low.corner<-r-1
+if(l.low.corner>50){l.low.corner<-1}
+  else if(l.low.corner<1){l.low.corner<-50}
+   #Columns:
+  #a upper
+  up.col<-c
+if( up.col>50){up.col<-1}
+  else if( up.col<1){up.col<-50}
+  # b lower
+  low.col<-c
+if( low.col>50){low.col<-1}
+  else if( low.col<1){low.col<-50}
+  # c right upper corner
+  r.up.cor.col<-c+1
+if( r.up.cor.col>50){r.up.cor.col<-1}
+  else if( r.up.cor.col<1){r.up.cor.col<-50}
+  # d left upper corner
+  l.up.cor.col<-c-1
+if( l.up.cor.col>50){l.up.cor.col<-1}
+  else if( l.up.cor.col<1){l.up.cor.col<-50}
+  # e center right
+  center.r.col<-c+1
+if( center.r.col>50){center.r.col<-1}
+  else if( center.r.col<1){center.r.col<-50}
+  # f center left
+  center.l.col<-c-1
+if( center.l.col>50){center.l.col<-1}
+  else if( center.l.col<1){center.l.col<-50}
+  # g right lower corner
+  r.lower.cor.col<-c+1
+if( r.lower.cor.col>50){r.lower.cor.col<-1}
+  else if( r.lower.cor.col<1){r.lower.cor.col<-50}
+  # h left lower corner 
+  l.lower.cor.col<-c-1
+if( l.lower.cor.col>50){l.lower.cor.col<-1}
+  else if( l.lower.cor.col<1){l.lower.cor.col<-50}
+  # put together neighbor indices
+  A<-initial.matrix[up.row,up.col]
+  B<-initial.matrix[down.row,low.col]
+  C<-initial.matrix[r.up.corner, r.up.cor.col]
+  D<-initial.matrix[l.up.corner, l.up.cor.col]
+  E<-initial.matrix[center.r, center.r.col]
+  G<-initial.matrix[center.l, center.l.col]
+  H<-initial.matrix[ r.low.corner,r.lower.cor.col]
+  I<-initial.matrix[l.low.corner, l.lower.cor.col]
+#if the cell is not empty
+  #change based on given probabilities:#C=1/3 C is 1
+  #S0=1/4+(3/4*fractionC) s is 2
+  #R is 10/32 R is 3
+  #tau =3/4 and is used in delta S calculation
+  #start with vector of neighbors
+    make.vec<-c(A,B,C,D,E,G,H,I)
+  #find how many Cs there are in neighborhood
+  #calculate fraction of C to use in delta_S calculation
+    ones<-length(grep(1,make.vec))
+    fract.ones<-ones/length(make.vec)
+#change based on the given probabilities. Cs= cell sample scheme 
+  #C=1
+  if(initial.matrix[r,c]==1) {newcell<-sample((c(4,1)),1,prob=(c((1/3),(1-1/3))))}
+  #S=2
+  else if(initial.matrix[r,c]==2) {newcell<-sample((c(4,2)),1,prob=(c(((.25+.75*fract.ones)),(1-(.25+(.75*fract.ones))))))}
+  #R=3
+  else if(initial.matrix[r,c]==3) {newcell<-sample((c(3,4)),1,prob=(c((1-10/32),(10/32))))}
+#change the type based on what is in neighborhood if cell is empty
+  #probability of it becoming 1,2,3,0 is based on probability 
+  else{
+    newcell<-make.vec[sample(1:8,1)]} 
+initial.matrix[r,c]<<-newcell
+#reassign initial.matrix for next round
+#return matrix
+   }
+##############################################
+#Sampling for global competition
+global.comp<-function(initial.matrix) {
+  #creating random cell to pick for type to change to if cell picked is empty
+  new.row<-sample(1:50,1)
+  new.col<-sample(1:50,1)
+  #pick the cell to change
+r<-initial.matrix[(sample(1:50,1, replace=T))]
+c<-initial.matrix[(sample(1:50,1, replace=T))]
+#if the cell is not empty
+  #change based on given probabilities:#C=1/3 C is 1
+  #S0=1/4+(3/4*fractionC) s is 2
+  #R is 10/32 R is 3
+  #tau =3/4 and is used in delta S calculation
+ #find how many Cs there are in neighborhood
+  #calculate fraction of C to use in delta_S calculation
+    ones<-length(grep(1,initial.matrix))
+    fract.ones<-ones/length(initial.matrix)
+#change based on the given probabilities. Cs= cell sample scheme 
+  #C=1
+  if(initial.matrix[r,c]=="1") {newcell<-sample((c(4,1)),1,prob=(c((1/3),(1-1/3))))}
+  #S=2
+  else if(initial.matrix[r,c]=="2") {newcell<-sample((c(4,2)),1,prob=(c(((.25+.75*fract.ones)),(1-(.25+(.75*fract.ones))))))}
+  #R=3
+  else if(initial.matrix[r,c]=="3") {newcell<-sample((c(3,4)),1,prob=(c((1-10/32),(10/32))))}
+#change the type based on what is in neighborhood if cell is empty
+  #probability of it becoming 1,2,3,0 is based on probability 
+  else {newcell<-initial.matrix[new.row,new.col]}
+  initial.matrix[r,c]<<-newcell
+}
+#EXPERIMENTAL: non-wrapping matrix for local competition
+#make matrix for no empties experiment 
+ex.seeds<-sample(1:3,2500, replace=T) #pick the random numbers to fill matrix
+initial.matrix<-matrix(ex.seeds,nrow=50, ncol=50) #create matrix with random numbers
+experimental.comp<-function(initial.matrix) {
+r<-initial.matrix[(sample(1:50,1, replace=T))]
+c<-initial.matrix[(sample(1:50,1, replace=T))]
+#select local neighborhood based on index
+#local neighborhood is 3 above, 2 each side, 3 on bottom of index
+ #rows:
+#a center upper
+  up.row<-r+1
+  if(up.row>50){up.row<-1}
+  else if(up.row<1){up.row<-50}
+  # b center lower
+  down.row<-r-1
+  if(down.row>50){down.row<-1}
+  else if(down.row<1){down.row<-50}
+  #c right upper corner
+  r.up.corner<-r+1
+  if(r.up.corner>50){r.up.corner<-1}
+  else if(r.up.corner<1){r.up.corner<-50}
+  #d left upper corner
+  l.up.corner<-r+1
+ if(l.up.corner>50){l.up.corner<-1}
+  else if(l.up.corner<1){l.up.corner<-50}
+  #e center right
+  center.r<-r
+ if(center.r>50){center.r<-1}
+  else if(center.r<1){center.r<-50}
+  # f center left
+  center.l<-r
+ if(center.l>50){center.l<-1}
+  else if(center.l<1){center.l<-50}
+  #g right lower corner
+  r.low.corner<-r-1
+if(r.low.corner>50){r.low.corner<-1}
+  else if(r.low.corner<1){r.low.corner<-50}
+  #h left lower corner 
+  l.low.corner<-r-1
+if(l.low.corner>50){l.low.corner<-1}
+  else if(l.low.corner<1){l.low.corner<-50}
+   #Columns:
+  #a upper
+  up.col<-c
+if( up.col>50){up.col<-1}
+  else if( up.col<1){up.col<-50}
+  # b lower
+  low.col<-c
+if( low.col>50){low.col<-1}
+  else if( low.col<1){low.col<-50}
+  # c right upper corner
+  r.up.cor.col<-c+1
+if( r.up.cor.col>50){r.up.cor.col<-1}
+  else if(r.up.cor.col<1){r.up.cor.col<-50}
+  # d left upper corner
+  l.up.cor.col<-c-1
+if( l.up.cor.col>50){l.up.cor.col<-1}
+  else if( l.up.cor.col<1){l.up.cor.col<-50}
+  # e center right
+  center.r.col<-c+1
+if( center.r.col>50){center.r.col<-1}
+  else if( center.r.col<1){center.r.col<-50}
+  # f center left
+  center.l.col<-c-1
+if( center.l.col>50){center.l.col<-1}
+  else if( center.l.col<1){center.l.col<-50}
+  # g right lower corner
+  r.lower.cor.col<-c+1
+if( r.lower.cor.col>50){r.lower.cor.col<-1}
+  else if( r.lower.cor.col<1){r.lower.cor.col<-50}
+  # h left lower corner 
+  l.lower.cor.col<-c-1
+if( l.lower.cor.col>50){l.lower.cor.col<-1}
+  else if( l.lower.cor.col<1){l.lower.cor.col<-50}
+  # put together neighbor indices
+  A<-initial.matrix[up.row,up.col]
+  B<-initial.matrix[down.row,low.col]
+  C<-initial.matrix[r.up.corner, r.up.cor.col]
+  D<-initial.matrix[l.up.corner, l.up.cor.col]
+  E<-initial.matrix[center.r, center.r.col]
+  G<-initial.matrix[center.l, center.l.col]
+  H<-initial.matrix[ r.low.corner,r.lower.cor.col]
+  I<-initial.matrix[l.low.corner, l.lower.cor.col]
+#if the cell is not empty
+  #change based on given probabilities:#C=1/3 C is 1
+  #S0=1/4+(3/4*fractionC) s is 2
+  #R is 10/32 R is 3
+  #tau =3/4 and is used in delta S calculation
+  #start with vector of neighbors
+    make.vec<-c(A,B,C,D,E,G,H,I)
+  #find how many Cs there are in neighborhood
+  #calculate fraction of C to use in delta_S calculation
+    ones<-length(grep(1,make.vec))
+    fract.ones<-ones/length(make.vec)
+#change based on the given probabilities. Cs= cell sample scheme 
+  #C=1
+  if(initial.matrix[r,c]==1) {newcell<-sample((c(4,1)),1,prob=(c((1/3),(1-1/3))))}
+  #S=2
+  else if(initial.matrix[r,c]==2) {newcell<-sample((c(4,2)),1,prob=(c(((.25+.75*fract.ones)),(1-(.25+(.75*fract.ones))))))}
+  #R=3
+  else if(initial.matrix[r,c]==3){newcell<-sample((c(3,4)),1,prob=(c((1-10/32),(10/32))))}
+initial.matrix[r,c]<<-newcell}
+#reassign initial.matrix for next round
+#return matrix
+
+```
+#results
+
+
+```{r}
+#forloop for local.comp
+fill<-c("NA")
+empty.matrix<-matrix(fill,nrow=2500,ncol=1001) #make empty matrix to fill 
+update.matrix<-initial.matrix #call input matrix something else to update it
+j<-1
+for( i in 1:((2500)*1000)) { #for each update
+  if (i==1 | i %% 2500==0){ #
+    empty.matrix[,j]<-update.matrix
+    j <-j+1
+  }
+  update.matrix<-local.comp(initial.matrix)
+  }
+colnames(empty.matrix)<-1:1001
+return(empty.matrix)
+
+#get abundances for local comp
+#C,S,R
+frequencies<-function(empty.matrix){
+  empty.matrix.df<-as.data.frame(empty.matrix)
+  label.matrix<-sapply(empty.matrix.df, function(x) table(factor(x, levels=(c("1","2","3","4")))))
+  lable.matrix.log<-log10(label.matrix)
+  lable.matrix.log[is.infinite(lable.matrix.log)] = 0
+  lable.matrix.log<-as.data.frame(lable.matrix.log)
+  return(lable.matrix.log)
+  }
+
+freq.matrix<-frequencies(empty.matrix)                    
+#transpose
+freq.matrix.t<-as.data.frame(t(freq.matrix))
+plot(freq.matrix.t$"1",type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="Local neighbourhood", xlim=c(0,ncol(freq.matrix)))
+lines(freq.matrix.t$"2", type="l", col="red")
+lines(freq.matrix.t$"3", type="l", col="blue")
+
+############################################
+#global competition
+fill<-(c("NA"))
+empty.matrix<-matrix(fill,nrow=2500,ncol=501) #make empty matrix to fill 
+update.matrix<-initial.matrix #call input matrix something else to update it
+j<-1
+for( i in 1:((2500)*500)) { #for each update
+  if (i==1 | i %% 2500==0){ #
+    empty.matrix[,j]<-update.matrix
+    j <-j+1
+  }
+  update.matrix<-global.comp(initial.matrix)
+  }
+colnames(empty.matrix)<-1:501
+return(empty.matrix)
+
+
+frequencies<-function(empty.matrix){
+  empty.matrix.df<-as.data.frame(empty.matrix)
+  label.matrix<-sapply(empty.matrix.df, function(x) table(factor(x, levels=(c("1","2","3","4")))))
+  lable.matrix.log<-log10(label.matrix)
+  lable.matrix.log[is.infinite(lable.matrix.log)] = 0
+  lable.matrix.log<-as.data.frame(lable.matrix.log)
+  return(lable.matrix.log)
+  }
+
+freq.matrix<-frequencies(empty.matrix)                    
+#transpose
+freq.matrix.t<-as.data.frame(t(freq.matrix))
+plot(freq.matrix.t$"1",type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="Global neighbourhood", xlim=c(0,ncol(freq.matrix.t)))
+lines(freq.matrix.t$"2", type="l", col="red")
+lines(freq.matrix.t$"3", type="l", col="blue")
+
+#############
+#loop for experimental
+#make matrix without empty cells
+ex.seeds<-sample(1:3,2500, replace=T) #pick the random numbers to fill matrix
+initial.matrix<-matrix(ex.seeds,nrow=50, ncol=50) #create matrix with random numbers
+fill<-(c("NA"))
+empty.matrix<-matrix(fill,nrow=2500,ncol=1001) #make empty matrix to fill 
+update.matrix<-initial.matrix #call input matrix something else to update it
+j<-1
+for( i in 1:((2500)*1000)) { #for each update
+  if (i==1 | i %% 2500==0){ #
+    empty.matrix[,j]<-update.matrix
+    j <-j+1
+  }
+  update.matrix<-local.comp(initial.matrix)
+  }
+colnames(empty.matrix)<-1:1001
+return(empty.matrix)
+
+#plot experiment
+freq.matrix<-frequencies(empty.matrix)                    
+#transpose
+freq.matrix.t<-as.data.frame(t(freq.matrix))
+plot(freq.matrix.t$"1",type="l", col="green",ylim=(c(0,5)),ylab="Log(abundance)",xlab="Time",main="Experiment: Local neighbourhood, no empty slots", xlim=c(0,ncol(freq.matrix)))
+lines(freq.matrix.t$"2", type="l", col="red")
+lines(freq.matrix.t$"3", type="l", col="blue")
+
+
+```
+
+
+#sources
+http://stackoverflow.com/questions/9109778/random-sampling-matrix
+help from Danielle and her group
+searching github/micro 612 class website
+google
