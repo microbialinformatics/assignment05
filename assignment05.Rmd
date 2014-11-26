@@ -103,5 +103,8 @@ We could not find a way to embed our GIF in knitr or to create it without outsid
 # }, img.name = "global_plot", imgdir = "global_dir", htmlfile = "global.html", autobrowse = FALSE, 
 # title = "Global GIF", description = "Original Global Simulation GIF")
 
+
+###Webpage with HTML-coded GIFs generated from: https://rawgit.com/
+
 ```
 
